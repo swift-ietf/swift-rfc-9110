@@ -252,7 +252,7 @@ extension RFC_9110.Response {
         location: String? = nil,
         headers: RFC_9110.Headers = [],
         body: [UInt8]? = nil
-    ) throws -> Self {
+    ) throws(RFC_9110.Header.Field.Error) -> Self {
         var responseHeaders = headers
         if let location = location {
             responseHeaders.append(try .init(name: "Location", value: location))
@@ -279,7 +279,7 @@ extension RFC_9110.Response {
     public static func movedPermanently(
         to location: String,
         headers: RFC_9110.Headers = []
-    ) throws -> Self {
+    ) throws(RFC_9110.Header.Field.Error) -> Self {
         var responseHeaders = headers
         responseHeaders.append(try .init(name: "Location", value: location))
         return Self(status: .movedPermanently, headers: responseHeaders, body: nil)
@@ -294,7 +294,7 @@ extension RFC_9110.Response {
     public static func found(
         at location: String,
         headers: RFC_9110.Headers = []
-    ) throws -> Self {
+    ) throws(RFC_9110.Header.Field.Error) -> Self {
         var responseHeaders = headers
         responseHeaders.append(try .init(name: "Location", value: location))
         return Self(status: .found, headers: responseHeaders, body: nil)
@@ -309,7 +309,7 @@ extension RFC_9110.Response {
     public static func seeOther(
         at location: String,
         headers: RFC_9110.Headers = []
-    ) throws -> Self {
+    ) throws(RFC_9110.Header.Field.Error) -> Self {
         var responseHeaders = headers
         responseHeaders.append(try .init(name: "Location", value: location))
         return Self(status: .seeOther, headers: responseHeaders, body: nil)
@@ -349,7 +349,7 @@ extension RFC_9110.Response {
         wwwAuthenticate: String,
         headers: RFC_9110.Headers = [],
         body: [UInt8]? = nil
-    ) throws -> Self {
+    ) throws(RFC_9110.Header.Field.Error) -> Self {
         var responseHeaders = headers
         responseHeaders.append(try .init(name: "WWW-Authenticate", value: wwwAuthenticate))
         return Self(status: .unauthorized, headers: responseHeaders, body: body)
@@ -405,7 +405,7 @@ extension RFC_9110.Response {
         retryAfter: String? = nil,
         headers: RFC_9110.Headers = [],
         body: [UInt8]? = nil
-    ) throws -> Self {
+    ) throws(RFC_9110.Header.Field.Error) -> Self {
         var responseHeaders = headers
         if let retryAfter = retryAfter {
             responseHeaders.append(try .init(name: "Retry-After", value: retryAfter))

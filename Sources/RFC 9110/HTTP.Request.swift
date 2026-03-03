@@ -283,7 +283,7 @@ extension RFC_9110 {
         /// - CONNECT can only be used with authority-form (RFC 9110 Section 7.1)
         /// - asterisk-form can only be used with OPTIONS (RFC 9110 Section 7.1)
         /// - OPTIONS with asterisk-form is for server-wide queries (RFC 9110 Section 7.1)
-        public func validate() throws {
+        public func validate() throws(Error) {
             // Validate method compatibility with request-target form
             switch target {
             case .authority:
