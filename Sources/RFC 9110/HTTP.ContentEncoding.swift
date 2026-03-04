@@ -7,7 +7,6 @@
 // Content coding values indicate an encoding transformation applied to the representation
 
 import ASCII
-import Parser_Primitives
 import Standard_Library_Extensions
 
 extension RFC_9110 {
@@ -83,10 +82,7 @@ extension RFC_9110 {
         /// // [.brotli]
         /// ```
         public static func parse(_ headerValue: String) -> [ContentEncoding] {
-            var input = Parser_Primitives.Parser.ByteInput(utf8: headerValue)
-            return HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.ByteInput, ContentEncoding> { element in
-                ContentEncoding(String(decoding: element, as: UTF8.self))
-            }.parse(&input)
+            HTTP.Parse.tokens(in: headerValue).map { ContentEncoding($0) }
         }
 
         /// Formats multiple encodings as a header value

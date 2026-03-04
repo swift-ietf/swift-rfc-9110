@@ -2,7 +2,6 @@
 // swift-rfc-9110
 
 import ASCII
-import Parser_Primitives
 import Standard_Library_Extensions
 
 extension HTTP {
@@ -52,10 +51,7 @@ extension HTTP {
         /// // [ContentLanguage("en-us"), ContentLanguage("fr-ca")]
         /// ```
         public static func parse(_ headerValue: String) -> [ContentLanguage] {
-            var input = Parser_Primitives.Parser.ByteInput(utf8: headerValue)
-            return HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.ByteInput, ContentLanguage> { element in
-                ContentLanguage(String(decoding: element, as: UTF8.self))
-            }.parse(&input)
+            HTTP.Parse.tokens(in: headerValue).map { ContentLanguage($0) }
         }
 
         /// Formats an array of ContentLanguage values into a header value
