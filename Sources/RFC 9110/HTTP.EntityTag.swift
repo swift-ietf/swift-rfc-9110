@@ -7,6 +7,7 @@
 // Entity tags (ETags) are used for cache validation and conditional requests
 
 import ASCII
+import Parser_Primitives
 import Standard_Library_Extensions
 
 extension RFC_9110 {
@@ -108,29 +109,27 @@ extension RFC_9110 {
         /// EntityTag.parse("invalid")           // nil
         /// ```
         public static func parse(_ headerValue: String) -> EntityTag? {
-            let trimmed = headerValue.trimming(.ascii.whitespaces)
+            var input = Parser_Primitives.Parser.ByteInput(utf8: headerValue)
 
-            // Check for weak prefix
-            let isWeak: Bool
-            let tagPart: String
+            // OWS
+            HTTP.Parse.OWS<Parser_Primitives.Parser.ByteInput>().parse(&input)
 
-            if trimmed.hasPrefix("W/\"") {
-                isWeak = true
-                tagPart = String(trimmed.dropFirst(2))  // Remove "W/"
-            } else if trimmed.hasPrefix("\"") {
-                isWeak = false
-                tagPart = trimmed
-            } else {
+            // Check for weak prefix "W/"
+            var isWeak = false
+            if input.startIndex < input.endIndex, input[input.startIndex] == 0x57 { // 'W'
+                let next = input.index(after: input.startIndex)
+                if next < input.endIndex, input[next] == 0x2F { // '/'
+                    input = input[input.index(after: next)...]
+                    isWeak = true
+                }
+            }
+
+            // Parse quoted tag value
+            guard let bytes = try? HTTP.Parse.QuotedString<Parser_Primitives.Parser.ByteInput>().parse(&input) else {
                 return nil
             }
 
-            // Extract quoted value
-            guard tagPart.hasPrefix("\"") && tagPart.hasSuffix("\"") else {
-                return nil
-            }
-
-            let value = String(tagPart.dropFirst().dropLast())
-            return EntityTag(value: value, isWeak: isWeak)
+            return EntityTag(value: String(decoding: bytes, as: UTF8.self), isWeak: isWeak)
         }
     }
 }

@@ -2,6 +2,7 @@
 // swift-rfc-9110
 
 import ASCII
+import Parser_Primitives
 public import RFC_5322
 import Standard_Library_Extensions
 
@@ -131,21 +132,24 @@ extension HTTP.Precondition {
     /// - Parameter headerValue: The If-Match header value
     /// - Returns: An If-Match precondition, or nil if parsing fails
     public static func parseIfMatch(_ headerValue: String) -> HTTP.Precondition? {
-        let bytes = Array(headerValue.utf8)
-        let trimmed = HTTP.Parse._trimOWS(bytes, 0..<bytes.count)
+        var input = Parser_Primitives.Parser.ByteInput(utf8: headerValue)
+        HTTP.Parse.OWS<Parser_Primitives.Parser.ByteInput>().parse(&input)
 
         // Wildcard case
-        if trimmed.count == 1, bytes[trimmed.lowerBound] == 0x2A {
-            return .ifMatch([wildcardTag])
+        if input.startIndex < input.endIndex, input[input.startIndex] == 0x2A {
+            let saved = input
+            input = input[input.index(after: input.startIndex)...]
+            HTTP.Parse.OWS<Parser_Primitives.Parser.ByteInput>().parse(&input)
+            if input.startIndex >= input.endIndex {
+                return .ifMatch([wildcardTag])
+            }
+            input = saved
         }
 
         // Parse comma-separated ETags
-        let items = HTTP.Parse._splitOnComma(bytes)
-        let etags: [HTTP.EntityTag] = items.compactMap { range in
-            let t = HTTP.Parse._trimOWS(bytes, range)
-            guard !t.isEmpty else { return nil }
-            return HTTP.EntityTag.parse(String(decoding: bytes[t], as: UTF8.self))
-        }
+        let etags = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.ByteInput, HTTP.EntityTag> { element in
+            HTTP.EntityTag.parse(String(decoding: element, as: UTF8.self))
+        }.parse(&input)
 
         return etags.isEmpty ? nil : .ifMatch(etags)
     }
@@ -155,21 +159,24 @@ extension HTTP.Precondition {
     /// - Parameter headerValue: The If-None-Match header value
     /// - Returns: An If-None-Match precondition, or nil if parsing fails
     public static func parseIfNoneMatch(_ headerValue: String) -> HTTP.Precondition? {
-        let bytes = Array(headerValue.utf8)
-        let trimmed = HTTP.Parse._trimOWS(bytes, 0..<bytes.count)
+        var input = Parser_Primitives.Parser.ByteInput(utf8: headerValue)
+        HTTP.Parse.OWS<Parser_Primitives.Parser.ByteInput>().parse(&input)
 
         // Wildcard case
-        if trimmed.count == 1, bytes[trimmed.lowerBound] == 0x2A {
-            return .ifNoneMatch([wildcardTag])
+        if input.startIndex < input.endIndex, input[input.startIndex] == 0x2A {
+            let saved = input
+            input = input[input.index(after: input.startIndex)...]
+            HTTP.Parse.OWS<Parser_Primitives.Parser.ByteInput>().parse(&input)
+            if input.startIndex >= input.endIndex {
+                return .ifNoneMatch([wildcardTag])
+            }
+            input = saved
         }
 
         // Parse comma-separated ETags
-        let items = HTTP.Parse._splitOnComma(bytes)
-        let etags: [HTTP.EntityTag] = items.compactMap { range in
-            let t = HTTP.Parse._trimOWS(bytes, range)
-            guard !t.isEmpty else { return nil }
-            return HTTP.EntityTag.parse(String(decoding: bytes[t], as: UTF8.self))
-        }
+        let etags = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.ByteInput, HTTP.EntityTag> { element in
+            HTTP.EntityTag.parse(String(decoding: element, as: UTF8.self))
+        }.parse(&input)
 
         return etags.isEmpty ? nil : .ifNoneMatch(etags)
     }

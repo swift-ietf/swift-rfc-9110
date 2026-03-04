@@ -7,6 +7,7 @@
 // HTTP authentication framework
 
 import ASCII
+import Parser_Primitives
 import RFC_4648
 import Standard_Library_Extensions
 
@@ -162,46 +163,38 @@ extension RFC_9110.Authentication {
         /// - Parameter headerValue: The WWW-Authenticate header value
         /// - Returns: A Challenge if parsing succeeds, nil otherwise
         public static func parse(_ headerValue: String) -> Challenge? {
-            let bytes = Array(headerValue.utf8)
-            var i = 0
+            var input = Parser_Primitives.Parser.ByteInput(utf8: headerValue)
 
             // Skip leading OWS
-            HTTP.Parse._skipOWS(bytes, &i)
+            HTTP.Parse.OWS<Parser_Primitives.Parser.ByteInput>().parse(&input)
 
             // Parse scheme (token)
-            guard let schemeName = HTTP.Parse._token(bytes, &i) else { return nil }
-            let scheme = Scheme(schemeName)
+            guard let schemeSlice = try? HTTP.Parse.Token<Parser_Primitives.Parser.ByteInput>().parse(&input) else {
+                return nil
+            }
+            let scheme = Scheme(String(decoding: schemeSlice, as: UTF8.self))
 
             // If no more content, scheme-only challenge
-            HTTP.Parse._skipOWS(bytes, &i)
-            guard i < bytes.count else {
+            HTTP.Parse.OWS<Parser_Primitives.Parser.ByteInput>().parse(&input)
+            guard input.startIndex < input.endIndex else {
                 return Challenge(scheme: scheme)
             }
 
-            // Parse comma-separated parameters: token "=" (token / quoted-string)
+            // Parse comma-separated parameters using Parameter parser
             var parameters: [String: String] = [:]
-            let paramBytes = Array(bytes[i...])
-            let items = HTTP.Parse._splitOnComma(paramBytes)
+            while true {
+                let saved = input
+                guard let param = try? HTTP.Parse.Parameter<Parser_Primitives.Parser.ByteInput>().parse(&input) else {
+                    input = saved
+                    break
+                }
+                parameters[String(decoding: param.name, as: UTF8.self)] = String(decoding: param.value, as: UTF8.self)
 
-            for range in items {
-                let trimmed = HTTP.Parse._trimOWS(paramBytes, range)
-                guard !trimmed.isEmpty else { continue }
-
-                var j = trimmed.lowerBound
-
-                // key (token)
-                guard let key = HTTP.Parse._token(paramBytes, &j) else { continue }
-                HTTP.Parse._skipOWS(paramBytes, &j)
-
-                // "="
-                guard j < trimmed.upperBound, paramBytes[j] == 0x3D else { continue }
-                j &+= 1
-                HTTP.Parse._skipOWS(paramBytes, &j)
-
-                // value (token / quoted-string)
-                guard let value = HTTP.Parse._tokenOrQuotedString(paramBytes, &j) else { continue }
-
-                parameters[key] = value
+                // Try to consume OWS "," OWS for next parameter
+                HTTP.Parse.OWS<Parser_Primitives.Parser.ByteInput>().parse(&input)
+                guard input.startIndex < input.endIndex, input[input.startIndex] == 0x2C else { break }
+                input = input[input.index(after: input.startIndex)...]
+                HTTP.Parse.OWS<Parser_Primitives.Parser.ByteInput>().parse(&input)
             }
 
             return Challenge(scheme: scheme, parameters: parameters)
@@ -386,7 +379,7 @@ extension RFC_9110.Authentication.Credentials {
         password: String
     ) -> RFC_9110.Authentication.Credentials {
         let combined = "\(username):\(password)"
-        let bytes = Array(combined.utf8)
+        let bytes = Swift.Array(combined.utf8)
         let encoded = String.base64(bytes)
         return Self(scheme: .basic, token: encoded)
     }

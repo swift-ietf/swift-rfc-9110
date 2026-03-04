@@ -7,6 +7,7 @@
 // Proactive content negotiation mechanisms
 
 import ASCII
+import Parser_Primitives
 import Standard_Library_Extensions
 
 extension RFC_9110 {
@@ -152,91 +153,33 @@ extension RFC_9110.ContentNegotiation {
         /// // Returns 3 preferences sorted by quality
         /// ```
         public static func parse(_ headerValue: String) -> [MediaTypePreference] {
-            let bytes = Array(headerValue.utf8)
-            let items = HTTP.Parse._splitOnComma(bytes)
-            var preferences: [MediaTypePreference] = []
-
-            for range in items {
-                let trimmed = HTTP.Parse._trimOWS(bytes, range)
-                guard !trimmed.isEmpty else { continue }
-
-                // Parse: type/subtype *( ";" param=value ) [ ";" q=N.NNN ]
-                var i = trimmed.lowerBound
-
-                // type
-                let typeStart = i
-                while i < trimmed.upperBound && HTTP.Parse._isTchar(bytes[i]) { i &+= 1 }
-                guard i > typeStart else { continue }
-                let type = String(decoding: bytes[typeStart..<i], as: UTF8.self)
-
-                // "/"
-                guard i < trimmed.upperBound, bytes[i] == 0x2F else { continue }
-                i &+= 1
-
-                // subtype
-                let subStart = i
-                while i < trimmed.upperBound && HTTP.Parse._isTchar(bytes[i]) { i &+= 1 }
-                guard i > subStart else { continue }
-                let subtype = String(decoding: bytes[subStart..<i], as: UTF8.self)
-
-                let mediaType = RFC_9110.MediaType(type, subtype)
-
-                // Scan for quality among semicolon-delimited parameters
-                var quality = QualityValue.default
-                while i < trimmed.upperBound {
-                    HTTP.Parse._skipOWS(bytes, &i)
-                    guard i < trimmed.upperBound, bytes[i] == 0x3B else { break }
-                    i &+= 1
-                    HTTP.Parse._skipOWS(bytes, &i)
-
-                    // Check for q= (quality)
-                    if i < trimmed.upperBound && (bytes[i] == 0x71 || bytes[i] == 0x51),
-                        i &+ 1 < trimmed.upperBound && bytes[i &+ 1] == 0x3D
-                    {
-                        i &+= 2
-                        let numStart = i
-                        while i < trimmed.upperBound
-                            && ((bytes[i] >= 0x30 && bytes[i] <= 0x39) || bytes[i] == 0x2E)
-                        {
-                            i &+= 1
-                        }
-                        if i > numStart,
-                            let q = Double(String(decoding: bytes[numStart..<i], as: UTF8.self))
-                        {
-                            quality = QualityValue(q)
-                        }
-                    } else {
-                        // Skip non-quality parameter (token=token/quoted-string)
-                        while i < trimmed.upperBound && HTTP.Parse._isTchar(bytes[i]) { i &+= 1 }
-                        if i < trimmed.upperBound && bytes[i] == 0x3D {
-                            i &+= 1
-                            let _ = HTTP.Parse._tokenOrQuotedString(bytes, &i)
-                        }
-                    }
+            var input = Parser_Primitives.Parser.ByteInput(utf8: headerValue)
+            let preferences = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.ByteInput, MediaTypePreference> { element in
+                var sub = element
+                guard let mediaType = try? HTTP.MediaType.Parser<Parser_Primitives.Parser.ByteInput>().parse(&sub) else {
+                    return nil
                 }
-
-                preferences.append(MediaTypePreference(mediaType: mediaType, quality: quality))
-            }
+                // Extract quality from parameters (q= is parsed as a media type parameter)
+                var quality = QualityValue.default
+                if let qStr = mediaType.parameters["q"], let q = Double(qStr) {
+                    quality = QualityValue(q)
+                }
+                // Remove q from media type parameters
+                var params = mediaType.parameters
+                params.removeValue(forKey: "q")
+                let cleanMediaType = RFC_9110.MediaType(mediaType.type, mediaType.subtype, parameters: params)
+                return MediaTypePreference(mediaType: cleanMediaType, quality: quality)
+            }.parse(&input)
 
             // Sort by quality (descending), then by specificity
             return preferences.sorted { lhs, rhs in
                 if lhs.quality.value != rhs.quality.value {
                     return lhs.quality > rhs.quality
                 }
-
-                if lhs.mediaType.type == "*" && rhs.mediaType.type != "*" {
-                    return false
-                }
-                if lhs.mediaType.type != "*" && rhs.mediaType.type == "*" {
-                    return true
-                }
-                if lhs.mediaType.subtype == "*" && rhs.mediaType.subtype != "*" {
-                    return false
-                }
-                if lhs.mediaType.subtype != "*" && rhs.mediaType.subtype == "*" {
-                    return true
-                }
-
+                if lhs.mediaType.type == "*" && rhs.mediaType.type != "*" { return false }
+                if lhs.mediaType.type != "*" && rhs.mediaType.type == "*" { return true }
+                if lhs.mediaType.subtype == "*" && rhs.mediaType.subtype != "*" { return false }
+                if lhs.mediaType.subtype != "*" && rhs.mediaType.subtype == "*" { return true }
                 return false
             }
         }
@@ -400,26 +343,19 @@ extension RFC_9110.ContentNegotiation {
         /// )
         /// ```
         public static func parse(_ headerValue: String) -> [EncodingPreference] {
-            let bytes = Array(headerValue.utf8)
-            let items = HTTP.Parse._splitOnComma(bytes)
-            var preferences: [EncodingPreference] = []
-
-            for range in items {
-                let trimmed = HTTP.Parse._trimOWS(bytes, range)
-                guard !trimmed.isEmpty else { continue }
-
-                var i = trimmed.lowerBound
-                guard let token = HTTP.Parse._token(bytes, &i) else { continue }
-                let encoding = RFC_9110.ContentEncoding(token)
-
-                var quality = QualityValue.default
-                if let q = HTTP.Parse._quality(bytes, &i) {
-                    quality = QualityValue(q)
+            var input = Parser_Primitives.Parser.ByteInput(utf8: headerValue)
+            let preferences = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.ByteInput, EncodingPreference> { element in
+                var sub = element
+                guard let token = try? HTTP.Parse.Token<Parser_Primitives.Parser.ByteInput>().parse(&sub) else {
+                    return nil
                 }
-
-                preferences.append(EncodingPreference(encoding: encoding, quality: quality))
-            }
-
+                let encoding = RFC_9110.ContentEncoding(String(decoding: token, as: UTF8.self))
+                var quality = QualityValue.default
+                if let q = try? HTTP.Parse.QualityValue<Parser_Primitives.Parser.ByteInput>().parse(&sub) {
+                    quality = QualityValue(Double(q) / 1000.0)
+                }
+                return EncodingPreference(encoding: encoding, quality: quality)
+            }.parse(&input)
             return preferences.sorted { $0.quality > $1.quality }
         }
     }
@@ -481,32 +417,19 @@ extension RFC_9110.ContentNegotiation {
         /// )
         /// ```
         public static func parse(_ headerValue: String) -> [LanguagePreference] {
-            let bytes = Array(headerValue.utf8)
-            let items = HTTP.Parse._splitOnComma(bytes)
-            var preferences: [LanguagePreference] = []
-
-            for range in items {
-                let trimmed = HTTP.Parse._trimOWS(bytes, range)
-                guard !trimmed.isEmpty else { continue }
-
-                // Language tags contain letters and hyphens (not just tchar), scan to semicolon
-                var i = trimmed.lowerBound
-                while i < trimmed.upperBound && bytes[i] != 0x3B && bytes[i] != 0x20
-                    && bytes[i] != 0x09
-                {
-                    i &+= 1
+            var input = Parser_Primitives.Parser.ByteInput(utf8: headerValue)
+            let preferences = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.ByteInput, LanguagePreference> { element in
+                var sub = element
+                guard let token = try? HTTP.Parse.Token<Parser_Primitives.Parser.ByteInput>().parse(&sub) else {
+                    return nil
                 }
-                guard i > trimmed.lowerBound else { continue }
-                let language = String(decoding: bytes[trimmed.lowerBound..<i], as: UTF8.self)
-
+                let language = String(decoding: token, as: UTF8.self)
                 var quality = QualityValue.default
-                if let q = HTTP.Parse._quality(bytes, &i) {
-                    quality = QualityValue(q)
+                if let q = try? HTTP.Parse.QualityValue<Parser_Primitives.Parser.ByteInput>().parse(&sub) {
+                    quality = QualityValue(Double(q) / 1000.0)
                 }
-
-                preferences.append(LanguagePreference(language: language, quality: quality))
-            }
-
+                return LanguagePreference(language: language, quality: quality)
+            }.parse(&input)
             return preferences.sorted { lhs, rhs in
                 if lhs.quality.value != rhs.quality.value {
                     return lhs.quality > rhs.quality
@@ -578,25 +501,18 @@ extension RFC_9110.ContentNegotiation {
         /// )
         /// ```
         public static func parse(_ headerValue: String) -> [CharsetPreference] {
-            let bytes = Array(headerValue.utf8)
-            let items = HTTP.Parse._splitOnComma(bytes)
-            var preferences: [CharsetPreference] = []
-
-            for range in items {
-                let trimmed = HTTP.Parse._trimOWS(bytes, range)
-                guard !trimmed.isEmpty else { continue }
-
-                var i = trimmed.lowerBound
-                guard let token = HTTP.Parse._token(bytes, &i) else { continue }
-
-                var quality = QualityValue.default
-                if let q = HTTP.Parse._quality(bytes, &i) {
-                    quality = QualityValue(q)
+            var input = Parser_Primitives.Parser.ByteInput(utf8: headerValue)
+            let preferences = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.ByteInput, CharsetPreference> { element in
+                var sub = element
+                guard let token = try? HTTP.Parse.Token<Parser_Primitives.Parser.ByteInput>().parse(&sub) else {
+                    return nil
                 }
-
-                preferences.append(CharsetPreference(charset: token, quality: quality))
-            }
-
+                var quality = QualityValue.default
+                if let q = try? HTTP.Parse.QualityValue<Parser_Primitives.Parser.ByteInput>().parse(&sub) {
+                    quality = QualityValue(Double(q) / 1000.0)
+                }
+                return CharsetPreference(charset: String(decoding: token, as: UTF8.self), quality: quality)
+            }.parse(&input)
             return preferences.sorted { $0.quality > $1.quality }
         }
     }
