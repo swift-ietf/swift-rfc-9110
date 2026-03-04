@@ -5,7 +5,7 @@
 //  HTTP token: token = 1*tchar
 //
 
-import Parser_Primitives
+public import Parser_Primitives
 
 extension HTTP.Parse {
     /// Parses an HTTP token per RFC 9110 Section 5.6.2.

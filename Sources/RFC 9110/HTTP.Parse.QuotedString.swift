@@ -5,7 +5,7 @@
 //  HTTP quoted-string: DQUOTE *( qdtext / quoted-pair ) DQUOTE
 //
 
-import Parser_Primitives
+public import Parser_Primitives
 
 extension HTTP.Parse {
     /// Parses an HTTP quoted-string per RFC 9110 Section 5.6.4.

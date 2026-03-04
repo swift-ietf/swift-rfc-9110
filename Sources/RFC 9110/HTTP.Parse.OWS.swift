@@ -5,7 +5,7 @@
 //  Optional whitespace: OWS = *( SP / HTAB )
 //
 
-import Parser_Primitives
+public import Parser_Primitives
 
 extension HTTP.Parse {
     /// Consumes zero or more SP (0x20) or HTAB (0x09) bytes.

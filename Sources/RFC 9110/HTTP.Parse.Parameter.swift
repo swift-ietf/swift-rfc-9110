@@ -5,7 +5,7 @@
 //  HTTP parameter: token "=" ( token / quoted-string )
 //
 
-import Parser_Primitives
+public import Parser_Primitives
 
 extension HTTP.Parse {
     /// Parses a single HTTP parameter per RFC 9110.
@@ -69,7 +69,13 @@ extension HTTP.Parse.Parameter: Parser.`Protocol` {
             } catch {
                 throw .expectedValue
             }
-            return (name: name, value: Array(tokenValue))
+            var bytes: [UInt8] = []
+            var i = tokenValue.startIndex
+            while i < tokenValue.endIndex {
+                bytes.append(tokenValue[i])
+                i = tokenValue.index(after: i)
+            }
+            return (name: name, value: bytes)
         }
     }
 }

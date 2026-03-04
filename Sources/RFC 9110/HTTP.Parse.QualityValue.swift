@@ -5,13 +5,15 @@
 //  Quality value weight: OWS ";" OWS "q=" qvalue
 //
 
+public import Parser_Primitives
+
 extension HTTP.Parse {
     /// Parses an HTTP quality value (weight) per RFC 9110 Section 12.4.2.
     ///
     /// `weight = OWS ";" OWS "q=" qvalue`
     /// `qvalue = ( "0" [ "." *3DIGIT ] ) / ( "1" [ "." *3"0" ] )`
     ///
-    /// Returns a value between 0 and 1000 (q=1.000 → 1000, q=0.5 → 500).
+    /// Returns a value between 0 and 1000 (q=1.000 -> 1000, q=0.5 -> 500).
     /// Using integer representation avoids floating-point imprecision.
     public struct QualityValue<Input: Collection.Slice.`Protocol`>: Sendable
     where Input: Sendable, Input.Element == UInt8 {
@@ -73,7 +75,7 @@ extension HTTP.Parse.QualityValue: Parser.`Protocol` {
                 input = input[input.index(after: input.startIndex)...]
             }
 
-            // Pad to 3 digits: "0.5" → 500, "0.05" → 50
+            // Pad to 3 digits: "0.5" -> 500, "0.05" -> 50
             while digits < 3 {
                 frac *= 10
                 digits += 1
@@ -81,7 +83,8 @@ extension HTTP.Parse.QualityValue: Parser.`Protocol` {
 
             if intPart == 0x31 {
                 // q=1.xxx — only 1.000 is valid
-                return frac == 0 ? 1000 : { throw .invalidQValue }()
+                guard frac == 0 else { throw .invalidQValue }
+                return 1000
             }
             return frac
         }

@@ -5,6 +5,8 @@
 //  Comma-separated list: #element per RFC 9110 Section 5.6.1.
 //
 
+public import Parser_Primitives
+
 extension HTTP.Parse {
     /// Parses a comma-separated list from an HTTP header value.
     ///
@@ -71,10 +73,9 @@ extension HTTP.Parse.CommaSeparated: Parser.`Protocol` {
         guard !element.isEmpty else { return nil }
 
         // Trim trailing OWS from the element
-        var trimEnd = index
-        var idx = element.startIndex
         var lastNonWS = element.startIndex
         var hasContent = false
+        var idx = element.startIndex
         while idx < element.endIndex {
             let b = element[idx]
             if b != 0x20 && b != 0x09 {

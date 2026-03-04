@@ -5,7 +5,7 @@
 //  Semicolon-separated parameter list: *( OWS ";" OWS parameter )
 //
 
-import Parser_Primitives
+public import Parser_Primitives
 
 extension HTTP.Parse {
     /// Parses a semicolon-separated list of parameters.

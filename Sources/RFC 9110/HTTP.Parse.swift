@@ -5,8 +5,8 @@
 //  Namespace for HTTP parser combinators per RFC 9110 grammar.
 //
 
-public import Parser_Primitives
-public import Parser_ASCII_Integer_Primitives
+import Parser_Primitives
+import Parser_ASCII_Integer_Primitives
 
 extension HTTP {
     public enum Parse {}
