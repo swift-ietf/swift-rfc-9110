@@ -30,7 +30,6 @@ let package = Package(
             dependencies: [
                 .product(name: "ASCII", package: "swift-ascii"),
                 .product(name: "Parser Primitives", package: "swift-parser-primitives"),
-                .product(name: "Parser ASCII Integer Primitives", package: "swift-parser-primitives"),
                 .product(name: "RFC 3986", package: "swift-rfc-3986"),
                 .product(name: "RFC 4648", package: "swift-rfc-4648"),
                 .product(name: "RFC 5322", package: "swift-rfc-5322"),

@@ -6,7 +6,6 @@
 //
 
 import Parser_Primitives
-import Parser_ASCII_Integer_Primitives
 
 extension HTTP {
     public enum Parse {}
