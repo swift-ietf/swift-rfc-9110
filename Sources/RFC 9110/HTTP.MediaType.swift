@@ -100,8 +100,8 @@ extension RFC_9110 {
         /// // mt?.parameters["charset"] == "utf-8"
         /// ```
         public static func parse(_ string: String) -> MediaType? {
-            var input = Parser_Primitives.Parser.ByteInput(utf8: string)
-            return try? Parser<Parser_Primitives.Parser.ByteInput>().parse(&input)
+            var input = Parser_Primitives.Parser.Input.Bytes(utf8: string)
+            return try? Parser<Parser_Primitives.Parser.Input.Bytes>().parse(&input)
         }
 
         // MARK: - Matching

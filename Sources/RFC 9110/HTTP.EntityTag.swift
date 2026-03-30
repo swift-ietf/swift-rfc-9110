@@ -109,10 +109,10 @@ extension RFC_9110 {
         /// EntityTag.parse("invalid")           // nil
         /// ```
         public static func parse(_ headerValue: String) -> EntityTag? {
-            var input = Parser_Primitives.Parser.ByteInput(utf8: headerValue)
+            var input = Parser_Primitives.Parser.Input.Bytes(utf8: headerValue)
 
             // OWS
-            HTTP.Parse.OWS<Parser_Primitives.Parser.ByteInput>().parse(&input)
+            HTTP.Parse.OWS<Parser_Primitives.Parser.Input.Bytes>().parse(&input)
 
             // Check for weak prefix "W/"
             var isWeak = false
@@ -125,7 +125,7 @@ extension RFC_9110 {
             }
 
             // Parse quoted tag value
-            guard let bytes = try? HTTP.Parse.QuotedString<Parser_Primitives.Parser.ByteInput>().parse(&input) else {
+            guard let bytes = try? HTTP.Parse.QuotedString<Parser_Primitives.Parser.Input.Bytes>().parse(&input) else {
                 return nil
             }
 

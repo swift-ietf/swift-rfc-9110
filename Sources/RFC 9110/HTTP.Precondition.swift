@@ -132,14 +132,14 @@ extension HTTP.Precondition {
     /// - Parameter headerValue: The If-Match header value
     /// - Returns: An If-Match precondition, or nil if parsing fails
     public static func parseIfMatch(_ headerValue: String) -> HTTP.Precondition? {
-        var input = Parser_Primitives.Parser.ByteInput(utf8: headerValue)
-        HTTP.Parse.OWS<Parser_Primitives.Parser.ByteInput>().parse(&input)
+        var input = Parser_Primitives.Parser.Input.Bytes(utf8: headerValue)
+        HTTP.Parse.OWS<Parser_Primitives.Parser.Input.Bytes>().parse(&input)
 
         // Wildcard case
         if input.startIndex < input.endIndex, input[input.startIndex] == 0x2A {
             let saved = input
             input = input[input.index(after: input.startIndex)...]
-            HTTP.Parse.OWS<Parser_Primitives.Parser.ByteInput>().parse(&input)
+            HTTP.Parse.OWS<Parser_Primitives.Parser.Input.Bytes>().parse(&input)
             if input.startIndex >= input.endIndex {
                 return .ifMatch([wildcardTag])
             }
@@ -147,7 +147,7 @@ extension HTTP.Precondition {
         }
 
         // Parse comma-separated ETags
-        let etags = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.ByteInput, HTTP.EntityTag> { element in
+        let etags = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.Input.Bytes, HTTP.EntityTag> { element in
             HTTP.EntityTag.parse(String(decoding: element, as: UTF8.self))
         }.parse(&input)
 
@@ -159,14 +159,14 @@ extension HTTP.Precondition {
     /// - Parameter headerValue: The If-None-Match header value
     /// - Returns: An If-None-Match precondition, or nil if parsing fails
     public static func parseIfNoneMatch(_ headerValue: String) -> HTTP.Precondition? {
-        var input = Parser_Primitives.Parser.ByteInput(utf8: headerValue)
-        HTTP.Parse.OWS<Parser_Primitives.Parser.ByteInput>().parse(&input)
+        var input = Parser_Primitives.Parser.Input.Bytes(utf8: headerValue)
+        HTTP.Parse.OWS<Parser_Primitives.Parser.Input.Bytes>().parse(&input)
 
         // Wildcard case
         if input.startIndex < input.endIndex, input[input.startIndex] == 0x2A {
             let saved = input
             input = input[input.index(after: input.startIndex)...]
-            HTTP.Parse.OWS<Parser_Primitives.Parser.ByteInput>().parse(&input)
+            HTTP.Parse.OWS<Parser_Primitives.Parser.Input.Bytes>().parse(&input)
             if input.startIndex >= input.endIndex {
                 return .ifNoneMatch([wildcardTag])
             }
@@ -174,7 +174,7 @@ extension HTTP.Precondition {
         }
 
         // Parse comma-separated ETags
-        let etags = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.ByteInput, HTTP.EntityTag> { element in
+        let etags = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.Input.Bytes, HTTP.EntityTag> { element in
             HTTP.EntityTag.parse(String(decoding: element, as: UTF8.self))
         }.parse(&input)
 

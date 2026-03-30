@@ -153,10 +153,10 @@ extension RFC_9110.ContentNegotiation {
         /// // Returns 3 preferences sorted by quality
         /// ```
         public static func parse(_ headerValue: String) -> [MediaTypePreference] {
-            var input = Parser_Primitives.Parser.ByteInput(utf8: headerValue)
-            let preferences = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.ByteInput, MediaTypePreference> { element in
+            var input = Parser_Primitives.Parser.Input.Bytes(utf8: headerValue)
+            let preferences = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.Input.Bytes, MediaTypePreference> { element in
                 var sub = element
-                guard let mediaType = try? HTTP.MediaType.Parser<Parser_Primitives.Parser.ByteInput>().parse(&sub) else {
+                guard let mediaType = try? HTTP.MediaType.Parser<Parser_Primitives.Parser.Input.Bytes>().parse(&sub) else {
                     return nil
                 }
                 // Extract quality from parameters (q= is parsed as a media type parameter)
@@ -343,15 +343,15 @@ extension RFC_9110.ContentNegotiation {
         /// )
         /// ```
         public static func parse(_ headerValue: String) -> [EncodingPreference] {
-            var input = Parser_Primitives.Parser.ByteInput(utf8: headerValue)
-            let preferences = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.ByteInput, EncodingPreference> { element in
+            var input = Parser_Primitives.Parser.Input.Bytes(utf8: headerValue)
+            let preferences = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.Input.Bytes, EncodingPreference> { element in
                 var sub = element
-                guard let token = try? HTTP.Parse.Token<Parser_Primitives.Parser.ByteInput>().parse(&sub) else {
+                guard let token = try? HTTP.Parse.Token<Parser_Primitives.Parser.Input.Bytes>().parse(&sub) else {
                     return nil
                 }
                 let encoding = RFC_9110.ContentEncoding(String(decoding: token, as: UTF8.self))
                 var quality = QualityValue.default
-                if let q = try? HTTP.Parse.QualityValue<Parser_Primitives.Parser.ByteInput>().parse(&sub) {
+                if let q = try? HTTP.Parse.QualityValue<Parser_Primitives.Parser.Input.Bytes>().parse(&sub) {
                     quality = QualityValue(Double(q) / 1000.0)
                 }
                 return EncodingPreference(encoding: encoding, quality: quality)
@@ -417,15 +417,15 @@ extension RFC_9110.ContentNegotiation {
         /// )
         /// ```
         public static func parse(_ headerValue: String) -> [LanguagePreference] {
-            var input = Parser_Primitives.Parser.ByteInput(utf8: headerValue)
-            let preferences = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.ByteInput, LanguagePreference> { element in
+            var input = Parser_Primitives.Parser.Input.Bytes(utf8: headerValue)
+            let preferences = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.Input.Bytes, LanguagePreference> { element in
                 var sub = element
-                guard let token = try? HTTP.Parse.Token<Parser_Primitives.Parser.ByteInput>().parse(&sub) else {
+                guard let token = try? HTTP.Parse.Token<Parser_Primitives.Parser.Input.Bytes>().parse(&sub) else {
                     return nil
                 }
                 let language = String(decoding: token, as: UTF8.self)
                 var quality = QualityValue.default
-                if let q = try? HTTP.Parse.QualityValue<Parser_Primitives.Parser.ByteInput>().parse(&sub) {
+                if let q = try? HTTP.Parse.QualityValue<Parser_Primitives.Parser.Input.Bytes>().parse(&sub) {
                     quality = QualityValue(Double(q) / 1000.0)
                 }
                 return LanguagePreference(language: language, quality: quality)
@@ -501,14 +501,14 @@ extension RFC_9110.ContentNegotiation {
         /// )
         /// ```
         public static func parse(_ headerValue: String) -> [CharsetPreference] {
-            var input = Parser_Primitives.Parser.ByteInput(utf8: headerValue)
-            let preferences = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.ByteInput, CharsetPreference> { element in
+            var input = Parser_Primitives.Parser.Input.Bytes(utf8: headerValue)
+            let preferences = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.Input.Bytes, CharsetPreference> { element in
                 var sub = element
-                guard let token = try? HTTP.Parse.Token<Parser_Primitives.Parser.ByteInput>().parse(&sub) else {
+                guard let token = try? HTTP.Parse.Token<Parser_Primitives.Parser.Input.Bytes>().parse(&sub) else {
                     return nil
                 }
                 var quality = QualityValue.default
-                if let q = try? HTTP.Parse.QualityValue<Parser_Primitives.Parser.ByteInput>().parse(&sub) {
+                if let q = try? HTTP.Parse.QualityValue<Parser_Primitives.Parser.Input.Bytes>().parse(&sub) {
                     quality = QualityValue(Double(q) / 1000.0)
                 }
                 return CharsetPreference(charset: String(decoding: token, as: UTF8.self), quality: quality)
