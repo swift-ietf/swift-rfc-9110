@@ -20,7 +20,7 @@ struct `HTTP.Request.Target Tests` {
         #expect(target.rawValue == "/users/123?page=1&limit=10")
         #expect(target.isOriginForm == true)
         #expect(target.isAbsoluteForm == false)
-        #expect(target.path?.string == "/users/123")
+        #expect(target.path?.description == "/users/123")
         #expect(target.query?.string == "page=1&limit=10")
     }
 
@@ -132,7 +132,7 @@ struct `HTTP.Request Tests` {
 
         #expect(request.method == .get)
         #expect(request.target.isAbsoluteForm == true)
-        #expect(request.path?.string == "/v1/users")
+        #expect(request.path?.description == "/v1/users")
         #expect(request.query?.string == "page=1")
     }
 
