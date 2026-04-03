@@ -6,9 +6,13 @@
 //
 
 extension HTTP.MediaType.Parser {
+    /// Errors that can occur when parsing an HTTP media-type.
     public enum Error: Swift.Error, Sendable, Equatable {
+        /// The type portion is not a valid token.
         case expectedType
+        /// Expected a slash between type and subtype.
         case expectedSlash
+        /// The subtype portion is not a valid token.
         case expectedSubtype
     }
 }

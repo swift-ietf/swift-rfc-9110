@@ -42,6 +42,7 @@ extension HTTP.Parse.Token: Parser.`Protocol` {
         return result
     }
 
+    /// Returns whether the given byte is a valid token character (`tchar`).
     @inlinable
     public static func isTchar(_ byte: UInt8) -> Bool {
         switch byte {

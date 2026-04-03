@@ -8,6 +8,7 @@
 import Parser_Primitives
 
 extension HTTP {
+    /// Parser combinators for HTTP grammar productions defined in RFC 9110.
     public enum Parse {}
 }
 
