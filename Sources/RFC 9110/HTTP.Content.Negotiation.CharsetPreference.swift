@@ -7,6 +7,7 @@
 // Charset preference for content negotiation
 
 import Parser_Primitives
+public import Byte_Parser_Primitives
 
 // MARK: - Charset Preference (Section 12.5.2)
 
@@ -59,14 +60,14 @@ extension RFC_9110.Content.Negotiation {
         /// )
         /// ```
         public static func parse(_ headerValue: String) -> [CharsetPreference] {
-            var input = Parser_Primitives.Parser.Input.Bytes(utf8: headerValue)
-            let preferences = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.Input.Bytes, CharsetPreference> { element in
+            var input = Byte.Input(utf8: headerValue)
+            let preferences = HTTP.Parse.CommaSeparated<Byte.Input, CharsetPreference> { element in
                 var sub = element
-                guard let token = try? HTTP.Parse.Token<Parser_Primitives.Parser.Input.Bytes>().parse(&sub) else {
+                guard let token = try? HTTP.Parse.Token<Byte.Input>().parse(&sub) else {
                     return nil
                 }
                 var quality = QualityValue.default
-                if let q = try? HTTP.Parse.QualityValue<Parser_Primitives.Parser.Input.Bytes>().parse(&sub) {
+                if let q = try? HTTP.Parse.QualityValue<Byte.Input>().parse(&sub) {
                     quality = QualityValue(Double(q) / 1000.0)
                 }
                 return CharsetPreference(charset: String(decoding: token, as: UTF8.self), quality: quality)

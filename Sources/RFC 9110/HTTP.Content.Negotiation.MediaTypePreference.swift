@@ -7,6 +7,7 @@
 // Media type preference for content negotiation
 
 import Parser_Primitives
+public import Byte_Parser_Primitives
 
 // MARK: - Media Type Preference
 
@@ -55,10 +56,10 @@ extension RFC_9110.Content.Negotiation {
         /// // Returns 3 preferences sorted by quality
         /// ```
         public static func parse(_ headerValue: String) -> [MediaTypePreference] {
-            var input = Parser_Primitives.Parser.Input.Bytes(utf8: headerValue)
-            let preferences = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.Input.Bytes, MediaTypePreference> { element in
+            var input = Byte.Input(utf8: headerValue)
+            let preferences = HTTP.Parse.CommaSeparated<Byte.Input, MediaTypePreference> { element in
                 var sub = element
-                guard let mediaType = try? HTTP.MediaType.Parser<Parser_Primitives.Parser.Input.Bytes>().parse(&sub) else {
+                guard let mediaType = try? HTTP.MediaType.Parser<Byte.Input>().parse(&sub) else {
                     return nil
                 }
                 // Extract quality from parameters (q= is parsed as a media type parameter)

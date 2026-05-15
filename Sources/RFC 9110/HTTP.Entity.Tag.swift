@@ -7,6 +7,7 @@
 // Entity tags (ETags) are used for cache validation and conditional requests
 
 import ASCII_Primitives
+public import Byte_Parser_Primitives
 import Parser_Primitives
 import Standard_Library_Extensions
 
@@ -109,10 +110,10 @@ extension RFC_9110.Entity {
         /// Entity.Tag.parse("invalid")           // nil
         /// ```
         public static func parse(_ headerValue: String) -> Tag? {
-            var input = Parser_Primitives.Parser.Input.Bytes(utf8: headerValue)
+            var input = Byte.Input(utf8: headerValue)
 
             // OWS
-            HTTP.Parse.OWS<Parser_Primitives.Parser.Input.Bytes>().parse(&input)
+            HTTP.Parse.OWS<Byte.Input>().parse(&input)
 
             // Check for weak prefix "W/"
             var isWeak = false
@@ -125,7 +126,7 @@ extension RFC_9110.Entity {
             }
 
             // Parse quoted tag value
-            guard let bytes = try? HTTP.Parse.QuotedString<Parser_Primitives.Parser.Input.Bytes>().parse(&input) else {
+            guard let bytes = try? HTTP.Parse.QuotedString<Byte.Input>().parse(&input) else {
                 return nil
             }
 

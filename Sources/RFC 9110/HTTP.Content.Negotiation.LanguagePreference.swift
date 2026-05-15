@@ -7,6 +7,7 @@
 // Language preference for content negotiation
 
 import Parser_Primitives
+public import Byte_Parser_Primitives
 
 // MARK: - Language Preference (Section 12.5.4)
 
@@ -54,15 +55,15 @@ extension RFC_9110.Content.Negotiation {
         /// )
         /// ```
         public static func parse(_ headerValue: String) -> [LanguagePreference] {
-            var input = Parser_Primitives.Parser.Input.Bytes(utf8: headerValue)
-            let preferences = HTTP.Parse.CommaSeparated<Parser_Primitives.Parser.Input.Bytes, LanguagePreference> { element in
+            var input = Byte.Input(utf8: headerValue)
+            let preferences = HTTP.Parse.CommaSeparated<Byte.Input, LanguagePreference> { element in
                 var sub = element
-                guard let token = try? HTTP.Parse.Token<Parser_Primitives.Parser.Input.Bytes>().parse(&sub) else {
+                guard let token = try? HTTP.Parse.Token<Byte.Input>().parse(&sub) else {
                     return nil
                 }
                 let language = String(decoding: token, as: UTF8.self)
                 var quality = QualityValue.default
-                if let q = try? HTTP.Parse.QualityValue<Parser_Primitives.Parser.Input.Bytes>().parse(&sub) {
+                if let q = try? HTTP.Parse.QualityValue<Byte.Input>().parse(&sub) {
                     quality = QualityValue(Double(q) / 1000.0)
                 }
                 return LanguagePreference(language: language, quality: quality)

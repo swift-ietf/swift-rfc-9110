@@ -6,6 +6,7 @@
 //
 
 import Parser_Primitives
+public import Byte_Parser_Primitives
 
 extension HTTP {
     /// Parser combinators for HTTP grammar productions defined in RFC 9110.
@@ -23,10 +24,10 @@ extension HTTP.Parse {
     /// - Parameter headerValue: The raw header value string
     /// - Returns: Array of parsed token strings
     public static func tokens(in headerValue: String) -> [String] {
-        var input = Parser_Primitives.Parser.Input.Bytes(utf8: headerValue)
-        return CommaSeparated<Parser_Primitives.Parser.Input.Bytes, String> { element in
+        var input = Byte.Input(utf8: headerValue)
+        return CommaSeparated<Byte.Input, String> { element in
             var sub = element
-            guard let token = try? Token<Parser_Primitives.Parser.Input.Bytes>().parse(&sub) else {
+            guard let token = try? Token<Byte.Input>().parse(&sub) else {
                 return nil
             }
             return String(decoding: token, as: UTF8.self)
@@ -41,25 +42,25 @@ extension HTTP.Parse {
     /// - Parameter headerValue: The raw header value string
     /// - Returns: Array of (name, value?) tuples
     public static func directives(in headerValue: String) -> [(name: String, value: String?)] {
-        var input = Parser_Primitives.Parser.Input.Bytes(utf8: headerValue)
-        return CommaSeparated<Parser_Primitives.Parser.Input.Bytes, (name: String, value: String?)> { element in
+        var input = Byte.Input(utf8: headerValue)
+        return CommaSeparated<Byte.Input, (name: String, value: String?)> { element in
             var sub = element
-            guard let nameSlice = try? Token<Parser_Primitives.Parser.Input.Bytes>().parse(&sub) else {
+            guard let nameSlice = try? Token<Byte.Input>().parse(&sub) else {
                 return nil
             }
             let name = String(decoding: nameSlice, as: UTF8.self)
 
-            OWS<Parser_Primitives.Parser.Input.Bytes>().parse(&sub)
+            OWS<Byte.Input>().parse(&sub)
             guard sub.startIndex < sub.endIndex, sub[sub.startIndex] == 0x3D else {
                 return (name: name, value: nil)
             }
             sub = sub[sub.index(after: sub.startIndex)...]
-            OWS<Parser_Primitives.Parser.Input.Bytes>().parse(&sub)
+            OWS<Byte.Input>().parse(&sub)
 
-            if let quoted = try? QuotedString<Parser_Primitives.Parser.Input.Bytes>().parse(&sub) {
+            if let quoted = try? QuotedString<Byte.Input>().parse(&sub) {
                 return (name: name, value: String(decoding: quoted, as: UTF8.self))
             }
-            if let tokenSlice = try? Token<Parser_Primitives.Parser.Input.Bytes>().parse(&sub) {
+            if let tokenSlice = try? Token<Byte.Input>().parse(&sub) {
                 return (name: name, value: String(decoding: tokenSlice, as: UTF8.self))
             }
 

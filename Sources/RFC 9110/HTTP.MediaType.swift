@@ -8,6 +8,7 @@
 // Media types for HTTP content negotiation
 
 import ASCII_Primitives
+public import Byte_Parser_Primitives
 import Parser_Primitives
 import Standard_Library_Extensions
 
@@ -100,8 +101,8 @@ extension RFC_9110 {
         /// // mt?.parameters["charset"] == "utf-8"
         /// ```
         public static func parse(_ string: String) -> MediaType? {
-            var input = Parser_Primitives.Parser.Input.Bytes(utf8: string)
-            return try? Parser<Parser_Primitives.Parser.Input.Bytes>().parse(&input)
+            var input = Byte.Input(utf8: string)
+            return try? Parser<Byte.Input>().parse(&input)
         }
 
         // MARK: - Matching
