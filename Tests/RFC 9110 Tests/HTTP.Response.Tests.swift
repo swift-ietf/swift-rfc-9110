@@ -4,6 +4,7 @@ import Foundation
 
 import Testing
 
+import Byte_Primitives
 @testable import RFC_9110
 
 @Suite
@@ -22,7 +23,7 @@ struct `HTTP.Response Tests` {
 
     @Test
     func `Response with headers and body`() async throws {
-        let jsonData = Array("{\"message\":\"success\"}".utf8)
+        let jsonData = Array("{\"message\":\"success\"}".utf8).map { Byte($0) }
         let response = try HTTP.Response(
             status: .ok,
             headers: [
@@ -88,23 +89,23 @@ struct `HTTP.Response Tests` {
     @Test
     func `Convenience constructor - ok()`() async throws {
         let response = HTTP.Response.ok(
-            body: Array("success".utf8)
+            body: Array("success".utf8).map { Byte($0) }
         )
 
         #expect(response.status == .ok)
-        #expect(response.body == Array("success".utf8))
+        #expect(response.body == Array("success".utf8).map { Byte($0) })
     }
 
     @Test
     func `Convenience constructor - created()`() async throws {
         let response = try HTTP.Response.created(
             location: "/users/123",
-            body: Array("created".utf8)
+            body: Array("created".utf8).map { Byte($0) }
         )
 
         #expect(response.status == .created)
         #expect(response.headers["Location"]?.first?.rawValue == "/users/123")
-        #expect(response.body == Array("created".utf8))
+        #expect(response.body == Array("created".utf8).map { Byte($0) })
     }
 
     @Test
@@ -161,11 +162,11 @@ struct `HTTP.Response Tests` {
     @Test
     func `Convenience constructor - badRequest()`() async throws {
         let response = HTTP.Response.badRequest(
-            body: Array("Invalid request".utf8)
+            body: Array("Invalid request".utf8).map { Byte($0) }
         )
 
         #expect(response.status == .badRequest)
-        #expect(response.body == Array("Invalid request".utf8))
+        #expect(response.body == Array("Invalid request".utf8).map { Byte($0) })
     }
 
     @Test
@@ -188,21 +189,21 @@ struct `HTTP.Response Tests` {
     @Test
     func `Convenience constructor - notFound()`() async throws {
         let response = HTTP.Response.notFound(
-            body: Array("Not found".utf8)
+            body: Array("Not found".utf8).map { Byte($0) }
         )
 
         #expect(response.status == .notFound)
-        #expect(response.body == Array("Not found".utf8))
+        #expect(response.body == Array("Not found".utf8).map { Byte($0) })
     }
 
     @Test
     func `Convenience constructor - internalServerError()`() async throws {
         let response = HTTP.Response.internalServerError(
-            body: Array("Internal error".utf8)
+            body: Array("Internal error".utf8).map { Byte($0) }
         )
 
         #expect(response.status == .internalServerError)
-        #expect(response.body == Array("Internal error".utf8))
+        #expect(response.body == Array("Internal error".utf8).map { Byte($0) })
     }
 
     @Test
@@ -222,7 +223,7 @@ struct `HTTP.Response Tests` {
             headers: [
                 .init(name: "Content-Type", value: "application/json")
             ],
-            body: Array("test".utf8)
+            body: Array("test".utf8).map { Byte($0) }
         )
 
         let encoder = JSONEncoder()
@@ -241,7 +242,7 @@ struct `HTTP.Response Tests` {
             headers: [
                 .init(name: "Content-Type", value: "application/json")
             ],
-            body: Array("test".utf8)
+            body: Array("test".utf8).map { Byte($0) }
         )
 
         let description = response.description

@@ -5,6 +5,7 @@ import Foundation
 import RFC_3986
 import Testing
 
+import Byte_Primitives
 @testable import RFC_9110
 
 @Suite
@@ -103,7 +104,7 @@ struct `HTTP.Request Tests` {
 
     @Test
     func `POST request with body and headers`() async throws {
-        let jsonData = Array("{\"name\":\"John\"}".utf8)
+        let jsonData = Array("{\"name\":\"John\"}".utf8).map { Byte($0) }
         let request = try HTTP.Request(
             method: .post,
             target: .origin(path: .init("/users"), query: nil),
@@ -265,7 +266,7 @@ struct `HTTP.Request Tests` {
             headers: [
                 .init(name: "Content-Type", value: "application/json")
             ],
-            body: Array("test".utf8)
+            body: Array("test".utf8).map { Byte($0) }
         )
 
         let encoder = JSONEncoder()

@@ -7,6 +7,7 @@
 //
 // HTTP request message semantics
 
+public import Byte_Primitives
 public import RFC_3986
 
 extension RFC_9110 {
@@ -85,7 +86,7 @@ extension RFC_9110 {
         /// Message body (optional per RFC 9110 Section 6.4)
         ///
         /// The message body (if any) carries the content of the request.
-        public var body: [UInt8]?
+        public var body: [Byte]?
 
         // MARK: - Initialization
 
@@ -100,7 +101,7 @@ extension RFC_9110 {
             method: RFC_9110.Method,
             target: Target,
             headers: RFC_9110.Headers = [],
-            body: [UInt8]? = nil
+            body: [Byte]? = nil
         ) {
             self.method = method
             self.target = target
@@ -137,7 +138,7 @@ extension RFC_9110.Request {
         path: RFC_3986.URI.Path? = nil,
         query: RFC_3986.URI.Query? = nil,
         headers: RFC_9110.Headers = [],
-        body: [UInt8]? = nil
+        body: [Byte]? = nil
     ) {
         // Determine request target form based on components
         let target: Target
@@ -343,7 +344,7 @@ extension RFC_9110.Request {
         let method = try container.decode(RFC_9110.Method.self, forKey: .method)
         let target = try container.decode(RFC_9110.Request.Target.self, forKey: .target)
         let headers = try container.decodeIfPresent(RFC_9110.Headers.self, forKey: .headers) ?? []
-        let body = try container.decodeIfPresent([UInt8].self, forKey: .body)
+        let body = try container.decodeIfPresent([Byte].self, forKey: .body)
 
         self.init(
             method: method,

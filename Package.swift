@@ -18,6 +18,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swift-primitives/swift-ascii-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-byte-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-byte-parser-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-parser-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-3986.git", branch: "main"),
@@ -30,6 +31,7 @@ let package = Package(
             name: "RFC 9110",
             dependencies: [
                 .product(name: "ASCII Primitives", package: "swift-ascii-primitives"),
+                .product(name: "Byte Primitives", package: "swift-byte-primitives"),
                 .product(name: "Byte Parser Primitives", package: "swift-byte-parser-primitives"),
                 .product(name: "Parser Primitives", package: "swift-parser-primitives"),
                 .product(name: "RFC 3986", package: "swift-rfc-3986"),

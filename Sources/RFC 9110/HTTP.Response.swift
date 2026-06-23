@@ -7,6 +7,8 @@
 //
 // HTTP response message semantics
 
+public import Byte_Primitives
+
 extension RFC_9110 {
     /// HTTP response message per RFC 9110 Section 15
     ///
@@ -74,7 +76,7 @@ extension RFC_9110 {
         /// Message body (optional per RFC 9110 Section 6.4)
         ///
         /// The message body (if any) carries the content of the response.
-        public var body: [UInt8]?
+        public var body: [Byte]?
 
         // MARK: - Initialization
 
@@ -87,7 +89,7 @@ extension RFC_9110 {
         public init(
             status: RFC_9110.Status,
             headers: RFC_9110.Headers = [],
-            body: [UInt8]? = nil
+            body: [Byte]? = nil
         ) {
             self.status = status
             self.headers = headers
@@ -146,7 +148,7 @@ extension RFC_9110.Response {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let status = try container.decode(RFC_9110.Status.self, forKey: .status)
         let headers = try container.decodeIfPresent(RFC_9110.Headers.self, forKey: .headers) ?? []
-        let body = try container.decodeIfPresent([UInt8].self, forKey: .body)
+        let body = try container.decodeIfPresent([Byte].self, forKey: .body)
 
         self.init(
             status: status,
@@ -236,7 +238,7 @@ extension RFC_9110.Response {
     /// - Returns: A response with status 200
     public static func ok(
         headers: RFC_9110.Headers = [],
-        body: [UInt8]? = nil
+        body: [Byte]? = nil
     ) -> Self {
         Self(status: .ok, headers: headers, body: body)
     }
@@ -251,7 +253,7 @@ extension RFC_9110.Response {
     public static func created(
         location: String? = nil,
         headers: RFC_9110.Headers = [],
-        body: [UInt8]? = nil
+        body: [Byte]? = nil
     ) throws(RFC_9110.Header.Field.Error) -> Self {
         var responseHeaders = headers
         if let location = location {
@@ -333,7 +335,7 @@ extension RFC_9110.Response {
     /// - Returns: A response with status 400
     public static func badRequest(
         headers: RFC_9110.Headers = [],
-        body: [UInt8]? = nil
+        body: [Byte]? = nil
     ) -> Self {
         Self(status: .badRequest, headers: headers, body: body)
     }
@@ -348,7 +350,7 @@ extension RFC_9110.Response {
     public static func unauthorized(
         wwwAuthenticate: String,
         headers: RFC_9110.Headers = [],
-        body: [UInt8]? = nil
+        body: [Byte]? = nil
     ) throws(RFC_9110.Header.Field.Error) -> Self {
         var responseHeaders = headers
         responseHeaders.append(try RFC_9110.Header.Field(name: "WWW-Authenticate", value: wwwAuthenticate))
@@ -363,7 +365,7 @@ extension RFC_9110.Response {
     /// - Returns: A response with status 403
     public static func forbidden(
         headers: RFC_9110.Headers = [],
-        body: [UInt8]? = nil
+        body: [Byte]? = nil
     ) -> Self {
         Self(status: .forbidden, headers: headers, body: body)
     }
@@ -376,7 +378,7 @@ extension RFC_9110.Response {
     /// - Returns: A response with status 404
     public static func notFound(
         headers: RFC_9110.Headers = [],
-        body: [UInt8]? = nil
+        body: [Byte]? = nil
     ) -> Self {
         Self(status: .notFound, headers: headers, body: body)
     }
@@ -389,7 +391,7 @@ extension RFC_9110.Response {
     /// - Returns: A response with status 500
     public static func internalServerError(
         headers: RFC_9110.Headers = [],
-        body: [UInt8]? = nil
+        body: [Byte]? = nil
     ) -> Self {
         Self(status: .internalServerError, headers: headers, body: body)
     }
@@ -404,7 +406,7 @@ extension RFC_9110.Response {
     public static func serviceUnavailable(
         retryAfter: String? = nil,
         headers: RFC_9110.Headers = [],
-        body: [UInt8]? = nil
+        body: [Byte]? = nil
     ) throws(RFC_9110.Header.Field.Error) -> Self {
         var responseHeaders = headers
         if let retryAfter = retryAfter {
