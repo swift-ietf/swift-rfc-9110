@@ -3,6 +3,7 @@
 
 import Parser_Primitives
 public import Byte_Parser_Primitives
+import Byte_Primitives_Standard_Library_Integration
 
 extension RFC_9110.Authentication {
     /// WWW-Authenticate challenge (RFC 9110 Section 11.6.1)

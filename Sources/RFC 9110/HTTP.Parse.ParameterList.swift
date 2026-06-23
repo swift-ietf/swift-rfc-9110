@@ -5,6 +5,7 @@
 //  Semicolon-separated parameter list: *( OWS ";" OWS parameter )
 //
 
+public import Byte_Parser_Primitives
 public import Parser_Primitives
 
 extension HTTP.Parse {
@@ -14,19 +15,19 @@ extension HTTP.Parse {
     ///
     /// Used by media-type, content-type, and content-disposition headers.
     public struct ParameterList<Input: Collection.Slice.`Protocol`>: Sendable
-    where Input: Sendable, Input.Element == UInt8 {
+    where Input: Sendable, Input.Element == Byte {
         @inlinable
         public init() {}
     }
 }
 
 extension HTTP.Parse.ParameterList: Parser.`Protocol` {
-    public typealias Output = [(name: Input, value: [UInt8])]
+    public typealias Output = [(name: Input, value: [Byte])]
     public typealias Failure = Never
 
     @inlinable
-    public func parse(_ input: inout Input) -> [(name: Input, value: [UInt8])] {
-        var results: [(name: Input, value: [UInt8])] = []
+    public func parse(_ input: inout Input) -> [(name: Input, value: [Byte])] {
+        var results: [(name: Input, value: [Byte])] = []
 
         while true {
             // Save position before attempting separator + parameter

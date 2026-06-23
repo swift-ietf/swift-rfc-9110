@@ -5,6 +5,7 @@
 //  HTTP token: token = 1*tchar
 //
 
+public import Byte_Parser_Primitives
 public import Parser_Primitives
 
 extension HTTP.Parse {
@@ -14,7 +15,7 @@ extension HTTP.Parse {
     /// `tchar = "!" / "#" / "$" / "%" / "&" / "'" / "*" / "+"
     ///        / "-" / "." / "^" / "_" / "`" / "|" / "~" / DIGIT / ALPHA`
     public struct Token<Input: Collection.Slice.`Protocol`>: Sendable
-    where Input: Sendable, Input.Element == UInt8 {
+    where Input: Sendable, Input.Element == Byte {
         @inlinable
         public init() {}
     }
@@ -44,7 +45,7 @@ extension HTTP.Parse.Token: Parser.`Protocol` {
 
     /// Returns whether the given byte is a valid token character (`tchar`).
     @inlinable
-    public static func isTchar(_ byte: UInt8) -> Bool {
+    public static func isTchar(_ byte: Byte) -> Bool {
         switch byte {
         case 0x21, 0x23, 0x24, 0x25, 0x26, 0x27, 0x2A, 0x2B,
              0x2D, 0x2E, 0x5E, 0x5F, 0x60, 0x7C, 0x7E:

@@ -5,6 +5,8 @@
 //  Media-type parser per RFC 9110 Section 8.3.1.
 //
 
+public import Byte_Parser_Primitives
+public import Byte_Primitives_Standard_Library_Integration
 public import Parser_Primitives
 
 extension HTTP.MediaType {
@@ -20,7 +22,7 @@ extension HTTP.MediaType {
     /// Composes `HTTP.Parse.Token`, `HTTP.Parse.OWS`,
     /// `HTTP.Parse.ParameterList` — zero inline byte logic.
     public struct Parser<Input: Collection.Slice.`Protocol` & Swift.Collection>: Sendable
-    where Input: Sendable, Input.Element == UInt8 {
+    where Input: Sendable, Input.Element == Byte {
         @inlinable
         public init() {}
     }

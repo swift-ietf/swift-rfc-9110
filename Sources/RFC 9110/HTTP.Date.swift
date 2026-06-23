@@ -82,7 +82,7 @@ extension RFC_5322.DateTime {
     ///
     /// Obsolete formats (RFC 850, asctime) are not yet supported.
     public init?(_ field: RFC_9110.Header.Field) {
-        guard let parsed = try? RFC_5322.DateTime(ascii: field.value.rawValue.utf8) else {
+        guard let parsed = try? RFC_5322.DateTime(field.value.rawValue) else {
             return nil
         }
         self = parsed
@@ -92,7 +92,7 @@ extension RFC_5322.DateTime {
     ///
     /// - Parameter value: The HTTP header field value containing the date
     public init?(_ value: RFC_9110.Header.Field.Value) {
-        guard let parsed = try? RFC_5322.DateTime(ascii: value.rawValue.utf8) else {
+        guard let parsed = try? RFC_5322.DateTime(value.rawValue) else {
             return nil
         }
         self = parsed

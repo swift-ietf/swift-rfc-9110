@@ -5,6 +5,7 @@
 //  Comma-separated list: #element per RFC 9110 Section 5.6.1.
 //
 
+public import Byte_Parser_Primitives
 public import Parser_Primitives
 
 extension HTTP.Parse {
@@ -16,7 +17,7 @@ extension HTTP.Parse {
     /// Empty elements between commas are silently skipped.
     /// The `transform` closure converts each non-empty trimmed element.
     public struct CommaSeparated<Input: Collection.Slice.`Protocol`, T: Sendable>: Sendable
-    where Input: Sendable, Input.Element == UInt8 {
+    where Input: Sendable, Input.Element == Byte {
         @usableFromInline
         let transform: @Sendable (Input) -> T?
 

@@ -117,8 +117,8 @@ extension RFC_9110.Authentication.Credentials {
         password: String
     ) -> RFC_9110.Authentication.Credentials {
         let combined = "\(username):\(password)"
-        let bytes = Swift.Array(combined.utf8)
-        let encoded = String.base64(bytes)
+        let bytes: [Byte] = combined.utf8.map(Byte.init)
+        let encoded = bytes.base64.encoded()
         return Self(scheme: .basic, token: encoded)
     }
 

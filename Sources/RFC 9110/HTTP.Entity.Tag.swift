@@ -8,6 +8,7 @@
 
 import ASCII_Primitives
 public import Byte_Parser_Primitives
+import Byte_Primitives_Standard_Library_Integration
 import Parser_Primitives
 import Standard_Library_Extensions
 

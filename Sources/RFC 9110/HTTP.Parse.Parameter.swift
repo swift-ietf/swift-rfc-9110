@@ -5,6 +5,7 @@
 //  HTTP parameter: token "=" ( token / quoted-string )
 //
 
+public import Byte_Parser_Primitives
 public import Parser_Primitives
 
 extension HTTP.Parse {
@@ -16,18 +17,18 @@ extension HTTP.Parse {
     ///
     /// Returns the parameter name (as a byte slice) and value (as bytes).
     public struct Parameter<Input: Collection.Slice.`Protocol`>: Sendable
-    where Input: Sendable, Input.Element == UInt8 {
+    where Input: Sendable, Input.Element == Byte {
         @inlinable
         public init() {}
     }
 }
 
 extension HTTP.Parse.Parameter: Parser.`Protocol` {
-    public typealias Output = (name: Input, value: [UInt8])
+    public typealias Output = (name: Input, value: [Byte])
     public typealias Failure = HTTP.Parse.Parameter<Input>.Error
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> (name: Input, value: [UInt8]) {
+    public func parse(_ input: inout Input) throws(Failure) -> (name: Input, value: [Byte]) {
         // Parse parameter name (token)
         let name: Input
         do {
@@ -45,7 +46,7 @@ extension HTTP.Parse.Parameter: Parser.`Protocol` {
         // Parse value: quoted-string or token
         if input.startIndex < input.endIndex, input[input.startIndex] == 0x22 {
             // Quoted string
-            let value: [UInt8]
+            let value: [Byte]
             do {
                 value = try HTTP.Parse.QuotedString<Input>().parse(&input)
             } catch {
@@ -60,7 +61,7 @@ extension HTTP.Parse.Parameter: Parser.`Protocol` {
             } catch {
                 throw .expectedValue
             }
-            var bytes: [UInt8] = []
+            var bytes: [Byte] = []
             var i = tokenValue.startIndex
             while i < tokenValue.endIndex {
                 bytes.append(tokenValue[i])

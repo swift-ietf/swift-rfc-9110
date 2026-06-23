@@ -5,6 +5,7 @@
 //  Optional whitespace: OWS = *( SP / HTAB )
 //
 
+public import Byte_Parser_Primitives
 public import Parser_Primitives
 
 extension HTTP.Parse {
@@ -13,7 +14,7 @@ extension HTTP.Parse {
     /// RFC 9110 Section 5.6.3: OWS (optional whitespace) is used
     /// between header field components.
     public struct OWS<Input: Collection.Slice.`Protocol`>: Sendable
-    where Input: Sendable, Input.Element == UInt8 {
+    where Input: Sendable, Input.Element == Byte {
         @inlinable
         public init() {}
     }

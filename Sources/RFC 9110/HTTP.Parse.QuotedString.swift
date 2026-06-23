@@ -5,6 +5,7 @@
 //  HTTP quoted-string: DQUOTE *( qdtext / quoted-pair ) DQUOTE
 //
 
+public import Byte_Parser_Primitives
 public import Parser_Primitives
 
 extension HTTP.Parse {
@@ -16,25 +17,25 @@ extension HTTP.Parse {
     ///
     /// Returns the unescaped content between the quotes.
     public struct QuotedString<Input: Collection.Slice.`Protocol`>: Sendable
-    where Input: Sendable, Input.Element == UInt8 {
+    where Input: Sendable, Input.Element == Byte {
         @inlinable
         public init() {}
     }
 }
 
 extension HTTP.Parse.QuotedString: Parser.`Protocol` {
-    public typealias Output = [UInt8]
+    public typealias Output = [Byte]
     public typealias Failure = HTTP.Parse.QuotedString<Input>.Error
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> [UInt8] {
+    public func parse(_ input: inout Input) throws(Failure) -> [Byte] {
         var index = input.startIndex
         guard index < input.endIndex, input[index] == 0x22 else {
             throw .expectedOpenQuote
         }
         input.formIndex(after: &index)
 
-        var result: [UInt8] = []
+        var result: [Byte] = []
 
         while index < input.endIndex {
             let byte = input[index]

@@ -5,6 +5,7 @@
 //  Quality value weight: OWS ";" OWS "q=" qvalue
 //
 
+public import Byte_Parser_Primitives
 public import Parser_Primitives
 
 extension HTTP.Parse {
@@ -16,7 +17,7 @@ extension HTTP.Parse {
     /// Returns a value between 0 and 1000 (q=1.000 -> 1000, q=0.5 -> 500).
     /// Using integer representation avoids floating-point imprecision.
     public struct QualityValue<Input: Collection.Slice.`Protocol`>: Sendable
-    where Input: Sendable, Input.Element == UInt8 {
+    where Input: Sendable, Input.Element == Byte {
         @inlinable
         public init() {}
     }
@@ -62,7 +63,7 @@ extension HTTP.Parse.QualityValue: Parser.`Protocol` {
             while digits < 3, input.startIndex < input.endIndex {
                 let byte = input[input.startIndex]
                 guard byte >= 0x30, byte <= 0x39 else { break }
-                frac = frac * 10 + Int(byte - 0x30)
+                frac = frac * 10 + Int(byte.underlying - 0x30)
                 digits += 1
                 input = input[input.index(after: input.startIndex)...]
             }
