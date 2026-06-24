@@ -25,16 +25,15 @@ struct `HTTP.Date Tests` {
         let field = HTTP.Header.Field(dateTime: httpDate)
         let headerValue = field.value.rawValue
 
-        // Should be in IMF-fixdate format
-        #expect(headerValue.contains("Sun"))
-        #expect(headerValue.contains("06 Nov 1994"))
-        #expect(headerValue.contains("08:49:37"))
-        #expect(headerValue.contains("0000"))  // GMT offset
+        // IMF-fixdate per RFC 9110 §5.6.7 (literal "GMT", never the RFC 5322 "+0000")
+        #expect(headerValue == "Sun, 06 Nov 1994 08:49:37 GMT")
+        #expect(headerValue.contains("GMT"))
+        #expect(!headerValue.contains("+0000"))
     }
 
     @Test
     func `Parse IMF-fixdate format`() async throws {
-        let field = try HTTP.Header.Field(name: "Date", value: "Sun, 06 Nov 1994 08:49:37 +0000")
+        let field = try HTTP.Header.Field(name: "Date", value: "Sun, 06 Nov 1994 08:49:37 GMT")
         let parsed = RFC_5322.DateTime(field)
 
         #expect(parsed != nil)
@@ -46,22 +45,26 @@ struct `HTTP.Date Tests` {
 
     @Test
     func `Parse RFC 850 format (obsolete)`() async throws {
-        // Note: RFC 850 format not yet supported
+        // RFC 9110 §5.6.7: recipients MUST accept the obsolete RFC 850 format
         let field = try HTTP.Header.Field(name: "Date", value: "Sunday, 06-Nov-94 08:49:37 GMT")
         let parsed = RFC_5322.DateTime(field)
 
-        // This will be nil until obsolete formats are implemented
-        #expect(parsed == nil)
+        #expect(parsed != nil)
+
+        let expectedTimestamp = 784_111_777
+        #expect(abs(parsed!.secondsSinceEpoch - expectedTimestamp) < 1)
     }
 
     @Test
     func `Parse asctime format (obsolete)`() async throws {
-        // Note: asctime format not yet supported
+        // RFC 9110 §5.6.7: recipients MUST accept the obsolete asctime format
         let field = try HTTP.Header.Field(name: "Date", value: "Sun Nov  6 08:49:37 1994")
         let parsed = RFC_5322.DateTime(field)
 
-        // This will be nil until obsolete formats are implemented
-        #expect(parsed == nil)
+        #expect(parsed != nil)
+
+        let expectedTimestamp = 784_111_777
+        #expect(abs(parsed!.secondsSinceEpoch - expectedTimestamp) < 1)
     }
 
     @Test
