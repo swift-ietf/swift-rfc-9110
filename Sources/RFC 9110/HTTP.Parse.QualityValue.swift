@@ -7,6 +7,7 @@
 
 public import Byte_Parser_Primitives
 public import Parser_Primitives
+public import ASCII_Decimal_Parser_Primitives
 
 extension HTTP.Parse {
     /// Parses an HTTP quality value (weight) per RFC 9110 Section 12.4.2.
@@ -58,14 +59,25 @@ extension HTTP.Parse.QualityValue: Parser.`Protocol` {
         if input.startIndex < input.endIndex, input[input.startIndex] == 0x2E {
             input = input[input.index(after: input.startIndex)...]
 
+            // Accumulate up to 3 fractional ASCII digits, delegating the
+            // per-digit ASCII classification + conversion to the L1 decimal
+            // parser. Each `.exactly(1)` parse consumes exactly one digit byte
+            // and advances `input`; when the next byte is absent or non-digit
+            // it throws (leaving `input` unchanged), which ends the loop —
+            // byte-for-byte the historical `guard isDigit else break` behavior.
+            // Zero fractional digits ("0.") is therefore permitted (frac = 0).
             var frac = 0
             var digits = 0
-            while digits < 3, input.startIndex < input.endIndex {
-                let byte = input[input.startIndex]
-                guard byte >= 0x30, byte <= 0x39 else { break }
-                frac = frac * 10 + Int(byte.underlying - 0x30)
+            while digits < 3 {
+                let digit: Int
+                do {
+                    digit = try ASCII.Decimal.Parser<Input, Int>(sign: .none, count: .exactly(1))
+                        .parse(&input)
+                } catch {
+                    break
+                }
+                frac = frac * 10 + digit
                 digits += 1
-                input = input[input.index(after: input.startIndex)...]
             }
 
             // Pad to 3 digits: "0.5" -> 500, "0.05" -> 50
