@@ -103,13 +103,13 @@ let response = try HTTP.Response.Message.created(
 ## Dependencies
 
 - [swift-collections](https://github.com/apple/swift-collections) - OrderedCollections
-- [swift-rfc-3986](https://github.com/coenttb/swift-rfc-3986) - URI types
+- [swift-rfc-3986](https://github.com/swift-ietf/swift-rfc-3986) - URI types
 
 ## Installation
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/swift-standards/swift-rfc-9110", from: "0.1.0")
+    .package(url: "https://github.com/swift-ietf/swift-rfc-9110", from: "0.0.4")
 ],
 targets: [
     .target(
