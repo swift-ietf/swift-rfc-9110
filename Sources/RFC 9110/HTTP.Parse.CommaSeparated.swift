@@ -8,7 +8,7 @@
 public import Byte_Parser_Primitives
 public import Parser_Primitives
 
-extension HTTP.Parse {
+extension RFC_9110.Parse {
     /// Parses a comma-separated list from an HTTP header value.
     ///
     /// RFC 9110 Section 5.6.1 defines the `#rule`:
@@ -28,7 +28,7 @@ extension HTTP.Parse {
     }
 }
 
-extension HTTP.Parse.CommaSeparated: Parser.`Protocol` {
+extension RFC_9110.Parse.CommaSeparated: Parser.`Protocol` {
     public typealias Output = [T]
     public typealias Failure = Never
 
@@ -37,19 +37,19 @@ extension HTTP.Parse.CommaSeparated: Parser.`Protocol` {
         var results: [T] = []
 
         // Parse first element (may be empty)
-        HTTP.Parse.OWS<Input>().parse(&input)
+        RFC_9110.Parse.OWS<Input>().parse(&input)
         if let first = _parseElement(&input) {
             results.append(first)
         }
 
         // Parse remaining: *( OWS "," OWS [ element ] )
         while input.startIndex < input.endIndex {
-            HTTP.Parse.OWS<Input>().parse(&input)
+            RFC_9110.Parse.OWS<Input>().parse(&input)
             guard input.startIndex < input.endIndex, input[input.startIndex] == 0x2C else {
                 break
             }
             input = input[input.index(after: input.startIndex)...]
-            HTTP.Parse.OWS<Input>().parse(&input)
+            RFC_9110.Parse.OWS<Input>().parse(&input)
 
             if let element = _parseElement(&input) {
                 results.append(element)

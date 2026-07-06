@@ -411,7 +411,7 @@ extension RFC_9110.Request: CustomDebugStringConvertible {
     /// ```
     public var debugDescription: String {
         """
-        HTTP.Request(
+        RFC_9110.Request(
           method: \(method.rawValue)
           target: \(target.rawValue)
           headers: \(headers.count) field\(headers.count == 1 ? "" : "s")

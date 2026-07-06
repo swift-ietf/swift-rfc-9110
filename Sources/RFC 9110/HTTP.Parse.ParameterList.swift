@@ -8,7 +8,7 @@
 public import Byte_Parser_Primitives
 public import Parser_Primitives
 
-extension HTTP.Parse {
+extension RFC_9110.Parse {
     /// Parses a semicolon-separated list of parameters.
     ///
     /// `*( OWS ";" OWS parameter )`
@@ -21,7 +21,7 @@ extension HTTP.Parse {
     }
 }
 
-extension HTTP.Parse.ParameterList: Parser.`Protocol` {
+extension RFC_9110.Parse.ParameterList: Parser.`Protocol` {
     public typealias Output = [(name: Input, value: [Byte])]
     public typealias Failure = Never
 
@@ -34,16 +34,16 @@ extension HTTP.Parse.ParameterList: Parser.`Protocol` {
             let saved = input
 
             // OWS ";" OWS
-            HTTP.Parse.OWS<Input>().parse(&input)
+            RFC_9110.Parse.OWS<Input>().parse(&input)
             guard input.startIndex < input.endIndex, input[input.startIndex] == 0x3B else {
                 input = saved
                 break
             }
             input = input[input.index(after: input.startIndex)...]
-            HTTP.Parse.OWS<Input>().parse(&input)
+            RFC_9110.Parse.OWS<Input>().parse(&input)
 
             // parameter
-            guard let param = try? HTTP.Parse.Parameter<Input>().parse(&input) else {
+            guard let param = try? RFC_9110.Parse.Parameter<Input>().parse(&input) else {
                 input = saved
                 break
             }

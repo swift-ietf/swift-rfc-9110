@@ -8,7 +8,7 @@
 public import Byte_Parser_Primitives
 public import Parser_Primitives
 
-extension HTTP.Parse {
+extension RFC_9110.Parse {
     /// Parses a single HTTP parameter per RFC 9110.
     ///
     /// `parameter = parameter-name "=" parameter-value`
@@ -23,16 +23,16 @@ extension HTTP.Parse {
     }
 }
 
-extension HTTP.Parse.Parameter: Parser.`Protocol` {
+extension RFC_9110.Parse.Parameter: Parser.`Protocol` {
     public typealias Output = (name: Input, value: [Byte])
-    public typealias Failure = HTTP.Parse.Parameter<Input>.Error
+    public typealias Failure = RFC_9110.Parse.Parameter<Input>.Error
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> (name: Input, value: [Byte]) {
         // Parse parameter name (token)
         let name: Input
         do {
-            name = try HTTP.Parse.Token<Input>().parse(&input)
+            name = try RFC_9110.Parse.Token<Input>().parse(&input)
         } catch {
             throw .expectedToken
         }
@@ -48,7 +48,7 @@ extension HTTP.Parse.Parameter: Parser.`Protocol` {
             // Quoted string
             let value: [Byte]
             do {
-                value = try HTTP.Parse.QuotedString<Input>().parse(&input)
+                value = try RFC_9110.Parse.QuotedString<Input>().parse(&input)
             } catch {
                 throw .invalidQuotedString(error)
             }
@@ -57,7 +57,7 @@ extension HTTP.Parse.Parameter: Parser.`Protocol` {
             // Token value
             let tokenValue: Input
             do {
-                tokenValue = try HTTP.Parse.Token<Input>().parse(&input)
+                tokenValue = try RFC_9110.Parse.Token<Input>().parse(&input)
             } catch {
                 throw .expectedValue
             }

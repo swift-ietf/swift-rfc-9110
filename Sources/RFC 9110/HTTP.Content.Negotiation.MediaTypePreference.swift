@@ -57,9 +57,9 @@ extension RFC_9110.Content.Negotiation {
         /// ```
         public static func parse(_ headerValue: String) -> [MediaTypePreference] {
             var input = Byte.Input(utf8: headerValue)
-            let preferences = HTTP.Parse.CommaSeparated<Byte.Input, MediaTypePreference> { element in
+            let preferences = RFC_9110.Parse.CommaSeparated<Byte.Input, MediaTypePreference> { element in
                 var sub = element
-                guard let mediaType = try? HTTP.MediaType.Parser<Byte.Input>().parse(&sub) else {
+                guard let mediaType = try? RFC_9110.MediaType.Parser<Byte.Input>().parse(&sub) else {
                     return nil
                 }
                 // Extract quality from parameters (q= is parsed as a media type parameter)

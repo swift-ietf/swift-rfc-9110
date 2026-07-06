@@ -5,7 +5,7 @@
 //  Error type for HTTP quoted-string parser.
 //
 
-extension HTTP.Parse.QuotedString {
+extension RFC_9110.Parse.QuotedString {
     /// Errors that can occur when parsing an HTTP quoted-string.
     public enum Error: Swift.Error, Sendable, Equatable {
         /// Input does not begin with an opening double-quote.

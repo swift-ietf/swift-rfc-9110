@@ -7,7 +7,7 @@ import Parser_Primitives
 public import RFC_5322
 import Standard_Library_Extensions
 
-extension HTTP {
+extension RFC_9110 {
     /// Conditional request preconditions (RFC 9110 Section 13)
     ///
     /// Preconditions are used to make requests conditional based on the state
@@ -34,14 +34,14 @@ extension HTTP {
         /// Use `[.wildcard]` to match any representation.
         ///
         /// # RFC 9110 Section 13.1.1
-        case ifMatch([HTTP.Entity.Tag])
+        case ifMatch([RFC_9110.Entity.Tag])
 
         /// If-None-Match: Only perform the action if the current ETag doesn't match any provided ETags
         ///
         /// Used with GET/HEAD for cache validation. Use `[.wildcard]` to match any representation.
         ///
         /// # RFC 9110 Section 13.1.2
-        case ifNoneMatch([HTTP.Entity.Tag])
+        case ifNoneMatch([RFC_9110.Entity.Tag])
 
         /// If-Modified-Since: Only perform the action if modified after the specified date
         ///
@@ -67,18 +67,18 @@ extension HTTP {
 
         /// A validator for If-Range precondition
         public enum Validator: Sendable, Equatable {
-            case etag(HTTP.Entity.Tag)
+            case etag(RFC_9110.Entity.Tag)
             case date(RFC_5322.DateTime)
         }
 
         /// Wildcard entity tag for matching any representation
-        public static let wildcardTag = HTTP.Entity.Tag.strong("*")
+        public static let wildcardTag = RFC_9110.Entity.Tag.strong("*")
     }
 }
 
 // MARK: - Header Generation
 
-extension HTTP.Precondition {
+extension RFC_9110.Precondition {
     /// The header field name for this precondition
     public var headerName: String {
         switch self {
@@ -127,20 +127,20 @@ extension HTTP.Precondition {
 
 // MARK: - Header Parsing
 
-extension HTTP.Precondition {
+extension RFC_9110.Precondition {
     /// Parses an If-Match header value
     ///
     /// - Parameter headerValue: The If-Match header value
     /// - Returns: An If-Match precondition, or nil if parsing fails
-    public static func parseIfMatch(_ headerValue: String) -> HTTP.Precondition? {
+    public static func parseIfMatch(_ headerValue: String) -> RFC_9110.Precondition? {
         var input = Byte.Input(utf8: headerValue)
-        HTTP.Parse.OWS<Byte.Input>().parse(&input)
+        RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
 
         // Wildcard case
         if input.startIndex < input.endIndex, input[input.startIndex] == 0x2A {
             let saved = input
             input = input[input.index(after: input.startIndex)...]
-            HTTP.Parse.OWS<Byte.Input>().parse(&input)
+            RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
             if input.startIndex >= input.endIndex {
                 return .ifMatch([wildcardTag])
             }
@@ -148,8 +148,8 @@ extension HTTP.Precondition {
         }
 
         // Parse comma-separated ETags
-        let etags = HTTP.Parse.CommaSeparated<Byte.Input, HTTP.Entity.Tag> { element in
-            HTTP.Entity.Tag.parse(String(decoding: element, as: UTF8.self))
+        let etags = RFC_9110.Parse.CommaSeparated<Byte.Input, RFC_9110.Entity.Tag> { element in
+            RFC_9110.Entity.Tag.parse(String(decoding: element, as: UTF8.self))
         }.parse(&input)
 
         return etags.isEmpty ? nil : .ifMatch(etags)
@@ -159,15 +159,15 @@ extension HTTP.Precondition {
     ///
     /// - Parameter headerValue: The If-None-Match header value
     /// - Returns: An If-None-Match precondition, or nil if parsing fails
-    public static func parseIfNoneMatch(_ headerValue: String) -> HTTP.Precondition? {
+    public static func parseIfNoneMatch(_ headerValue: String) -> RFC_9110.Precondition? {
         var input = Byte.Input(utf8: headerValue)
-        HTTP.Parse.OWS<Byte.Input>().parse(&input)
+        RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
 
         // Wildcard case
         if input.startIndex < input.endIndex, input[input.startIndex] == 0x2A {
             let saved = input
             input = input[input.index(after: input.startIndex)...]
-            HTTP.Parse.OWS<Byte.Input>().parse(&input)
+            RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
             if input.startIndex >= input.endIndex {
                 return .ifNoneMatch([wildcardTag])
             }
@@ -175,8 +175,8 @@ extension HTTP.Precondition {
         }
 
         // Parse comma-separated ETags
-        let etags = HTTP.Parse.CommaSeparated<Byte.Input, HTTP.Entity.Tag> { element in
-            HTTP.Entity.Tag.parse(String(decoding: element, as: UTF8.self))
+        let etags = RFC_9110.Parse.CommaSeparated<Byte.Input, RFC_9110.Entity.Tag> { element in
+            RFC_9110.Entity.Tag.parse(String(decoding: element, as: UTF8.self))
         }.parse(&input)
 
         return etags.isEmpty ? nil : .ifNoneMatch(etags)
@@ -186,7 +186,7 @@ extension HTTP.Precondition {
     ///
     /// - Parameter headerValue: The If-Modified-Since header value
     /// - Returns: An If-Modified-Since precondition, or nil if parsing fails
-    public static func parseIfModifiedSince(_ headerValue: String) -> HTTP.Precondition? {
+    public static func parseIfModifiedSince(_ headerValue: String) -> RFC_9110.Precondition? {
         guard let httpDate = try? RFC_5322.DateTime(headerValue) else {
             return nil
         }
@@ -197,7 +197,7 @@ extension HTTP.Precondition {
     ///
     /// - Parameter headerValue: The If-Unmodified-Since header value
     /// - Returns: An If-Unmodified-Since precondition, or nil if parsing fails
-    public static func parseIfUnmodifiedSince(_ headerValue: String) -> HTTP.Precondition? {
+    public static func parseIfUnmodifiedSince(_ headerValue: String) -> RFC_9110.Precondition? {
         guard let httpDate = try? RFC_5322.DateTime(headerValue) else {
             return nil
         }
@@ -208,11 +208,11 @@ extension HTTP.Precondition {
     ///
     /// - Parameter headerValue: The If-Range header value
     /// - Returns: An If-Range precondition, or nil if parsing fails
-    public static func parseIfRange(_ headerValue: String) -> HTTP.Precondition? {
+    public static func parseIfRange(_ headerValue: String) -> RFC_9110.Precondition? {
         let trimmed = String(headerValue.trimming(where: { $0.isWhitespace }))
 
         // Try to parse as ETag first
-        if let etag = HTTP.Entity.Tag.parse(trimmed) {
+        if let etag = RFC_9110.Entity.Tag.parse(trimmed) {
             return .ifRange(.etag(etag))
         }
 
@@ -227,14 +227,14 @@ extension HTTP.Precondition {
 
 // MARK: - Evaluation
 
-extension HTTP.Precondition {
+extension RFC_9110.Precondition {
     /// Evaluates whether this precondition is satisfied
     ///
     /// - Parameters:
     ///   - currentETag: The current entity tag of the resource, if any
     ///   - lastModified: The last modified timestamp of the resource, if any
     /// - Returns: true if the precondition is satisfied, false otherwise
-    public func evaluate(currentETag: HTTP.Entity.Tag?, lastModified: RFC_5322.DateTime?) -> Bool {
+    public func evaluate(currentETag: RFC_9110.Entity.Tag?, lastModified: RFC_5322.DateTime?) -> Bool {
         switch self {
         case .ifMatch(let etags):
             guard let currentETag = currentETag else {
@@ -245,7 +245,7 @@ extension HTTP.Precondition {
                 return true
             }
             // Check if any ETag matches using strong comparison
-            return etags.contains(where: { HTTP.Entity.Tag.strongCompare($0, currentETag) })
+            return etags.contains(where: { RFC_9110.Entity.Tag.strongCompare($0, currentETag) })
 
         case .ifNoneMatch(let etags):
             guard let currentETag = currentETag else {
@@ -257,7 +257,7 @@ extension HTTP.Precondition {
                 return false
             }
             // Check if NO ETag matches using weak comparison
-            return !etags.contains(where: { HTTP.Entity.Tag.weakCompare($0, currentETag) })
+            return !etags.contains(where: { RFC_9110.Entity.Tag.weakCompare($0, currentETag) })
 
         case .ifModifiedSince(let date):
             guard let lastModified = lastModified else {
@@ -280,7 +280,7 @@ extension HTTP.Precondition {
                 return false
             }
             // Must use strong comparison for If-Range
-            return HTTP.Entity.Tag.strongCompare(etag, currentETag)
+            return RFC_9110.Entity.Tag.strongCompare(etag, currentETag)
 
         case .ifRange(.date(let date)):
             guard let lastModified = lastModified else {
@@ -294,13 +294,13 @@ extension HTTP.Precondition {
 
 // MARK: - CustomStringConvertible
 
-extension HTTP.Precondition: CustomStringConvertible {
+extension RFC_9110.Precondition: CustomStringConvertible {
     public var description: String {
         return "\(headerName): \(headerValue)"
     }
 }
 
-extension HTTP.Precondition.Validator: CustomStringConvertible {
+extension RFC_9110.Precondition.Validator: CustomStringConvertible {
     public var description: String {
         switch self {
         case .etag(let etag):

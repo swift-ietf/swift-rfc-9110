@@ -8,7 +8,7 @@
 public import Byte_Parser_Primitives
 public import Parser_Primitives
 
-extension HTTP.Parse {
+extension RFC_9110.Parse {
     /// Parses an HTTP quoted-string per RFC 9110 Section 5.6.4.
     ///
     /// `quoted-string = DQUOTE *( qdtext / quoted-pair ) DQUOTE`
@@ -23,9 +23,9 @@ extension HTTP.Parse {
     }
 }
 
-extension HTTP.Parse.QuotedString: Parser.`Protocol` {
+extension RFC_9110.Parse.QuotedString: Parser.`Protocol` {
     public typealias Output = [Byte]
-    public typealias Failure = HTTP.Parse.QuotedString<Input>.Error
+    public typealias Failure = RFC_9110.Parse.QuotedString<Input>.Error
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> [Byte] {

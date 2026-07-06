@@ -5,7 +5,7 @@
 //  Error type for HTTP parameter parser.
 //
 
-extension HTTP.Parse.Parameter {
+extension RFC_9110.Parse.Parameter {
     /// Errors that can occur when parsing an HTTP parameter (`name=value`).
     public enum Error: Swift.Error, Sendable, Equatable {
         /// The parameter name is not a valid token.
@@ -15,6 +15,6 @@ extension HTTP.Parse.Parameter {
         /// No valid token or quoted-string follows the equals sign.
         case expectedValue
         /// The quoted-string value is malformed.
-        case invalidQuotedString(HTTP.Parse.QuotedString<Input>.Error)
+        case invalidQuotedString(RFC_9110.Parse.QuotedString<Input>.Error)
     }
 }

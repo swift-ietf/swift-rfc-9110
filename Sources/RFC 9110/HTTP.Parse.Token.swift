@@ -8,7 +8,7 @@
 public import Byte_Parser_Primitives
 public import Parser_Primitives
 
-extension HTTP.Parse {
+extension RFC_9110.Parse {
     /// Parses an HTTP token per RFC 9110 Section 5.6.2.
     ///
     /// `token = 1*tchar`
@@ -21,9 +21,9 @@ extension HTTP.Parse {
     }
 }
 
-extension HTTP.Parse.Token: Parser.`Protocol` {
+extension RFC_9110.Parse.Token: Parser.`Protocol` {
     public typealias Output = Input
-    public typealias Failure = HTTP.Parse.Token<Input>.Error
+    public typealias Failure = RFC_9110.Parse.Token<Input>.Error
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Input {

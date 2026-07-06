@@ -9,7 +9,7 @@ public import Byte_Parser_Primitives
 public import Parser_Primitives
 public import ASCII_Decimal_Parser_Primitives
 
-extension HTTP.Parse {
+extension RFC_9110.Parse {
     /// Parses an HTTP quality value (weight) per RFC 9110 Section 12.4.2.
     ///
     /// `weight = OWS ";" OWS "q=" qvalue`
@@ -24,19 +24,19 @@ extension HTTP.Parse {
     }
 }
 
-extension HTTP.Parse.QualityValue: Parser.`Protocol` {
+extension RFC_9110.Parse.QualityValue: Parser.`Protocol` {
     public typealias Output = Int
-    public typealias Failure = HTTP.Parse.QualityValue<Input>.Error
+    public typealias Failure = RFC_9110.Parse.QualityValue<Input>.Error
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Int {
         // OWS ";" OWS
-        HTTP.Parse.OWS<Input>().parse(&input)
+        RFC_9110.Parse.OWS<Input>().parse(&input)
         guard input.startIndex < input.endIndex, input[input.startIndex] == 0x3B else {
             throw .expectedSemicolon
         }
         input = input[input.index(after: input.startIndex)...]
-        HTTP.Parse.OWS<Input>().parse(&input)
+        RFC_9110.Parse.OWS<Input>().parse(&input)
 
         // "q=" (case-insensitive for q)
         guard input.startIndex < input.endIndex else { throw .expectedQ }

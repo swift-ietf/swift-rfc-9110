@@ -61,13 +61,13 @@ extension RFC_9110.Content.Negotiation {
         /// ```
         public static func parse(_ headerValue: String) -> [CharsetPreference] {
             var input = Byte.Input(utf8: headerValue)
-            let preferences = HTTP.Parse.CommaSeparated<Byte.Input, CharsetPreference> { element in
+            let preferences = RFC_9110.Parse.CommaSeparated<Byte.Input, CharsetPreference> { element in
                 var sub = element
-                guard let token = try? HTTP.Parse.Token<Byte.Input>().parse(&sub) else {
+                guard let token = try? RFC_9110.Parse.Token<Byte.Input>().parse(&sub) else {
                     return nil
                 }
                 var quality = QualityValue.default
-                if let q = try? HTTP.Parse.QualityValue<Byte.Input>().parse(&sub) {
+                if let q = try? RFC_9110.Parse.QualityValue<Byte.Input>().parse(&sub) {
                     quality = QualityValue(Double(q) / 1000.0)
                 }
                 return CharsetPreference(charset: String(decoding: token, as: UTF8.self), quality: quality)

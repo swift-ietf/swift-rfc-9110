@@ -5,7 +5,7 @@
 //  Error type for HTTP quality value parser.
 //
 
-extension HTTP.Parse.QualityValue {
+extension RFC_9110.Parse.QualityValue {
     /// Errors that can occur when parsing an HTTP quality value.
     public enum Error: Swift.Error, Sendable, Equatable {
         /// Expected a semicolon separator before the quality parameter.

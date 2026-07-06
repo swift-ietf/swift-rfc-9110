@@ -103,16 +103,16 @@ extension RFC_9110.Authentication {
             var input = Byte.Input(utf8: headerValue)
 
             // Skip leading OWS
-            HTTP.Parse.OWS<Byte.Input>().parse(&input)
+            RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
 
             // Parse scheme (token)
-            guard let schemeSlice = try? HTTP.Parse.Token<Byte.Input>().parse(&input) else {
+            guard let schemeSlice = try? RFC_9110.Parse.Token<Byte.Input>().parse(&input) else {
                 return nil
             }
             let scheme = Scheme(String(decoding: schemeSlice, as: UTF8.self))
 
             // If no more content, scheme-only challenge
-            HTTP.Parse.OWS<Byte.Input>().parse(&input)
+            RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
             guard input.startIndex < input.endIndex else {
                 return Challenge(scheme: scheme)
             }
@@ -121,17 +121,17 @@ extension RFC_9110.Authentication {
             var parameters: [String: String] = [:]
             while true {
                 let saved = input
-                guard let param = try? HTTP.Parse.Parameter<Byte.Input>().parse(&input) else {
+                guard let param = try? RFC_9110.Parse.Parameter<Byte.Input>().parse(&input) else {
                     input = saved
                     break
                 }
                 parameters[String(decoding: param.name, as: UTF8.self)] = String(decoding: param.value, as: UTF8.self)
 
                 // Try to consume OWS "," OWS for next parameter
-                HTTP.Parse.OWS<Byte.Input>().parse(&input)
+                RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
                 guard input.startIndex < input.endIndex, input[input.startIndex] == 0x2C else { break }
                 input = input[input.index(after: input.startIndex)...]
-                HTTP.Parse.OWS<Byte.Input>().parse(&input)
+                RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
             }
 
             return Challenge(scheme: scheme, parameters: parameters)

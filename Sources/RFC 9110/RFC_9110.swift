@@ -22,9 +22,8 @@ import RFC_3986
 ///
 /// This namespace contains types representing HTTP semantics as defined
 /// in RFC 9110, which consolidates and updates the core HTTP specifications.
-public enum RFC_9110 {}
-
-/// Convenience namespace for HTTP types
 ///
-/// Allows writing `HTTP.Method` instead of `RFC_9110.Method`
-public typealias HTTP = RFC_9110
+/// The friendly `HTTP` name (`HTTP.Method` instead of `RFC_9110.Method`) is
+/// provided by the converger package `swift-standards/swift-http-standard`,
+/// not by this spec-direct package.
+public enum RFC_9110 {}

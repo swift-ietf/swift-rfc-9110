@@ -9,7 +9,7 @@ public import Byte_Parser_Primitives
 public import Byte_Primitives_Standard_Library_Integration
 public import Parser_Primitives
 
-extension HTTP.MediaType {
+extension RFC_9110.MediaType {
     /// Parses a media-type per RFC 9110 Section 8.3.1.
     ///
     /// ```
@@ -28,18 +28,18 @@ extension HTTP.MediaType {
     }
 }
 
-extension HTTP.MediaType.Parser: Parser_Primitives.Parser.`Protocol` {
-    public typealias Output = HTTP.MediaType
-    public typealias Failure = HTTP.MediaType.Parser<Input>.Error
+extension RFC_9110.MediaType.Parser: Parser_Primitives.Parser.`Protocol` {
+    public typealias Output = RFC_9110.MediaType
+    public typealias Failure = RFC_9110.MediaType.Parser<Input>.Error
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> HTTP.MediaType {
+    public func parse(_ input: inout Input) throws(Failure) -> RFC_9110.MediaType {
         // OWS
-        HTTP.Parse.OWS<Input>().parse(&input)
+        RFC_9110.Parse.OWS<Input>().parse(&input)
 
         // type = token
         let typeSlice: Input
-        do { typeSlice = try HTTP.Parse.Token<Input>().parse(&input) }
+        do { typeSlice = try RFC_9110.Parse.Token<Input>().parse(&input) }
         catch { throw .expectedType }
 
         // "/"
@@ -50,11 +50,11 @@ extension HTTP.MediaType.Parser: Parser_Primitives.Parser.`Protocol` {
 
         // subtype = token
         let subtypeSlice: Input
-        do { subtypeSlice = try HTTP.Parse.Token<Input>().parse(&input) }
+        do { subtypeSlice = try RFC_9110.Parse.Token<Input>().parse(&input) }
         catch { throw .expectedSubtype }
 
         // parameters = *( OWS ";" OWS parameter )
-        let params = HTTP.Parse.ParameterList<Input>().parse(&input)
+        let params = RFC_9110.Parse.ParameterList<Input>().parse(&input)
 
         // Assemble
         let type = String(decoding: typeSlice, as: UTF8.self).lowercased()
@@ -65,6 +65,6 @@ extension HTTP.MediaType.Parser: Parser_Primitives.Parser.`Protocol` {
             let value = String(decoding: p.value, as: UTF8.self)
             parameters[name] = value
         }
-        return HTTP.MediaType(type, subtype, parameters: parameters)
+        return RFC_9110.MediaType(type, subtype, parameters: parameters)
     }
 }

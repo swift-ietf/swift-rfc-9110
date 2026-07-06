@@ -218,7 +218,7 @@ extension RFC_9110.Response: CustomDebugStringConvertible {
             }
 
         return """
-            HTTP.Response(
+            RFC_9110.Response(
               status: \(statusLine)
               headers: \(headers.count) field\(headers.count == 1 ? "" : "s")
               body: \(body?.count ?? 0) bytes

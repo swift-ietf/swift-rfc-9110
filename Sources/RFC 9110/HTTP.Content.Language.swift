@@ -51,7 +51,7 @@ extension RFC_9110.Content {
         /// // [Language("en-us"), Language("fr-ca")]
         /// ```
         public static func parse(_ headerValue: String) -> [Language] {
-            HTTP.Parse.tokens(in: headerValue).map { Language($0) }
+            RFC_9110.Parse.tokens(in: headerValue).map { Language($0) }
         }
 
         /// Formats an array of Language values into a header value

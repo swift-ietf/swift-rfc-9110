@@ -9,14 +9,14 @@ import Parser_Primitives
 public import Byte_Parser_Primitives
 import Byte_Primitives_Standard_Library_Integration
 
-extension HTTP {
+extension RFC_9110 {
     /// Parser combinators for HTTP grammar productions defined in RFC 9110.
     public enum Parse {}
 }
 
 // MARK: - String Convenience
 
-extension HTTP.Parse {
+extension RFC_9110.Parse {
     /// Parses comma-separated tokens from an HTTP header value.
     ///
     /// Each element between commas is parsed as an HTTP token (RFC 9110 Section 5.6.2).

@@ -114,7 +114,7 @@ extension RFC_9110.Entity {
             var input = Byte.Input(utf8: headerValue)
 
             // OWS
-            HTTP.Parse.OWS<Byte.Input>().parse(&input)
+            RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
 
             // Check for weak prefix "W/"
             var isWeak = false
@@ -127,7 +127,7 @@ extension RFC_9110.Entity {
             }
 
             // Parse quoted tag value
-            guard let bytes = try? HTTP.Parse.QuotedString<Byte.Input>().parse(&input) else {
+            guard let bytes = try? RFC_9110.Parse.QuotedString<Byte.Input>().parse(&input) else {
                 return nil
             }
 

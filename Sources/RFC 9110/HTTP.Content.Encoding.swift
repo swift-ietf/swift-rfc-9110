@@ -82,7 +82,7 @@ extension RFC_9110.Content {
         /// // [.brotli]
         /// ```
         public static func parse(_ headerValue: String) -> [Encoding] {
-            HTTP.Parse.tokens(in: headerValue).map { Encoding($0) }
+            RFC_9110.Parse.tokens(in: headerValue).map { Encoding($0) }
         }
 
         /// Formats multiple encodings as a header value

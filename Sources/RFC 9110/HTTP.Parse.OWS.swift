@@ -8,7 +8,7 @@
 public import Byte_Parser_Primitives
 public import Parser_Primitives
 
-extension HTTP.Parse {
+extension RFC_9110.Parse {
     /// Consumes zero or more SP (0x20) or HTAB (0x09) bytes.
     ///
     /// RFC 9110 Section 5.6.3: OWS (optional whitespace) is used
@@ -20,7 +20,7 @@ extension HTTP.Parse {
     }
 }
 
-extension HTTP.Parse.OWS: Parser.`Protocol` {
+extension RFC_9110.Parse.OWS: Parser.`Protocol` {
     public typealias Output = Void
     public typealias Failure = Never
 
