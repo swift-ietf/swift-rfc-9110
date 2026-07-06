@@ -56,7 +56,8 @@ extension RFC_9110.Content.Negotiation {
         /// ```
         public static func parse(_ headerValue: String) -> [LanguagePreference] {
             var input = Byte.Input(utf8: headerValue)
-            let preferences = RFC_9110.Parse.CommaSeparated<Byte.Input, LanguagePreference> { element in
+            let preferences = RFC_9110.Parse.CommaSeparated<Byte.Input, LanguagePreference> {
+                element in
                 var sub = element
                 guard let token = try? RFC_9110.Parse.Token<Byte.Input>().parse(&sub) else {
                     return nil

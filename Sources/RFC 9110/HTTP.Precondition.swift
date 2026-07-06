@@ -234,7 +234,10 @@ extension RFC_9110.Precondition {
     ///   - currentETag: The current entity tag of the resource, if any
     ///   - lastModified: The last modified timestamp of the resource, if any
     /// - Returns: true if the precondition is satisfied, false otherwise
-    public func evaluate(currentETag: RFC_9110.Entity.Tag?, lastModified: RFC_5322.DateTime?) -> Bool {
+    public func evaluate(
+        currentETag: RFC_9110.Entity.Tag?,
+        lastModified: RFC_5322.DateTime?
+    ) -> Bool {
         switch self {
         case .ifMatch(let etags):
             guard let currentETag = currentETag else {

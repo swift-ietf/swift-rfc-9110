@@ -39,8 +39,11 @@ extension RFC_9110.MediaType.Parser: Parser_Primitives.Parser.`Protocol` {
 
         // type = token
         let typeSlice: Input
-        do { typeSlice = try RFC_9110.Parse.Token<Input>().parse(&input) }
-        catch { throw .expectedType }
+        do {
+            typeSlice = try RFC_9110.Parse.Token<Input>().parse(&input)
+        } catch {
+            throw .expectedType
+        }
 
         // "/"
         guard input.startIndex < input.endIndex,
@@ -50,8 +53,11 @@ extension RFC_9110.MediaType.Parser: Parser_Primitives.Parser.`Protocol` {
 
         // subtype = token
         let subtypeSlice: Input
-        do { subtypeSlice = try RFC_9110.Parse.Token<Input>().parse(&input) }
-        catch { throw .expectedSubtype }
+        do {
+            subtypeSlice = try RFC_9110.Parse.Token<Input>().parse(&input)
+        } catch {
+            throw .expectedSubtype
+        }
 
         // parameters = *( OWS ";" OWS parameter )
         let params = RFC_9110.Parse.ParameterList<Input>().parse(&input)
