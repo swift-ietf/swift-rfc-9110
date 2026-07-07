@@ -6,8 +6,8 @@
 //
 // Language preference for content negotiation
 
-import Parser_Primitives
 public import Byte_Parser_Primitives
+import Parser_Primitives
 
 // MARK: - Language Preference (Section 12.5.4)
 
@@ -26,7 +26,7 @@ extension RFC_9110.Content.Negotiation {
     ///
     /// - [RFC 9110 Section 12.5.4: Accept-Language](https://www.rfc-editor.org/rfc/rfc9110.html#section-12.5.4)
     public struct LanguagePreference: Sendable, Equatable {
-        /// The language tag (e.g., "en-US", "fr", "de")
+        /// The language tag, for example "en-US", "fr", or "de"
         public let language: String
 
         /// The quality value (defaults to 1.0)

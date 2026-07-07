@@ -5,9 +5,9 @@
 //  Quality value weight: OWS ";" OWS "q=" qvalue
 //
 
+public import ASCII_Decimal_Parser_Primitives
 public import Byte_Parser_Primitives
 public import Parser_Primitives
-public import ASCII_Decimal_Parser_Primitives
 
 extension RFC_9110.Parse {
     /// Parses an HTTP quality value (weight) per RFC 9110 Section 12.4.2.
@@ -41,7 +41,7 @@ extension RFC_9110.Parse.QualityValue: Parser.`Protocol` {
         // "q=" (case-insensitive for q)
         guard input.startIndex < input.endIndex else { throw .expectedQ }
         let q = input[input.startIndex]
-        guard q == 0x71 || q == 0x51 else { throw .expectedQ } // 'q' or 'Q'
+        guard q == 0x71 || q == 0x51 else { throw .expectedQ }  // 'q' or 'Q'
         input = input[input.index(after: input.startIndex)...]
 
         guard input.startIndex < input.endIndex, input[input.startIndex] == 0x3D else {
@@ -52,7 +52,7 @@ extension RFC_9110.Parse.QualityValue: Parser.`Protocol` {
         // qvalue: digit before decimal
         guard input.startIndex < input.endIndex else { throw .invalidQValue }
         let intPart = input[input.startIndex]
-        guard intPart == 0x30 || intPart == 0x31 else { throw .invalidQValue } // '0' or '1'
+        guard intPart == 0x30 || intPart == 0x31 else { throw .invalidQValue }  // '0' or '1'
         input = input[input.index(after: input.startIndex)...]
 
         // Optional decimal part

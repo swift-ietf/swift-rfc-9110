@@ -1,10 +1,10 @@
 import Foundation
-// HTTP.Content.Negotiation.Tests.swift
-// swift-rfc-9110
-
 import Testing
 
 @testable import RFC_9110
+
+// HTTP.Content.Negotiation.Tests.swift
+// swift-rfc-9110
 
 @Suite
 struct `HTTP.Content.Negotiation Tests` {
@@ -183,7 +183,7 @@ struct `HTTP.Content.Negotiation Tests` {
 
     @Test
     func `Select media types - multiple`() async throws {
-        let available = [HTTP.MediaType.json, HTTP.MediaType.xml_app, HTTP.MediaType.html]
+        let available = [HTTP.MediaType.json, HTTP.MediaType.xmlApp, HTTP.MediaType.html]
         let selected = HTTP.Content.Negotiation.selectMediaTypes(
             from: available,
             acceptHeader: "application/json;q=1.0, application/xml;q=0.9, text/html;q=0.5"
@@ -191,7 +191,7 @@ struct `HTTP.Content.Negotiation Tests` {
 
         #expect(selected.count == 3)
         #expect(selected[0] == .json)
-        #expect(selected[1] == .xml_app)
+        #expect(selected[1] == .xmlApp)
         #expect(selected[2] == .html)
     }
 

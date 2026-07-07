@@ -6,8 +6,8 @@
 //
 // Charset preference for content negotiation
 
-import Parser_Primitives
 public import Byte_Parser_Primitives
+import Parser_Primitives
 
 // MARK: - Charset Preference (Section 12.5.2)
 
@@ -31,7 +31,7 @@ extension RFC_9110.Content.Negotiation {
     ///
     /// - [RFC 9110 Section 12.5.2: Accept-Charset](https://www.rfc-editor.org/rfc/rfc9110.html#section-12.5.2)
     public struct CharsetPreference: Sendable, Equatable {
-        /// The charset name (e.g., "utf-8", "iso-8859-1")
+        /// The charset name, for example "utf-8" or "iso-8859-1"
         public let charset: String
 
         /// The quality value (defaults to 1.0)
@@ -71,7 +71,10 @@ extension RFC_9110.Content.Negotiation {
                 if let q = try? RFC_9110.Parse.QualityValue<Byte.Input>().parse(&sub) {
                     quality = QualityValue(Double(q) / 1000.0)
                 }
-                return CharsetPreference(charset: String(decoding: token, as: UTF8.self), quality: quality)
+                return CharsetPreference(
+                    charset: String(decoding: token, as: UTF8.self),
+                    quality: quality
+                )
             }.parse(&input)
             return preferences.sorted { $0.quality > $1.quality }
         }

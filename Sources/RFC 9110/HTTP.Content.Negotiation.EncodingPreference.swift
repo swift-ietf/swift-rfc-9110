@@ -6,8 +6,8 @@
 //
 // Content encoding preference for content negotiation
 
-import Parser_Primitives
 public import Byte_Parser_Primitives
+import Parser_Primitives
 
 // MARK: - Encoding Preference (Section 12.5.3)
 

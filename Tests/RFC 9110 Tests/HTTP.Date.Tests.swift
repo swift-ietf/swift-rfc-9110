@@ -1,11 +1,11 @@
 import Foundation
-// HTTP.Date.Tests.swift
-// swift-rfc-9110
-
 import RFC_5322
 import Testing
 
 @testable import RFC_9110
+
+// HTTP.Date.Tests.swift
+// swift-rfc-9110
 
 @Suite
 struct `HTTP.Date Tests` {

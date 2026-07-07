@@ -1,9 +1,9 @@
 // HTTP.Authentication.Challenge.swift
 // swift-rfc-9110
 
-import Parser_Primitives
 public import Byte_Parser_Primitives
 import Byte_Primitives_Standard_Library_Integration
+import Parser_Primitives
 
 extension RFC_9110.Authentication {
     /// WWW-Authenticate challenge (RFC 9110 Section 11.6.1)
@@ -35,7 +35,7 @@ extension RFC_9110.Authentication {
         /// The authentication scheme
         public let scheme: Scheme
 
-        /// Challenge parameters (e.g., realm, scope)
+        /// Challenge parameters (for example, realm, scope)
         public var parameters: [String: String]
 
         /// Creates an authentication challenge
@@ -125,11 +125,16 @@ extension RFC_9110.Authentication {
                     input = saved
                     break
                 }
-                parameters[String(decoding: param.name, as: UTF8.self)] = String(decoding: param.value, as: UTF8.self)
+                parameters[String(decoding: param.name, as: UTF8.self)] = String(
+                    decoding: param.value,
+                    as: UTF8.self
+                )
 
                 // Try to consume OWS "," OWS for next parameter
                 RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
-                guard input.startIndex < input.endIndex, input[input.startIndex] == 0x2C else { break }
+                guard input.startIndex < input.endIndex, input[input.startIndex] == 0x2C else {
+                    break
+                }
                 input = input[input.index(after: input.startIndex)...]
                 RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
             }

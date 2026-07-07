@@ -1,10 +1,10 @@
 import Foundation
-// HTTP.Method.Tests.swift
-// swift-rfc-9110
-
 import Testing
 
 @testable import RFC_9110
+
+// HTTP.Method.Tests.swift
+// swift-rfc-9110
 
 @Suite
 struct `HTTP.Method Tests` {

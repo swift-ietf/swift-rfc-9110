@@ -47,7 +47,7 @@ extension RFC_9110.MediaType.Parser: Parser_Primitives.Parser.`Protocol` {
 
         // "/"
         guard input.startIndex < input.endIndex,
-              input[input.startIndex] == 0x2F
+            input[input.startIndex] == 0x2F
         else { throw .expectedSlash }
         input = input[input.index(after: input.startIndex)...]
 

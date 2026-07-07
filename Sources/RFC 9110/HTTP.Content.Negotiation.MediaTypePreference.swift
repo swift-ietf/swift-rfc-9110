@@ -6,8 +6,8 @@
 //
 // Media type preference for content negotiation
 
-import Parser_Primitives
 public import Byte_Parser_Primitives
+import Parser_Primitives
 
 // MARK: - Media Type Preference
 
@@ -72,7 +72,11 @@ extension RFC_9110.Content.Negotiation {
                 // Remove q from media type parameters
                 var params = mediaType.parameters
                 params.removeValue(forKey: "q")
-                let cleanMediaType = RFC_9110.MediaType(mediaType.type, mediaType.subtype, parameters: params)
+                let cleanMediaType = RFC_9110.MediaType(
+                    mediaType.type,
+                    mediaType.subtype,
+                    parameters: params
+                )
                 return MediaTypePreference(mediaType: cleanMediaType, quality: quality)
             }.parse(&input)
 

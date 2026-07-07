@@ -55,7 +55,8 @@ extension RFC_9110.Parse.QuotedString: Parser.`Protocol` {
                 }
                 let escaped = input[index]
                 // quoted-pair allows HTAB / SP / VCHAR / obs-text
-                guard escaped == 0x09 || (escaped >= 0x20 && escaped <= 0x7E) || escaped >= 0x80 else {
+                guard escaped == 0x09 || (escaped >= 0x20 && escaped <= 0x7E) || escaped >= 0x80
+                else {
                     throw .invalidEscapeSequence
                 }
                 result.append(escaped)

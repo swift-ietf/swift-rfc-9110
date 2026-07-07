@@ -73,8 +73,10 @@ extension RFC_9110.Authentication {
             let schemeName = String(trimmed[..<spaceIndex])
             let scheme = Scheme(schemeName)
 
-            let token = String(String(trimmed[trimmed.index(after: spaceIndex)...])
-                .trimming(where: { $0.isWhitespace }))
+            let token = String(
+                String(trimmed[trimmed.index(after: spaceIndex)...])
+                    .trimming(where: { $0.isWhitespace })
+            )
 
             return Credentials(scheme: scheme, token: token)
         }

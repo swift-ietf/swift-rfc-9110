@@ -118,9 +118,9 @@ extension RFC_9110.Entity {
 
             // Check for weak prefix "W/"
             var isWeak = false
-            if input.startIndex < input.endIndex, input[input.startIndex] == 0x57 { // 'W'
+            if input.startIndex < input.endIndex, input[input.startIndex] == 0x57 {  // 'W'
                 let next = input.index(after: input.startIndex)
-                if next < input.endIndex, input[next] == 0x2F { // '/'
+                if next < input.endIndex, input[next] == 0x2F {  // '/'
                     input = input[input.index(after: next)...]
                     isWeak = true
                 }

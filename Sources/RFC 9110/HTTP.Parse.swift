@@ -5,9 +5,9 @@
 //  Namespace for HTTP parser combinators per RFC 9110 grammar.
 //
 
-import Parser_Primitives
 public import Byte_Parser_Primitives
 import Byte_Primitives_Standard_Library_Integration
+import Parser_Primitives
 
 extension RFC_9110 {
     /// Parser combinators for HTTP grammar productions defined in RFC 9110.
@@ -69,4 +69,3 @@ extension RFC_9110.Parse {
         }.parse(&input)
     }
 }
-

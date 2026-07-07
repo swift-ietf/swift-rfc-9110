@@ -26,7 +26,7 @@ extension RFC_9110.Content {
     /// Language tags are defined in [RFC 5646](https://www.rfc-editor.org/rfc/rfc5646.html).
     ///
     public struct Language: Sendable, Equatable, Hashable {
-        /// The language tag (e.g., "en", "en-US", "fr-CA")
+        /// The language tag, for example "en", "en-US", or "fr-CA"
         public let tag: String
 
         /// Creates a content language with the specified language tag

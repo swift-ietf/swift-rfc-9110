@@ -1,10 +1,10 @@
 import Foundation
-// HTTP.Entity.Tag.Tests.swift
-// swift-rfc-9110
-
 import Testing
 
 @testable import RFC_9110
+
+// HTTP.Entity.Tag.Tests.swift
+// swift-rfc-9110
 
 @Suite
 struct `HTTP.Entity.Tag Tests` {

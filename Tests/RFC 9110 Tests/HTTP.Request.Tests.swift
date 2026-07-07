@@ -1,12 +1,12 @@
+import Byte_Primitives
 import Foundation
-// HTTP.Request.Tests.swift
-// swift-rfc-9110
-
 import RFC_3986
 import Testing
 
-import Byte_Primitives
 @testable import RFC_9110
+
+// HTTP.Request.Tests.swift
+// swift-rfc-9110
 
 @Suite
 struct `HTTP.Request.Target Tests` {

@@ -255,7 +255,7 @@ extension RFC_9110.MediaType {
     public static let json = RFC_9110.MediaType("application", "json")
 
     /// application/xml
-    public static let xml_app = RFC_9110.MediaType("application", "xml")
+    public static let xmlApp = RFC_9110.MediaType("application", "xml")
 
     /// application/pdf
     public static let pdf = RFC_9110.MediaType("application", "pdf")
@@ -304,7 +304,7 @@ extension RFC_9110.MediaType {
     public static let wav = RFC_9110.MediaType("audio", "wav")
 
     /// audio/ogg
-    public static let ogg_audio = RFC_9110.MediaType("audio", "ogg")
+    public static let oggAudio = RFC_9110.MediaType("audio", "ogg")
 
     // MARK: - Video Types
 
@@ -315,7 +315,7 @@ extension RFC_9110.MediaType {
     public static let webm = RFC_9110.MediaType("video", "webm")
 
     /// video/ogg
-    public static let ogg_video = RFC_9110.MediaType("video", "ogg")
+    public static let oggVideo = RFC_9110.MediaType("video", "ogg")
 
     // MARK: - Font Types
 

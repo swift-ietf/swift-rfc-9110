@@ -353,7 +353,9 @@ extension RFC_9110.Response {
         body: [Byte]? = nil
     ) throws(RFC_9110.Header.Field.Error) -> Self {
         var responseHeaders = headers
-        responseHeaders.append(try RFC_9110.Header.Field(name: "WWW-Authenticate", value: wwwAuthenticate))
+        responseHeaders.append(
+            try RFC_9110.Header.Field(name: "WWW-Authenticate", value: wwwAuthenticate)
+        )
         return Self(status: .unauthorized, headers: responseHeaders, body: body)
     }
 
@@ -410,7 +412,9 @@ extension RFC_9110.Response {
     ) throws(RFC_9110.Header.Field.Error) -> Self {
         var responseHeaders = headers
         if let retryAfter = retryAfter {
-            responseHeaders.append(try RFC_9110.Header.Field(name: "Retry-After", value: retryAfter))
+            responseHeaders.append(
+                try RFC_9110.Header.Field(name: "Retry-After", value: retryAfter)
+            )
         }
         return Self(status: .serviceUnavailable, headers: responseHeaders, body: body)
     }
