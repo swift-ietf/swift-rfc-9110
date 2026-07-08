@@ -46,15 +46,18 @@ extension RFC_9110.Header.Field {
             self.rawValue = rawValue
         }
 
-        /// Hash value (case-insensitive per RFC 9110)
-        public func hash(into hasher: inout Hasher) {
-            hasher.combine(rawValue.lowercased())
-        }
+    }
+}
 
-        /// Equality comparison (case-insensitive per RFC 9110)
-        public static func == (lhs: Name, rhs: Name) -> Bool {
-            lhs.rawValue.lowercased() == rhs.rawValue.lowercased()
-        }
+extension RFC_9110.Header.Field.Name {
+    /// Hash value (case-insensitive per RFC 9110)
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(rawValue.lowercased())
+    }
+
+    /// Equality comparison (case-insensitive per RFC 9110)
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.rawValue.lowercased() == rhs.rawValue.lowercased()
     }
 }
 

@@ -42,39 +42,42 @@ extension RFC_9110.Content.Negotiation {
             self.quality = quality
         }
 
-        /// Parses language preferences from an Accept-Language header value
-        ///
-        /// - Parameter headerValue: The Accept-Language header value
-        /// - Returns: An array of language preferences, sorted by quality (descending)
-        ///
-        /// ## Example
-        ///
-        /// ```swift
-        /// let prefs = HTTP.Content.Negotiation.LanguagePreference.parse(
-        ///     "en-US;q=1.0, fr;q=0.8, *;q=0.1"
-        /// )
-        /// ```
-        public static func parse(_ headerValue: String) -> [LanguagePreference] {
-            var input = Byte.Input(utf8: headerValue)
-            let preferences = RFC_9110.Parse.CommaSeparated<Byte.Input, LanguagePreference> {
-                element in
-                var sub = element
-                guard let token = try? RFC_9110.Parse.Token<Byte.Input>().parse(&sub) else {
-                    return nil
-                }
-                let language = String(decoding: token, as: UTF8.self)
-                var quality = QualityValue.default
-                if let q = try? RFC_9110.Parse.QualityValue<Byte.Input>().parse(&sub) {
-                    quality = QualityValue(Double(q) / 1000.0)
-                }
-                return LanguagePreference(language: language, quality: quality)
-            }.parse(&input)
-            return preferences.sorted { lhs, rhs in
-                if lhs.quality.value != rhs.quality.value {
-                    return lhs.quality > rhs.quality
-                }
-                return lhs.language.count > rhs.language.count
+    }
+}
+
+extension RFC_9110.Content.Negotiation.LanguagePreference {
+    /// Parses language preferences from an Accept-Language header value
+    ///
+    /// - Parameter headerValue: The Accept-Language header value
+    /// - Returns: An array of language preferences, sorted by quality (descending)
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let prefs = HTTP.Content.Negotiation.LanguagePreference.parse(
+    ///     "en-US;q=1.0, fr;q=0.8, *;q=0.1"
+    /// )
+    /// ```
+    public static func parse(_ headerValue: String) -> [Self] {
+        var input = Byte.Input(utf8: headerValue)
+        let preferences = RFC_9110.Parse.CommaSeparated<Byte.Input, Self> {
+            element in
+            var sub = element
+            guard let token = try? RFC_9110.Parse.Token<Byte.Input>().parse(&sub) else {
+                return nil
             }
+            let language = String(decoding: token, as: UTF8.self)
+            var quality = RFC_9110.Content.Negotiation.QualityValue.default
+            if let q = try? RFC_9110.Parse.QualityValue<Byte.Input>().parse(&sub) {
+                quality = RFC_9110.Content.Negotiation.QualityValue(Double(q) / 1000.0)
+            }
+            return Self(language: language, quality: quality)
+        }.parse(&input)
+        return preferences.sorted { lhs, rhs in
+            if lhs.quality.value != rhs.quality.value {
+                return lhs.quality > rhs.quality
+            }
+            return lhs.language.count > rhs.language.count
         }
     }
 }

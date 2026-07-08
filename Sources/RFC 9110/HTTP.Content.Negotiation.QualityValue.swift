@@ -34,26 +34,29 @@ extension RFC_9110.Content.Negotiation {
             self.value = min(max(value, 0.0), 1.0)
         }
 
-        /// Parses a quality value from a string
-        ///
-        /// - Parameter string: The quality value string (e.g., "0.8", "1.0")
-        /// - Returns: A QualityValue if parsing succeeds, nil otherwise
-        public static func parse(_ string: String) -> QualityValue? {
-            guard let doubleValue = Double(string) else { return nil }
-            return QualityValue(doubleValue)
-        }
+    }
+}
 
-        /// Default quality value (1.0)
-        public static let `default` = QualityValue(1.0)
+extension RFC_9110.Content.Negotiation.QualityValue {
+    /// Parses a quality value from a string
+    ///
+    /// - Parameter string: The quality value string (e.g., "0.8", "1.0")
+    /// - Returns: A QualityValue if parsing succeeds, nil otherwise
+    public static func parse(_ string: String) -> Self? {
+        guard let doubleValue = Double(string) else { return nil }
+        return Self(doubleValue)
+    }
 
-        /// Zero quality value (not acceptable)
-        public static let zero = QualityValue(0.0)
+    /// Default quality value (1.0)
+    public static let `default` = Self(1.0)
 
-        // MARK: - Comparable
+    /// Zero quality value (not acceptable)
+    public static let zero = Self(0.0)
 
-        public static func < (lhs: QualityValue, rhs: QualityValue) -> Bool {
-            lhs.value < rhs.value
-        }
+    // MARK: - Comparable
+
+    public static func < (lhs: Self, rhs: Self) -> Bool {
+        lhs.value < rhs.value
     }
 }
 

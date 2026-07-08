@@ -42,55 +42,58 @@ extension RFC_9110.Content.Negotiation {
             self.quality = quality
         }
 
-        /// Parses media type preferences from an Accept header value
-        ///
-        /// - Parameter headerValue: The Accept header value
-        /// - Returns: An array of media type preferences, sorted by quality (descending)
-        ///
-        /// ## Example
-        ///
-        /// ```swift
-        /// let prefs = HTTP.Content.Negotiation.MediaTypePreference.parse(
-        ///     "text/html, application/json;q=0.9, */*;q=0.1"
-        /// )
-        /// // Returns 3 preferences sorted by quality
-        /// ```
-        public static func parse(_ headerValue: String) -> [MediaTypePreference] {
-            var input = Byte.Input(utf8: headerValue)
-            let preferences = RFC_9110.Parse.CommaSeparated<Byte.Input, MediaTypePreference> {
-                element in
-                var sub = element
-                guard let mediaType = try? RFC_9110.MediaType.Parser<Byte.Input>().parse(&sub)
-                else {
-                    return nil
-                }
-                // Extract quality from parameters (q= is parsed as a media type parameter)
-                var quality = QualityValue.default
-                if let qStr = mediaType.parameters["q"], let q = Double(qStr) {
-                    quality = QualityValue(q)
-                }
-                // Remove q from media type parameters
-                var params = mediaType.parameters
-                params.removeValue(forKey: "q")
-                let cleanMediaType = RFC_9110.MediaType(
-                    mediaType.type,
-                    mediaType.subtype,
-                    parameters: params
-                )
-                return MediaTypePreference(mediaType: cleanMediaType, quality: quality)
-            }.parse(&input)
+    }
+}
 
-            // Sort by quality (descending), then by specificity
-            return preferences.sorted { lhs, rhs in
-                if lhs.quality.value != rhs.quality.value {
-                    return lhs.quality > rhs.quality
-                }
-                if lhs.mediaType.type == "*" && rhs.mediaType.type != "*" { return false }
-                if lhs.mediaType.type != "*" && rhs.mediaType.type == "*" { return true }
-                if lhs.mediaType.subtype == "*" && rhs.mediaType.subtype != "*" { return false }
-                if lhs.mediaType.subtype != "*" && rhs.mediaType.subtype == "*" { return true }
-                return false
+extension RFC_9110.Content.Negotiation.MediaTypePreference {
+    /// Parses media type preferences from an Accept header value
+    ///
+    /// - Parameter headerValue: The Accept header value
+    /// - Returns: An array of media type preferences, sorted by quality (descending)
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let prefs = HTTP.Content.Negotiation.MediaTypePreference.parse(
+    ///     "text/html, application/json;q=0.9, */*;q=0.1"
+    /// )
+    /// // Returns 3 preferences sorted by quality
+    /// ```
+    public static func parse(_ headerValue: String) -> [Self] {
+        var input = Byte.Input(utf8: headerValue)
+        let preferences = RFC_9110.Parse.CommaSeparated<Byte.Input, Self> {
+            element in
+            var sub = element
+            guard let mediaType = try? RFC_9110.MediaType.Parser<Byte.Input>().parse(&sub)
+            else {
+                return nil
             }
+            // Extract quality from parameters (q= is parsed as a media type parameter)
+            var quality = RFC_9110.Content.Negotiation.QualityValue.default
+            if let qStr = mediaType.parameters["q"], let q = Double(qStr) {
+                quality = RFC_9110.Content.Negotiation.QualityValue(q)
+            }
+            // Remove q from media type parameters
+            var params = mediaType.parameters
+            params.removeValue(forKey: "q")
+            let cleanMediaType = RFC_9110.MediaType(
+                mediaType.type,
+                mediaType.subtype,
+                parameters: params
+            )
+            return Self(mediaType: cleanMediaType, quality: quality)
+        }.parse(&input)
+
+        // Sort by quality (descending), then by specificity
+        return preferences.sorted { lhs, rhs in
+            if lhs.quality.value != rhs.quality.value {
+                return lhs.quality > rhs.quality
+            }
+            if lhs.mediaType.type == "*" && rhs.mediaType.type != "*" { return false }
+            if lhs.mediaType.type != "*" && rhs.mediaType.type == "*" { return true }
+            if lhs.mediaType.subtype == "*" && rhs.mediaType.subtype != "*" { return false }
+            if lhs.mediaType.subtype != "*" && rhs.mediaType.subtype == "*" { return true }
+            return false
         }
     }
 }

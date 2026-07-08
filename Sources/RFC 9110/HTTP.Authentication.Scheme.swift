@@ -28,17 +28,20 @@ extension RFC_9110.Authentication {
             self.name = name
         }
 
-        // MARK: - Equatable
+    }
+}
 
-        public static func == (lhs: Scheme, rhs: Scheme) -> Bool {
-            lhs.name.lowercased() == rhs.name.lowercased()
-        }
+extension RFC_9110.Authentication.Scheme {
+    // MARK: - Equatable
 
-        // MARK: - Hashable
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.name.lowercased() == rhs.name.lowercased()
+    }
 
-        public func hash(into hasher: inout Hasher) {
-            hasher.combine(name.lowercased())
-        }
+    // MARK: - Hashable
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(name.lowercased())
     }
 }
 

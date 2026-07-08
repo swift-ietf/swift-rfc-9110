@@ -47,39 +47,42 @@ extension RFC_9110.Authentication {
             self.token = token
         }
 
-        /// The header value for the Authorization header
-        ///
-        /// ## Example
-        ///
-        /// ```swift
-        /// let creds = HTTP.Authentication.Credentials.bearer("abc123")
-        /// creds.headerValue // "Bearer abc123"
-        /// ```
-        public var headerValue: String {
-            "\(scheme.name) \(token)"
+    }
+}
+
+extension RFC_9110.Authentication.Credentials {
+    /// The header value for the Authorization header
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let creds = HTTP.Authentication.Credentials.bearer("abc123")
+    /// creds.headerValue // "Bearer abc123"
+    /// ```
+    public var headerValue: String {
+        "\(scheme.name) \(token)"
+    }
+
+    /// Parses credentials from an Authorization header value
+    ///
+    /// - Parameter headerValue: The Authorization header value
+    /// - Returns: Credentials if parsing succeeds, nil otherwise
+    public static func parse(_ headerValue: String) -> Self? {
+        let trimmed = String(headerValue.trimming(where: { $0.isWhitespace }))
+
+        guard let spaceIndex = trimmed.firstIndex(of: " ") else {
+            return nil
         }
 
-        /// Parses credentials from an Authorization header value
-        ///
-        /// - Parameter headerValue: The Authorization header value
-        /// - Returns: Credentials if parsing succeeds, nil otherwise
-        public static func parse(_ headerValue: String) -> Credentials? {
-            let trimmed = String(headerValue.trimming(where: { $0.isWhitespace }))
+        let schemeName = String(trimmed[..<spaceIndex])
+        let scheme = RFC_9110.Authentication.Scheme(schemeName)
 
-            guard let spaceIndex = trimmed.firstIndex(of: " ") else {
-                return nil
-            }
+        let token = String(
+            String(trimmed[trimmed.index(after: spaceIndex)...])
+                .trimming(where: { $0.isWhitespace })
+        )
 
-            let schemeName = String(trimmed[..<spaceIndex])
-            let scheme = Scheme(schemeName)
-
-            let token = String(
-                String(trimmed[trimmed.index(after: spaceIndex)...])
-                    .trimming(where: { $0.isWhitespace })
-            )
-
-            return Credentials(scheme: scheme, token: token)
-        }
+        return Self(scheme: scheme, token: token)
     }
 }
 

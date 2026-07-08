@@ -37,40 +37,43 @@ extension RFC_9110.Content {
             self.tag = tag.lowercased()
         }
 
-        // MARK: - Header Parsing
+    }
+}
 
-        /// Parses a Content-Language header value into an array of Language values
-        ///
-        /// - Parameter headerValue: The Content-Language header value (e.g., "en-US, fr-CA")
-        /// - Returns: An array of Language values
-        ///
-        /// # Example
-        ///
-        /// ```swift
-        /// let languages = RFC_9110.Content.Language.parse("en-US, fr-CA")
-        /// // [Language("en-us"), Language("fr-ca")]
-        /// ```
-        public static func parse(_ headerValue: String) -> [Language] {
-            RFC_9110.Parse.tokens(in: headerValue).map { Language($0) }
-        }
+extension RFC_9110.Content.Language {
+    // MARK: - Header Parsing
 
-        /// Formats an array of Language values into a header value
-        ///
-        /// - Parameter languages: The languages to format
-        /// - Returns: A Content-Language header value
-        ///
-        /// # Example
-        ///
-        /// ```swift
-        /// let header = RFC_9110.Content.Language.formatHeader([.englishUS, .frenchCA])
-        /// // "en-us, fr-ca"
-        /// ```
-        public static func formatHeader(_ languages: [Language]) -> String {
-            return
-                languages
-                .map { $0.tag }
-                .joined(separator: ", ")
-        }
+    /// Parses a Content-Language header value into an array of Language values
+    ///
+    /// - Parameter headerValue: The Content-Language header value (e.g., "en-US, fr-CA")
+    /// - Returns: An array of Language values
+    ///
+    /// # Example
+    ///
+    /// ```swift
+    /// let languages = RFC_9110.Content.Language.parse("en-US, fr-CA")
+    /// // [Language("en-us"), Language("fr-ca")]
+    /// ```
+    public static func parse(_ headerValue: String) -> [Self] {
+        RFC_9110.Parse.tokens(in: headerValue).map { Self($0) }
+    }
+
+    /// Formats an array of Language values into a header value
+    ///
+    /// - Parameter languages: The languages to format
+    /// - Returns: A Content-Language header value
+    ///
+    /// # Example
+    ///
+    /// ```swift
+    /// let header = RFC_9110.Content.Language.formatHeader([.englishUS, .frenchCA])
+    /// // "en-us, fr-ca"
+    /// ```
+    public static func formatHeader(_ languages: [Self]) -> String {
+        return
+            languages
+            .map { $0.tag }
+            .joined(separator: ", ")
     }
 }
 

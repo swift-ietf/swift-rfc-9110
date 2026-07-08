@@ -47,37 +47,40 @@ extension RFC_9110.Content.Negotiation {
             self.quality = quality
         }
 
-        /// Parses charset preferences from an Accept-Charset header value
-        ///
-        /// - Parameter headerValue: The Accept-Charset header value
-        /// - Returns: An array of charset preferences, sorted by quality (descending)
-        ///
-        /// ## Example
-        ///
-        /// ```swift
-        /// let prefs = HTTP.Content.Negotiation.CharsetPreference.parse(
-        ///     "utf-8;q=1.0, iso-8859-1;q=0.5"
-        /// )
-        /// ```
-        public static func parse(_ headerValue: String) -> [CharsetPreference] {
-            var input = Byte.Input(utf8: headerValue)
-            let preferences = RFC_9110.Parse.CommaSeparated<Byte.Input, CharsetPreference> {
-                element in
-                var sub = element
-                guard let token = try? RFC_9110.Parse.Token<Byte.Input>().parse(&sub) else {
-                    return nil
-                }
-                var quality = QualityValue.default
-                if let q = try? RFC_9110.Parse.QualityValue<Byte.Input>().parse(&sub) {
-                    quality = QualityValue(Double(q) / 1000.0)
-                }
-                return CharsetPreference(
-                    charset: String(decoding: token, as: UTF8.self),
-                    quality: quality
-                )
-            }.parse(&input)
-            return preferences.sorted { $0.quality > $1.quality }
-        }
+    }
+}
+
+extension RFC_9110.Content.Negotiation.CharsetPreference {
+    /// Parses charset preferences from an Accept-Charset header value
+    ///
+    /// - Parameter headerValue: The Accept-Charset header value
+    /// - Returns: An array of charset preferences, sorted by quality (descending)
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let prefs = HTTP.Content.Negotiation.CharsetPreference.parse(
+    ///     "utf-8;q=1.0, iso-8859-1;q=0.5"
+    /// )
+    /// ```
+    public static func parse(_ headerValue: String) -> [Self] {
+        var input = Byte.Input(utf8: headerValue)
+        let preferences = RFC_9110.Parse.CommaSeparated<Byte.Input, Self> {
+            element in
+            var sub = element
+            guard let token = try? RFC_9110.Parse.Token<Byte.Input>().parse(&sub) else {
+                return nil
+            }
+            var quality = RFC_9110.Content.Negotiation.QualityValue.default
+            if let q = try? RFC_9110.Parse.QualityValue<Byte.Input>().parse(&sub) {
+                quality = RFC_9110.Content.Negotiation.QualityValue(Double(q) / 1000.0)
+            }
+            return Self(
+                charset: String(decoding: token, as: UTF8.self),
+                quality: quality
+            )
+        }.parse(&input)
+        return preferences.sorted { $0.quality > $1.quality }
     }
 }
 

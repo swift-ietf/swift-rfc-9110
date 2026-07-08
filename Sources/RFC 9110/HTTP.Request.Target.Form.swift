@@ -15,32 +15,34 @@ extension RFC_9110.Request.Target {
     /// ```
     public struct Form: Sendable {
         let target: RFC_9110.Request.Target
-
-        /// Returns true if this is origin-form
-        public var isOrigin: Bool {
-            if case .origin = target { return true }
-            return false
-        }
-
-        /// Returns true if this is absolute-form
-        public var isAbsolute: Bool {
-            if case .absolute = target { return true }
-            return false
-        }
-
-        /// Returns true if this is authority-form
-        public var isAuthority: Bool {
-            if case .authority = target { return true }
-            return false
-        }
-
-        /// Returns true if this is asterisk-form
-        public var isAsterisk: Bool {
-            if case .asterisk = target { return true }
-            return false
-        }
     }
 
     /// Accessor for querying the request-target form
     public var form: Form { Form(target: self) }
+}
+
+extension RFC_9110.Request.Target.Form {
+    /// Returns true if this is origin-form
+    public var isOrigin: Bool {
+        if case .origin = target { return true }
+        return false
+    }
+
+    /// Returns true if this is absolute-form
+    public var isAbsolute: Bool {
+        if case .absolute = target { return true }
+        return false
+    }
+
+    /// Returns true if this is authority-form
+    public var isAuthority: Bool {
+        if case .authority = target { return true }
+        return false
+    }
+
+    /// Returns true if this is asterisk-form
+    public var isAsterisk: Bool {
+        if case .asterisk = target { return true }
+        return false
+    }
 }

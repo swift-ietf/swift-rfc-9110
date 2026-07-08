@@ -58,89 +58,92 @@ extension RFC_9110.Authentication {
             self.parameters = ["realm": realm]
         }
 
-        /// The realm parameter, if present
-        public var realm: String? {
-            parameters["realm"]
-        }
+    }
+}
 
-        /// Formats the challenge as a header value
-        ///
-        /// - Returns: The formatted challenge string
-        ///
-        /// ## Example
-        ///
-        /// ```swift
-        /// let challenge = HTTP.Authentication.Challenge(scheme: .basic, realm: "API")
-        /// challenge.headerValue // "Basic realm=\"API\""
-        /// ```
-        public var headerValue: String {
-            var result = scheme.name
+extension RFC_9110.Authentication.Challenge {
+    /// The realm parameter, if present
+    public var realm: String? {
+        parameters["realm"]
+    }
 
-            if !parameters.isEmpty {
-                let params =
-                    parameters
-                    .sorted { $0.key < $1.key }
-                    .map { key, value in
-                        // Quote value if it contains special characters
-                        if value.contains(" ") || value.contains(",") || value.contains("=") {
-                            return "\(key)=\"\(value)\""
-                        } else {
-                            return "\(key)=\(value)"
-                        }
+    /// Formats the challenge as a header value
+    ///
+    /// - Returns: The formatted challenge string
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let challenge = HTTP.Authentication.Challenge(scheme: .basic, realm: "API")
+    /// challenge.headerValue // "Basic realm=\"API\""
+    /// ```
+    public var headerValue: String {
+        var result = scheme.name
+
+        if !parameters.isEmpty {
+            let params =
+                parameters
+                .sorted { $0.key < $1.key }
+                .map { key, value in
+                    // Quote value if it contains special characters
+                    if value.contains(" ") || value.contains(",") || value.contains("=") {
+                        return "\(key)=\"\(value)\""
+                    } else {
+                        return "\(key)=\(value)"
                     }
-                    .joined(separator: ", ")
-                result += " \(params)"
-            }
-
-            return result
+                }
+                .joined(separator: ", ")
+            result += " \(params)"
         }
 
-        /// Parses a challenge from a header value
-        ///
-        /// - Parameter headerValue: The WWW-Authenticate header value
-        /// - Returns: A Challenge if parsing succeeds, nil otherwise
-        public static func parse(_ headerValue: String) -> Challenge? {
-            var input = Byte.Input(utf8: headerValue)
+        return result
+    }
 
-            // Skip leading OWS
-            RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
+    /// Parses a challenge from a header value
+    ///
+    /// - Parameter headerValue: The WWW-Authenticate header value
+    /// - Returns: A Challenge if parsing succeeds, nil otherwise
+    public static func parse(_ headerValue: String) -> Self? {
+        var input = Byte.Input(utf8: headerValue)
 
-            // Parse scheme (token)
-            guard let schemeSlice = try? RFC_9110.Parse.Token<Byte.Input>().parse(&input) else {
-                return nil
-            }
-            let scheme = Scheme(String(decoding: schemeSlice, as: UTF8.self))
+        // Skip leading OWS
+        RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
 
-            // If no more content, scheme-only challenge
-            RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
-            guard input.startIndex < input.endIndex else {
-                return Challenge(scheme: scheme)
-            }
-
-            // Parse comma-separated parameters using Parameter parser
-            var parameters: [String: String] = [:]
-            while true {
-                let saved = input
-                guard let param = try? RFC_9110.Parse.Parameter<Byte.Input>().parse(&input) else {
-                    input = saved
-                    break
-                }
-                parameters[String(decoding: param.name, as: UTF8.self)] = String(
-                    decoding: param.value,
-                    as: UTF8.self
-                )
-
-                // Try to consume OWS "," OWS for next parameter
-                RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
-                guard input.startIndex < input.endIndex, input[input.startIndex] == 0x2C else {
-                    break
-                }
-                input = input[input.index(after: input.startIndex)...]
-                RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
-            }
-
-            return Challenge(scheme: scheme, parameters: parameters)
+        // Parse scheme (token)
+        guard let schemeSlice = try? RFC_9110.Parse.Token<Byte.Input>().parse(&input) else {
+            return nil
         }
+        let scheme = RFC_9110.Authentication.Scheme(String(decoding: schemeSlice, as: UTF8.self))
+
+        // If no more content, scheme-only challenge
+        RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
+        guard input.startIndex < input.endIndex else {
+            return Self(scheme: scheme)
+        }
+
+        // Parse comma-separated parameters using Parameter parser
+        var parameters: [String: String] = [:]
+        while true {
+            let saved = input
+            guard let param = try? RFC_9110.Parse.Parameter<Byte.Input>().parse(&input) else {
+                input = saved
+                break
+            }
+            parameters[String(decoding: param.name, as: UTF8.self)] = String(
+                decoding: param.value,
+                as: UTF8.self
+            )
+
+            // Try to consume OWS "," OWS for next parameter
+            RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
+            guard input.startIndex < input.endIndex, input[input.startIndex] == 0x2C else {
+                break
+            }
+            input = input[input.index(after: input.startIndex)...]
+            RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
+        }
+
+        return Self(scheme: scheme, parameters: parameters)
     }
 }
 

@@ -60,7 +60,7 @@ extension RFC_9110.Parse.CommaSeparated: Parser.`Protocol` {
     }
 
     @inlinable
-    func _parseElement(_ input: inout Input) -> T? {
+    package func _parseElement(_ input: inout Input) -> T? {
         // Collect bytes until comma or end
         var index = input.startIndex
         while index < input.endIndex {

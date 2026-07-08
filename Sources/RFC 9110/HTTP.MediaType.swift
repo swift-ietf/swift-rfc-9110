@@ -69,99 +69,102 @@ extension RFC_9110 {
             self.parameters = parameters
         }
 
-        /// The complete media type string
-        ///
-        /// Format: "type/subtype" or "type/subtype; param=value"
-        public var value: String {
-            var result = "\(type)/\(subtype)"
+    }
+}
 
-            if !parameters.isEmpty {
-                let params =
-                    parameters
-                    .sorted { $0.key < $1.key }
-                    .map { "\($0.key)=\($0.value)" }
-                    .joined(separator: "; ")
-                result += "; \(params)"
-            }
+extension RFC_9110.MediaType {
+    /// The complete media type string
+    ///
+    /// Format: "type/subtype" or "type/subtype; param=value"
+    public var value: String {
+        var result = "\(type)/\(subtype)"
 
-            return result
+        if !parameters.isEmpty {
+            let params =
+                parameters
+                .sorted { $0.key < $1.key }
+                .map { "\($0.key)=\($0.value)" }
+                .joined(separator: "; ")
+            result += "; \(params)"
         }
 
-        /// Parses a media type string
-        ///
-        /// - Parameter string: The media type string to parse
-        /// - Returns: A MediaType if parsing succeeds, nil otherwise
-        ///
-        /// ## Example
-        ///
-        /// ```swift
-        /// let mt = HTTP.MediaType.parse("text/html; charset=utf-8")
-        /// // mt?.type == "text"
-        /// // mt?.subtype == "html"
-        /// // mt?.parameters["charset"] == "utf-8"
-        /// ```
-        public static func parse(_ string: String) -> MediaType? {
-            var input = Byte.Input(utf8: string)
-            return try? Parser<Byte.Input>().parse(&input)
+        return result
+    }
+
+    /// Parses a media type string
+    ///
+    /// - Parameter string: The media type string to parse
+    /// - Returns: A MediaType if parsing succeeds, nil otherwise
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let mt = HTTP.MediaType.parse("text/html; charset=utf-8")
+    /// // mt?.type == "text"
+    /// // mt?.subtype == "html"
+    /// // mt?.parameters["charset"] == "utf-8"
+    /// ```
+    public static func parse(_ string: String) -> Self? {
+        var input = Byte.Input(utf8: string)
+        return try? Parser<Byte.Input>().parse(&input)
+    }
+
+    // MARK: - Matching
+
+    /// Returns true if this media type matches the given pattern
+    ///
+    /// Supports wildcards: "*/*" matches all, "text/*" matches all text types
+    ///
+    /// - Parameter pattern: The pattern to match against
+    /// - Returns: True if this media type matches the pattern
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let json = HTTP.MediaType.json
+    /// json.matches("*/*")              // true
+    /// json.matches("application/*")    // true
+    /// json.matches("application/json") // true
+    /// json.matches("text/*")           // false
+    /// ```
+    public func matches(_ pattern: String) -> Bool {
+        guard let patternType = Self.parse(pattern) else {
+            return false
         }
 
-        // MARK: - Matching
+        return matches(patternType)
+    }
 
-        /// Returns true if this media type matches the given pattern
-        ///
-        /// Supports wildcards: "*/*" matches all, "text/*" matches all text types
-        ///
-        /// - Parameter pattern: The pattern to match against
-        /// - Returns: True if this media type matches the pattern
-        ///
-        /// ## Example
-        ///
-        /// ```swift
-        /// let json = HTTP.MediaType.json
-        /// json.matches("*/*")              // true
-        /// json.matches("application/*")    // true
-        /// json.matches("application/json") // true
-        /// json.matches("text/*")           // false
-        /// ```
-        public func matches(_ pattern: String) -> Bool {
-            guard let patternType = MediaType.parse(pattern) else {
-                return false
-            }
-
-            return matches(patternType)
+    /// Returns true if this media type matches the given media type pattern
+    ///
+    /// - Parameter other: The media type pattern to match against
+    /// - Returns: True if this media type matches the pattern
+    public func matches(_ other: Self) -> Bool {
+        // */* matches everything
+        if other.type == "*" && other.subtype == "*" {
+            return true
         }
 
-        /// Returns true if this media type matches the given media type pattern
-        ///
-        /// - Parameter other: The media type pattern to match against
-        /// - Returns: True if this media type matches the pattern
-        public func matches(_ other: MediaType) -> Bool {
-            // */* matches everything
-            if other.type == "*" && other.subtype == "*" {
-                return true
-            }
-
-            // type/* matches all subtypes of type
-            if other.type == type && other.subtype == "*" {
-                return true
-            }
-
-            // Exact match (ignoring parameters)
-            return type == other.type && subtype == other.subtype
+        // type/* matches all subtypes of type
+        if other.type == type && other.subtype == "*" {
+            return true
         }
 
-        // MARK: - Equatable (based on type and subtype, ignoring parameters)
+        // Exact match (ignoring parameters)
+        return type == other.type && subtype == other.subtype
+    }
 
-        public static func == (lhs: MediaType, rhs: MediaType) -> Bool {
-            lhs.type == rhs.type && lhs.subtype == rhs.subtype
-        }
+    // MARK: - Equatable (based on type and subtype, ignoring parameters)
 
-        // MARK: - Hashable
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.type == rhs.type && lhs.subtype == rhs.subtype
+    }
 
-        public func hash(into hasher: inout Hasher) {
-            hasher.combine(type)
-            hasher.combine(subtype)
-        }
+    // MARK: - Hashable
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(type)
+        hasher.combine(subtype)
     }
 }
 

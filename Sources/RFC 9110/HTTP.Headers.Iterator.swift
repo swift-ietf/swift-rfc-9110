@@ -27,23 +27,6 @@ extension RFC_9110.Headers: Sequence {
             self.storage = storage
         }
 
-        public mutating func next() -> RFC_9110.Header.Field? {
-            guard nameIndex < orderedNames.count else { return nil }
-
-            let name = orderedNames[nameIndex]
-            let values = storage[name]!
-
-            guard valueIndex < values.count else {
-                nameIndex += 1
-                valueIndex = 0
-                return next()
-            }
-
-            let value = values[valueIndex]
-            valueIndex += 1
-
-            return RFC_9110.Header.Field(name: name, value: value)
-        }
     }
 
     /// Iterates over all header fields (expanding headers with multiple values)
@@ -56,5 +39,25 @@ extension RFC_9110.Headers: Sequence {
     /// ```
     public func makeIterator() -> Iterator {
         Iterator(orderedNames: orderedNames, storage: storage)
+    }
+}
+
+extension RFC_9110.Headers.Iterator {
+    public mutating func next() -> RFC_9110.Header.Field? {
+        guard nameIndex < orderedNames.count else { return nil }
+
+        let name = orderedNames[nameIndex]
+        let values = storage[name]!
+
+        guard valueIndex < values.count else {
+            nameIndex += 1
+            valueIndex = 0
+            return next()
+        }
+
+        let value = values[valueIndex]
+        valueIndex += 1
+
+        return RFC_9110.Header.Field(name: name, value: value)
     }
 }

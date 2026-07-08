@@ -137,67 +137,69 @@ extension RFC_9110.Request {
         /// - [RFC 9110 Section 9.3.7: OPTIONS](https://www.rfc-editor.org/rfc/rfc9110.html#section-9.3.7)
         case asterisk
 
-        /// The string representation of the request-target
-        ///
-        /// Returns the request-target as it would appear in an HTTP request line.
-        public var rawValue: String {
-            switch self {
-            case .origin(let path, let query):
-                if let query = query, !query.isEmpty {
-                    return "\(path.description)?\(query.description)"
-                } else {
-                    return path.description
-                }
+    }
+}
 
-            case .absolute(let uri):
-                return uri.value
-
-            case .authority(let authority):
-                return authority.rawValue
-
-            case .asterisk:
-                return "*"
+extension RFC_9110.Request.Target {
+    /// The string representation of the request-target
+    ///
+    /// Returns the request-target as it would appear in an HTTP request line.
+    public var rawValue: String {
+        switch self {
+        case .origin(let path, let query):
+            if let query = query, !query.isEmpty {
+                return "\(path.description)?\(query.description)"
+            } else {
+                return path.description
             }
+
+        case .absolute(let uri):
+            return uri.value
+
+        case .authority(let authority):
+            return authority.rawValue
+
+        case .asterisk:
+            return "*"
         }
+    }
 
-        /// Returns the path component, if applicable
-        ///
-        /// For origin-form, returns the path.
-        /// For absolute-form, attempts to extract the path from the URI.
-        /// For authority-form and asterisk-form, returns nil.
-        public var path: RFC_3986.URI.Path? {
-            switch self {
-            case .origin(let path, _):
-                return path
+    /// Returns the path component, if applicable
+    ///
+    /// For origin-form, returns the path.
+    /// For absolute-form, attempts to extract the path from the URI.
+    /// For authority-form and asterisk-form, returns nil.
+    public var path: RFC_3986.URI.Path? {
+        switch self {
+        case .origin(let path, _):
+            return path
 
-            case .absolute(let uri):
-                // Return path from URI
-                return uri.path
+        case .absolute(let uri):
+            // Return path from URI
+            return uri.path
 
-            case .authority, .asterisk:
-                return nil
-            }
+        case .authority, .asterisk:
+            return nil
         }
+    }
 
-        /// Returns the query component, if applicable
-        ///
-        /// For origin-form, returns the query.
-        /// For absolute-form, attempts to extract the query from the URI.
-        /// For authority-form and asterisk-form, returns nil.
-        public var query: RFC_3986.URI.Query? {
-            switch self {
-            case .origin(_, let query):
-                return query
+    /// Returns the query component, if applicable
+    ///
+    /// For origin-form, returns the query.
+    /// For absolute-form, attempts to extract the query from the URI.
+    /// For authority-form and asterisk-form, returns nil.
+    public var query: RFC_3986.URI.Query? {
+        switch self {
+        case .origin(_, let query):
+            return query
 
-            case .absolute(let uri):
-                // Return query from URI
-                return uri.query
+        case .absolute(let uri):
+            // Return query from URI
+            return uri.query
 
-            case .authority, .asterisk:
-                return nil
-            }
+        case .authority, .asterisk:
+            return nil
         }
-
     }
 }
 

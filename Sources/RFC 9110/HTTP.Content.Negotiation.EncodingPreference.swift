@@ -42,35 +42,38 @@ extension RFC_9110.Content.Negotiation {
             self.quality = quality
         }
 
-        /// Parses encoding preferences from an Accept-Encoding header value
-        ///
-        /// - Parameter headerValue: The Accept-Encoding header value
-        /// - Returns: An array of encoding preferences, sorted by quality (descending)
-        ///
-        /// ## Example
-        ///
-        /// ```swift
-        /// let prefs = HTTP.Content.Negotiation.EncodingPreference.parse(
-        ///     "gzip;q=1.0, br;q=0.8, deflate;q=0.5"
-        /// )
-        /// ```
-        public static func parse(_ headerValue: String) -> [EncodingPreference] {
-            var input = Byte.Input(utf8: headerValue)
-            let preferences = RFC_9110.Parse.CommaSeparated<Byte.Input, EncodingPreference> {
-                element in
-                var sub = element
-                guard let token = try? RFC_9110.Parse.Token<Byte.Input>().parse(&sub) else {
-                    return nil
-                }
-                let encoding = RFC_9110.Content.Encoding(String(decoding: token, as: UTF8.self))
-                var quality = QualityValue.default
-                if let q = try? RFC_9110.Parse.QualityValue<Byte.Input>().parse(&sub) {
-                    quality = QualityValue(Double(q) / 1000.0)
-                }
-                return EncodingPreference(encoding: encoding, quality: quality)
-            }.parse(&input)
-            return preferences.sorted { $0.quality > $1.quality }
-        }
+    }
+}
+
+extension RFC_9110.Content.Negotiation.EncodingPreference {
+    /// Parses encoding preferences from an Accept-Encoding header value
+    ///
+    /// - Parameter headerValue: The Accept-Encoding header value
+    /// - Returns: An array of encoding preferences, sorted by quality (descending)
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// let prefs = HTTP.Content.Negotiation.EncodingPreference.parse(
+    ///     "gzip;q=1.0, br;q=0.8, deflate;q=0.5"
+    /// )
+    /// ```
+    public static func parse(_ headerValue: String) -> [Self] {
+        var input = Byte.Input(utf8: headerValue)
+        let preferences = RFC_9110.Parse.CommaSeparated<Byte.Input, Self> {
+            element in
+            var sub = element
+            guard let token = try? RFC_9110.Parse.Token<Byte.Input>().parse(&sub) else {
+                return nil
+            }
+            let encoding = RFC_9110.Content.Encoding(String(decoding: token, as: UTF8.self))
+            var quality = RFC_9110.Content.Negotiation.QualityValue.default
+            if let q = try? RFC_9110.Parse.QualityValue<Byte.Input>().parse(&sub) {
+                quality = RFC_9110.Content.Negotiation.QualityValue(Double(q) / 1000.0)
+            }
+            return Self(encoding: encoding, quality: quality)
+        }.parse(&input)
+        return preferences.sorted { $0.quality > $1.quality }
     }
 }
 

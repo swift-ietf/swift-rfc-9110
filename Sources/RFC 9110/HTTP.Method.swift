@@ -104,22 +104,6 @@ extension RFC_9110 {
             }
         }
 
-        // MARK: - Equatable
-
-        public static func == (lhs: Method, rhs: Method) -> Bool {
-            lhs.rawValue == rhs.rawValue && lhs.isSafe == rhs.isSafe
-                && lhs.isIdempotent == rhs.isIdempotent && lhs.isCacheable == rhs.isCacheable
-        }
-
-        // MARK: - Hashable
-
-        public func hash(into hasher: inout Hasher) {
-            hasher.combine(rawValue)
-            hasher.combine(isSafe)
-            hasher.combine(isIdempotent)
-            hasher.combine(isCacheable)
-        }
-
         // MARK: - Codable
 
         public init(from decoder: any Decoder) throws {
@@ -140,10 +124,29 @@ extension RFC_9110 {
             }
         }
 
-        public func encode(to encoder: any Encoder) throws {
-            var container = encoder.singleValueContainer()
-            try container.encode(rawValue)
-        }
+    }
+}
+
+extension RFC_9110.Method {
+    // MARK: - Equatable
+
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.rawValue == rhs.rawValue && lhs.isSafe == rhs.isSafe
+            && lhs.isIdempotent == rhs.isIdempotent && lhs.isCacheable == rhs.isCacheable
+    }
+
+    // MARK: - Hashable
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(rawValue)
+        hasher.combine(isSafe)
+        hasher.combine(isIdempotent)
+        hasher.combine(isCacheable)
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(rawValue)
     }
 }
 

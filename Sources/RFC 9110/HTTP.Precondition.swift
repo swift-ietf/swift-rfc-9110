@@ -64,16 +64,18 @@ extension RFC_9110 {
         ///
         /// # RFC 9110 Section 13.1.5
         case ifRange(Validator)
-
-        /// A validator for If-Range precondition
-        public enum Validator: Sendable, Equatable {
-            case etag(RFC_9110.Entity.Tag)
-            case date(RFC_5322.DateTime)
-        }
-
-        /// Wildcard entity tag for matching any representation
-        public static let wildcardTag = RFC_9110.Entity.Tag.strong("*")
     }
+}
+
+extension RFC_9110.Precondition {
+    /// A validator for If-Range precondition
+    public enum Validator: Sendable, Equatable {
+        case etag(RFC_9110.Entity.Tag)
+        case date(RFC_5322.DateTime)
+    }
+
+    /// Wildcard entity tag for matching any representation
+    public static let wildcardTag = RFC_9110.Entity.Tag.strong("*")
 }
 
 // MARK: - Header Generation

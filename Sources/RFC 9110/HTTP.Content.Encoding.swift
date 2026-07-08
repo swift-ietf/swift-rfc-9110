@@ -61,44 +61,46 @@ extension RFC_9110.Content {
         public init(_ value: String) {
             self.value = value.lowercased()
         }
+    }
+}
 
-        /// Parses content encodings from a header value
-        ///
-        /// Supports comma-separated list of encodings.
-        ///
-        /// - Parameter headerValue: The Content-Encoding header value
-        /// - Returns: Array of content encodings
-        ///
-        /// ## Example
-        ///
-        /// ```swift
-        /// Encoding.parse("gzip")
-        /// // [.gzip]
-        ///
-        /// Encoding.parse("gzip, deflate")
-        /// // [.gzip, .deflate]
-        ///
-        /// Encoding.parse("br")
-        /// // [.brotli]
-        /// ```
-        public static func parse(_ headerValue: String) -> [Encoding] {
-            RFC_9110.Parse.tokens(in: headerValue).map { Encoding($0) }
-        }
+extension RFC_9110.Content.Encoding {
+    /// Parses content encodings from a header value
+    ///
+    /// Supports comma-separated list of encodings.
+    ///
+    /// - Parameter headerValue: The Content-Encoding header value
+    /// - Returns: Array of content encodings
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// Encoding.parse("gzip")
+    /// // [.gzip]
+    ///
+    /// Encoding.parse("gzip, deflate")
+    /// // [.gzip, .deflate]
+    ///
+    /// Encoding.parse("br")
+    /// // [.brotli]
+    /// ```
+    public static func parse(_ headerValue: String) -> [Self] {
+        RFC_9110.Parse.tokens(in: headerValue).map { Self($0) }
+    }
 
-        /// Formats multiple encodings as a header value
-        ///
-        /// - Parameter encodings: The encodings to format
-        /// - Returns: Comma-separated encoding list
-        ///
-        /// ## Example
-        ///
-        /// ```swift
-        /// Encoding.formatHeader([.gzip, .deflate])
-        /// // "gzip, deflate"
-        /// ```
-        public static func formatHeader(_ encodings: [Encoding]) -> String {
-            encodings.map(\.value).joined(separator: ", ")
-        }
+    /// Formats multiple encodings as a header value
+    ///
+    /// - Parameter encodings: The encodings to format
+    /// - Returns: Comma-separated encoding list
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// Encoding.formatHeader([.gzip, .deflate])
+    /// // "gzip, deflate"
+    /// ```
+    public static func formatHeader(_ encodings: [Self]) -> String {
+        encodings.map(\.value).joined(separator: ", ")
     }
 }
 

@@ -80,59 +80,62 @@ extension RFC_9110.Entity {
             self.isWeak = isWeak
         }
 
-        /// The header value representation
-        ///
-        /// - Returns: The ETag formatted for use in HTTP headers
-        ///
-        /// ## Examples
-        ///
-        /// ```swift
-        /// Entity.Tag.strong("abc").headerValue  // "abc"
-        /// Entity.Tag.weak("abc").headerValue    // W/"abc"
-        /// ```
-        public var headerValue: String {
-            if isWeak {
-                return "W/\"\(value)\""
-            } else {
-                return "\"\(value)\""
+    }
+}
+
+extension RFC_9110.Entity.Tag {
+    /// The header value representation
+    ///
+    /// - Returns: The ETag formatted for use in HTTP headers
+    ///
+    /// ## Examples
+    ///
+    /// ```swift
+    /// Entity.Tag.strong("abc").headerValue  // "abc"
+    /// Entity.Tag.weak("abc").headerValue    // W/"abc"
+    /// ```
+    public var headerValue: String {
+        if isWeak {
+            return "W/\"\(value)\""
+        } else {
+            return "\"\(value)\""
+        }
+    }
+
+    /// Parses an entity tag from a header value
+    ///
+    /// - Parameter headerValue: The ETag header value to parse
+    /// - Returns: A Tag if parsing succeeds, nil otherwise
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// Entity.Tag.parse("\"abc123\"")        // Entity.Tag(value: "abc123", isWeak: false)
+    /// Entity.Tag.parse("W/\"abc123\"")      // Entity.Tag(value: "abc123", isWeak: true)
+    /// Entity.Tag.parse("invalid")           // nil
+    /// ```
+    public static func parse(_ headerValue: String) -> Self? {
+        var input = Byte.Input(utf8: headerValue)
+
+        // OWS
+        RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
+
+        // Check for weak prefix "W/"
+        var isWeak = false
+        if input.startIndex < input.endIndex, input[input.startIndex] == 0x57 {  // 'W'
+            let next = input.index(after: input.startIndex)
+            if next < input.endIndex, input[next] == 0x2F {  // '/'
+                input = input[input.index(after: next)...]
+                isWeak = true
             }
         }
 
-        /// Parses an entity tag from a header value
-        ///
-        /// - Parameter headerValue: The ETag header value to parse
-        /// - Returns: A Tag if parsing succeeds, nil otherwise
-        ///
-        /// ## Example
-        ///
-        /// ```swift
-        /// Entity.Tag.parse("\"abc123\"")        // Entity.Tag(value: "abc123", isWeak: false)
-        /// Entity.Tag.parse("W/\"abc123\"")      // Entity.Tag(value: "abc123", isWeak: true)
-        /// Entity.Tag.parse("invalid")           // nil
-        /// ```
-        public static func parse(_ headerValue: String) -> Tag? {
-            var input = Byte.Input(utf8: headerValue)
-
-            // OWS
-            RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
-
-            // Check for weak prefix "W/"
-            var isWeak = false
-            if input.startIndex < input.endIndex, input[input.startIndex] == 0x57 {  // 'W'
-                let next = input.index(after: input.startIndex)
-                if next < input.endIndex, input[next] == 0x2F {  // '/'
-                    input = input[input.index(after: next)...]
-                    isWeak = true
-                }
-            }
-
-            // Parse quoted tag value
-            guard let bytes = try? RFC_9110.Parse.QuotedString<Byte.Input>().parse(&input) else {
-                return nil
-            }
-
-            return Tag(value: String(decoding: bytes, as: UTF8.self), isWeak: isWeak)
+        // Parse quoted tag value
+        guard let bytes = try? RFC_9110.Parse.QuotedString<Byte.Input>().parse(&input) else {
+            return nil
         }
+
+        return Self(value: String(decoding: bytes, as: UTF8.self), isWeak: isWeak)
     }
 }
 
