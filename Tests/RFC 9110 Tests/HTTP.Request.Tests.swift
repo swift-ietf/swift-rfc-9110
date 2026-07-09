@@ -217,10 +217,10 @@ struct `HTTP.Request Tests` {
             target: .origin(path: try .init("/"), query: nil)
         )
 
-        do {
+        do throws(HTTP.Request.Error) {
             try request.validate()
             Issue.record("Should have thrown validation error")
-        } catch let error as HTTP.Request.Error {
+        } catch {
             if case .invalidMethodForTarget = error {
                 // Expected
             } else {
@@ -246,10 +246,10 @@ struct `HTTP.Request Tests` {
             target: .asterisk
         )
 
-        do {
+        do throws(HTTP.Request.Error) {
             try request.validate()
             Issue.record("Should have thrown validation error")
-        } catch let error as HTTP.Request.Error {
+        } catch {
             if case .invalidMethodForTarget = error {
                 // Expected
             } else {
