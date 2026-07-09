@@ -39,7 +39,7 @@ extension RFC_9110.MediaType.Parser: Parser_Primitives.Parser.`Protocol` {
 
         // type = token
         let typeSlice: Input
-        do {
+        do throws(RFC_9110.Parse.Token<Input>.Error) {
             typeSlice = try RFC_9110.Parse.Token<Input>().parse(&input)
         } catch {
             throw .expectedType
@@ -53,7 +53,7 @@ extension RFC_9110.MediaType.Parser: Parser_Primitives.Parser.`Protocol` {
 
         // subtype = token
         let subtypeSlice: Input
-        do {
+        do throws(RFC_9110.Parse.Token<Input>.Error) {
             subtypeSlice = try RFC_9110.Parse.Token<Input>().parse(&input)
         } catch {
             throw .expectedSubtype

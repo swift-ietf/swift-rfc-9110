@@ -70,7 +70,7 @@ extension RFC_9110.Parse.QualityValue: Parser.`Protocol` {
             var digits = 0
             while digits < 3 {
                 let digit: Int
-                do {
+                do throws(ASCII.Decimal.Error) {
                     digit = try ASCII.Decimal.Parser<Input, Int>(sign: .none, count: .exactly(1))
                         .parse(&input)
                 } catch {
