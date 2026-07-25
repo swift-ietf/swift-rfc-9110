@@ -1,5 +1,7 @@
 # swift-rfc-9110
 
+![Development Status](https://img.shields.io/badge/status-active--development-blue.svg)
+
 Swift implementation of RFC 9110: HTTP Semantics
 
 ## Overview
