@@ -23,6 +23,7 @@ extension RFC_9110.Parse {
 extension RFC_9110.Parse.OWS: Parser.`Protocol` {
     public typealias Output = Void
     public typealias Failure = Never
+    public typealias Body = Never
 
     @inlinable
     public func parse(_ input: inout Input) {

@@ -18,6 +18,9 @@ struct `HTTP.Request.Target Tests` {
             query: try .init("page=1&limit=10")
         )
 
+        // swift-linter:disable:next raw value access
+        // REASON: the test's purpose is the newtype's raw wire boundary —
+        // asserting the exact origin-form wire spelling.
         #expect(target.rawValue == "/users/123?page=1&limit=10")
         #expect(target.form.isOrigin == true)
         #expect(target.form.isAbsolute == false)
@@ -32,6 +35,8 @@ struct `HTTP.Request.Target Tests` {
             query: nil
         )
 
+        // swift-linter:disable:next raw value access
+        // REASON: raw wire boundary — see above.
         #expect(target.rawValue == "/users")
         #expect(target.query == nil)
     }
@@ -41,6 +46,8 @@ struct `HTTP.Request.Target Tests` {
         let uri = try RFC_3986.URI("http://example.com/users?page=1")
         let target = HTTP.Request.Target.absolute(uri)
 
+        // swift-linter:disable:next raw value access
+        // REASON: raw wire boundary — see above.
         #expect(target.rawValue == "http://example.com/users?page=1")
         #expect(target.form.isAbsolute == true)
         #expect(target.form.isOrigin == false)
@@ -63,6 +70,8 @@ struct `HTTP.Request.Target Tests` {
     func `Asterisk-form request target`() async throws {
         let target = HTTP.Request.Target.asterisk
 
+        // swift-linter:disable:next raw value access
+        // REASON: raw wire boundary — see above.
         #expect(target.rawValue == "*")
         #expect(target.form.isAsterisk == true)
         #expect(target.path == nil)
@@ -97,6 +106,8 @@ struct `HTTP.Request Tests` {
         )
 
         #expect(request.method == .get)
+        // swift-linter:disable:next raw value access
+        // REASON: raw wire boundary — see above.
         #expect(request.target.rawValue == "/users")
         #expect(request.headers.isEmpty)
         #expect(request.body == nil)
@@ -117,6 +128,8 @@ struct `HTTP.Request Tests` {
 
         #expect(request.method == .post)
         #expect(request.body == jsonData)
+        // swift-linter:disable:next raw value access
+        // REASON: raw wire boundary — see above.
         #expect(request.headers["Content-Type"]?.first?.rawValue == "application/json")
     }
 
@@ -154,6 +167,8 @@ struct `HTTP.Request Tests` {
 
         // firstHeader() method
         let firstAccept = request.firstHeader(.accept)
+        // swift-linter:disable:next raw value access
+        // REASON: raw wire boundary — see above.
         #expect(firstAccept?.rawValue == "application/json")
 
         // Missing header

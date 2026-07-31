@@ -31,6 +31,7 @@ extension RFC_9110.MediaType {
 extension RFC_9110.MediaType.Parser: Parser_Primitives.Parser.`Protocol` {
     public typealias Output = RFC_9110.MediaType
     public typealias Failure = __HTTPMediaTypeParserError
+    public typealias Body = Never
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> RFC_9110.MediaType {

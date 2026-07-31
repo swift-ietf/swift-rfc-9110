@@ -60,7 +60,7 @@ extension RFC_9110.Header.Field {
         public init(_ rawValue: String) throws(Error) {
             // RFC 9110 Section 5.5: field-content cannot contain CR or LF
             // Check for CR (U+000D) and LF (U+000A) characters
-            if rawValue.unicodeScalars.contains(where: { $0 == "\r" }) {
+            if rawValue.utf8.contains(0x0D) {
                 throw Error.invalidFieldValue(
                     value: rawValue,
                     reason:
@@ -68,7 +68,7 @@ extension RFC_9110.Header.Field {
                 )
             }
 
-            if rawValue.unicodeScalars.contains(where: { $0 == "\n" }) {
+            if rawValue.utf8.contains(0x0A) {
                 throw Error.invalidFieldValue(
                     value: rawValue,
                     reason:
@@ -102,12 +102,16 @@ extension RFC_9110.Header.Field.Value: CustomStringConvertible {
 // MARK: - Codable
 
 extension RFC_9110.Header.Field.Value {
+    // reason: Decodable's `init(from:) throws` requirement is fixed by the stdlib protocol — `any Decoder` and untyped `throws` cannot be replaced with a generic constraint or typed throws without breaking Codable conformance.
+    // swiftlint:disable:next no_any_protocol_existential typed_throws_required
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let rawValue = try container.decode(String.self)
         try self.init(rawValue)
     }
 
+    // reason: Encodable's `encode(to:) throws` requirement is fixed by the stdlib protocol — `any Encoder` and untyped `throws` cannot be replaced with a generic constraint or typed throws without breaking Codable conformance.
+    // swiftlint:disable:next no_any_protocol_existential typed_throws_required
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(rawValue)

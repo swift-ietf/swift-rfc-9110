@@ -93,6 +93,9 @@ struct `HTTP.Method Tests` {
     @Test
     func `Custom method`() async throws {
         let custom = HTTP.Method(rawValue: "CUSTOM")
+        // swift-linter:disable:next raw value access
+        // REASON: the test's purpose is the newtype's raw wire boundary —
+        // asserting a custom method preserves its exact wire spelling.
         #expect(custom.rawValue == "CUSTOM")
         #expect(custom.isSafe == false)
         #expect(custom.isIdempotent == false)
@@ -102,6 +105,9 @@ struct `HTTP.Method Tests` {
     @Test
     func `String literal`() async throws {
         let method: HTTP.Method = "CUSTOM"
+        // swift-linter:disable:next raw value access
+        // REASON: the test's purpose is the newtype's raw wire boundary —
+        // asserting the string-literal conformance preserves exact spelling.
         #expect(method.rawValue == "CUSTOM")
     }
 

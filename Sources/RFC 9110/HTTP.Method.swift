@@ -82,22 +82,31 @@ extension RFC_9110 {
             switch rawValue {
             case "GET":
                 self = .get
+
             case "HEAD":
                 self = .head
+
             case "POST":
                 self = .post
+
             case "PUT":
                 self = .put
+
             case "DELETE":
                 self = .delete
+
             case "CONNECT":
                 self = .connect
+
             case "OPTIONS":
                 self = .options
+
             case "TRACE":
                 self = .trace
+
             case "PATCH":
                 self = .patch
+
             default:
                 // Custom method: defaults to unsafe, non-idempotent, non-cacheable
                 self.init(rawValue, isSafe: false, isIdempotent: false, isCacheable: false)
@@ -106,6 +115,8 @@ extension RFC_9110 {
 
         // MARK: - Codable
 
+        // reason: Decodable's `init(from:) throws` requirement is fixed by the stdlib protocol — `any Decoder` and untyped `throws` cannot be replaced with a generic constraint or typed throws without breaking Codable conformance.
+        // swiftlint:disable:next no_any_protocol_existential typed_throws_required
         public init(from decoder: any Decoder) throws {
             let container = try decoder.singleValueContainer()
             let rawValue = try container.decode(String.self)
@@ -116,6 +127,9 @@ extension RFC_9110 {
                 .connect, .options, .trace, .patch,
             ]
 
+            // swift-linter:disable:next raw value access
+            // REASON: Method's own init(rawValue:) — same-package implementation
+            // matching a candidate standard method's wrapped raw string.
             if let standard = standardMethods.first(where: { $0.rawValue == rawValue }) {
                 self = standard
             } else {
@@ -131,6 +145,9 @@ extension RFC_9110.Method {
     // MARK: - Equatable
 
     public static func == (lhs: Self, rhs: Self) -> Bool {
+        // swift-linter:disable:next raw value access
+        // REASON: Method's own Equatable conformance — same-package implementation
+        // reading its own wrapped value at the type's boundary.
         lhs.rawValue == rhs.rawValue && lhs.isSafe == rhs.isSafe
             && lhs.isIdempotent == rhs.isIdempotent && lhs.isCacheable == rhs.isCacheable
     }
@@ -144,6 +161,8 @@ extension RFC_9110.Method {
         hasher.combine(isCacheable)
     }
 
+    // reason: Encodable's `encode(to:) throws` requirement is fixed by the stdlib protocol — `any Encoder` and untyped `throws` cannot be replaced with a generic constraint or typed throws without breaking Codable conformance.
+    // swiftlint:disable:next no_any_protocol_existential typed_throws_required
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(rawValue)

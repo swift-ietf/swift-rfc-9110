@@ -68,12 +68,6 @@ extension RFC_9110 {
 }
 
 extension RFC_9110.Precondition {
-    /// A validator for If-Range precondition
-    public enum Validator: Sendable, Equatable {
-        case etag(RFC_9110.Entity.Tag)
-        case date(RFC_5322.DateTime)
-    }
-
     /// Wildcard entity tag for matching any representation
     public static let wildcardTag = RFC_9110.Entity.Tag.strong("*")
 }
@@ -86,12 +80,16 @@ extension RFC_9110.Precondition {
         switch self {
         case .ifMatch:
             return "If-Match"
+
         case .ifNoneMatch:
             return "If-None-Match"
+
         case .ifModifiedSince:
             return "If-Modified-Since"
+
         case .ifUnmodifiedSince:
             return "If-Unmodified-Since"
+
         case .ifRange:
             return "If-Range"
         }
@@ -189,7 +187,10 @@ extension RFC_9110.Precondition {
     /// - Parameter headerValue: The If-Modified-Since header value
     /// - Returns: An If-Modified-Since precondition, or nil if parsing fails
     public static func parseIfModifiedSince(_ headerValue: String) -> RFC_9110.Precondition? {
-        guard let httpDate = try? RFC_5322.DateTime(headerValue) else {
+        let httpDate: RFC_5322.DateTime
+        do throws(RFC_5322.DateTime.Error) {
+            httpDate = try RFC_5322.DateTime(headerValue)
+        } catch {
             return nil
         }
         return .ifModifiedSince(httpDate)
@@ -200,7 +201,10 @@ extension RFC_9110.Precondition {
     /// - Parameter headerValue: The If-Unmodified-Since header value
     /// - Returns: An If-Unmodified-Since precondition, or nil if parsing fails
     public static func parseIfUnmodifiedSince(_ headerValue: String) -> RFC_9110.Precondition? {
-        guard let httpDate = try? RFC_5322.DateTime(headerValue) else {
+        let httpDate: RFC_5322.DateTime
+        do throws(RFC_5322.DateTime.Error) {
+            httpDate = try RFC_5322.DateTime(headerValue)
+        } catch {
             return nil
         }
         return .ifUnmodifiedSince(httpDate)
@@ -219,8 +223,11 @@ extension RFC_9110.Precondition {
         }
 
         // Try to parse as date
-        if let httpDate = try? RFC_5322.DateTime(trimmed) {
+        do throws(RFC_5322.DateTime.Error) {
+            let httpDate = try RFC_5322.DateTime(trimmed)
             return .ifRange(.date(httpDate))
+        } catch {
+            // not a valid HTTP-date either: fall through to nil
         }
 
         return nil
@@ -242,7 +249,7 @@ extension RFC_9110.Precondition {
     ) -> Bool {
         switch self {
         case .ifMatch(let etags):
-            guard let currentETag = currentETag else {
+            guard let currentETag else {
                 return false
             }
             // Wildcard matches any representation
@@ -253,7 +260,7 @@ extension RFC_9110.Precondition {
             return etags.contains(where: { RFC_9110.Entity.Tag.strongCompare($0, currentETag) })
 
         case .ifNoneMatch(let etags):
-            guard let currentETag = currentETag else {
+            guard let currentETag else {
                 // If no current ETag exists, precondition is satisfied
                 return true
             }
@@ -265,7 +272,7 @@ extension RFC_9110.Precondition {
             return !etags.contains(where: { RFC_9110.Entity.Tag.weakCompare($0, currentETag) })
 
         case .ifModifiedSince(let date):
-            guard let lastModified = lastModified else {
+            guard let lastModified else {
                 // If no last modified date exists, assume modified
                 return true
             }
@@ -273,7 +280,7 @@ extension RFC_9110.Precondition {
             return lastModified > date
 
         case .ifUnmodifiedSince(let date):
-            guard let lastModified = lastModified else {
+            guard let lastModified else {
                 // If no last modified date exists, assume unmodified
                 return true
             }
@@ -281,14 +288,14 @@ extension RFC_9110.Precondition {
             return lastModified <= date
 
         case .ifRange(.etag(let etag)):
-            guard let currentETag = currentETag else {
+            guard let currentETag else {
                 return false
             }
             // Must use strong comparison for If-Range
             return RFC_9110.Entity.Tag.strongCompare(etag, currentETag)
 
         case .ifRange(.date(let date)):
-            guard let lastModified = lastModified else {
+            guard let lastModified else {
                 return false
             }
             // Satisfied if not modified since the date
@@ -302,16 +309,5 @@ extension RFC_9110.Precondition {
 extension RFC_9110.Precondition: CustomStringConvertible {
     public var description: String {
         return "\(headerName): \(headerValue)"
-    }
-}
-
-extension RFC_9110.Precondition.Validator: CustomStringConvertible {
-    public var description: String {
-        switch self {
-        case .etag(let etag):
-            return etag.description
-        case .date(let date):
-            return String(date)
-        }
     }
 }

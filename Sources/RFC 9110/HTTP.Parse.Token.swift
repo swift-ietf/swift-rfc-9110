@@ -24,6 +24,7 @@ extension RFC_9110.Parse {
 extension RFC_9110.Parse.Token: Parser.`Protocol` {
     public typealias Output = Input
     public typealias Failure = __HTTPTokenParserError
+    public typealias Body = Never
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Input {
@@ -50,9 +51,13 @@ extension RFC_9110.Parse.Token: Parser.`Protocol` {
         case 0x21, 0x23, 0x24, 0x25, 0x26, 0x27, 0x2A, 0x2B,
             0x2D, 0x2E, 0x5E, 0x5F, 0x60, 0x7C, 0x7E:
             true
+
         case 0x30...0x39: true  // DIGIT
+
         case 0x41...0x5A: true  // ALPHA upper
+
         case 0x61...0x7A: true  // ALPHA lower
+
         default: false
         }
     }

@@ -88,7 +88,15 @@ extension RFC_9110.Headers {
     ///
     /// Per RFC 9110 Section 5.1, field names are case-insensitive.
     public subscript(_ name: String) -> [RFC_9110.Header.Field.Value]? {
-        storage[RFC_9110.Header.Field.Name(name)]
+        self[RFC_9110.Header.Field.Name(name)]
+    }
+
+    /// Subscript access to header values by name (case-insensitive, O(1))
+    ///
+    /// - Parameter name: The header field name (case-insensitive)
+    /// - Returns: An array of values for that header field, or nil if not present
+    public subscript(_ name: RFC_9110.Header.Field.Name) -> [RFC_9110.Header.Field.Value]? {
+        storage[name]
     }
 
     /// Returns true if the headers collection is empty
@@ -151,9 +159,15 @@ extension RFC_9110.Headers {
     ///
     /// - Parameter name: The header field name to remove (case-insensitive)
     public mutating func removeAll(named name: String) {
-        let fieldName = RFC_9110.Header.Field.Name(name)
-        storage.removeValue(forKey: fieldName)
-        orderedNames.removeAll { $0 == fieldName }
+        removeAll(named: RFC_9110.Header.Field.Name(name))
+    }
+
+    /// Removes all header fields with the given name
+    ///
+    /// - Parameter name: The header field name to remove (case-insensitive)
+    public mutating func removeAll(named name: RFC_9110.Header.Field.Name) {
+        storage.removeValue(forKey: name)
+        orderedNames.removeAll { $0 == name }
     }
 }
 
@@ -188,12 +202,16 @@ extension RFC_9110.Headers: CustomStringConvertible {
 // MARK: - Codable
 
 extension RFC_9110.Headers {
+    // reason: Decodable's `init(from:) throws` requirement is fixed by the stdlib protocol — `any Decoder` and untyped `throws` cannot be replaced with a generic constraint or typed throws without breaking Codable conformance.
+    // swiftlint:disable:next no_any_protocol_existential typed_throws_required
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let fields = try container.decode([RFC_9110.Header.Field].self)
         self.init(fields)
     }
 
+    // reason: Encodable's `encode(to:) throws` requirement is fixed by the stdlib protocol — `any Encoder` and untyped `throws` cannot be replaced with a generic constraint or typed throws without breaking Codable conformance.
+    // swiftlint:disable:next no_any_protocol_existential typed_throws_required
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         // Encode as array of fields for compatibility
@@ -217,7 +235,7 @@ extension RFC_9110.Headers: CustomDebugStringConvertible {
     ///   User-Agent: MyApp/1.0
     /// ```
     public var debugDescription: String {
-        let headerLines = map { "  \($0.name.rawValue): \($0.value.rawValue)" }
+        let headerLines = map { "  \($0.name): \($0.value)" }
             .joined(separator: "\n")
 
         if isEmpty {

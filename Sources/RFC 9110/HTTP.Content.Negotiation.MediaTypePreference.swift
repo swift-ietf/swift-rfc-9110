@@ -64,8 +64,10 @@ extension RFC_9110.Content.Negotiation.MediaTypePreference {
         let preferences = RFC_9110.Parse.CommaSeparated<Byte.Input, Self> {
             element in
             var sub = element
-            guard let mediaType = try? RFC_9110.MediaType.Parser<Byte.Input>().parse(&sub)
-            else {
+            let mediaType: RFC_9110.MediaType
+            do throws(RFC_9110.MediaType.Parser<Byte.Input>.Error) {
+                mediaType = try RFC_9110.MediaType.Parser<Byte.Input>().parse(&sub)
+            } catch {
                 return nil
             }
             // Extract quality from parameters (q= is parsed as a media type parameter)

@@ -31,6 +31,7 @@ extension RFC_9110.Parse {
 extension RFC_9110.Parse.CommaSeparated: Parser.`Protocol` {
     public typealias Output = [T]
     public typealias Failure = Never
+    public typealias Body = Never
 
     @inlinable
     public func parse(_ input: inout Input) -> [T] {

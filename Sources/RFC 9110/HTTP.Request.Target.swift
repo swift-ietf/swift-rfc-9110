@@ -147,7 +147,7 @@ extension RFC_9110.Request.Target {
     public var rawValue: String {
         switch self {
         case .origin(let path, let query):
-            if let query = query, !query.isEmpty {
+            if let query, !query.isEmpty {
                 return "\(path.description)?\(query.description)"
             } else {
                 return path.description
@@ -206,6 +206,8 @@ extension RFC_9110.Request.Target {
 // MARK: - Codable
 
 extension RFC_9110.Request.Target {
+    // reason: Decodable's `init(from:) throws` requirement is fixed by the stdlib protocol — `any Decoder` and untyped `throws` cannot be replaced with a generic constraint or typed throws without breaking Codable conformance.
+    // swiftlint:disable:next no_any_protocol_existential typed_throws_required
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let form = try container.decode(String.self, forKey: .form)
@@ -237,6 +239,8 @@ extension RFC_9110.Request.Target {
         }
     }
 
+    // reason: Encodable's `encode(to:) throws` requirement is fixed by the stdlib protocol — `any Encoder` and untyped `throws` cannot be replaced with a generic constraint or typed throws without breaking Codable conformance.
+    // swiftlint:disable:next no_any_protocol_existential typed_throws_required
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
@@ -244,7 +248,7 @@ extension RFC_9110.Request.Target {
         case .origin(let path, let query):
             try container.encode("origin", forKey: .form)
             try container.encode(path, forKey: .path)
-            if let query = query {
+            if let query {
                 try container.encode(query, forKey: .query)
             }
 

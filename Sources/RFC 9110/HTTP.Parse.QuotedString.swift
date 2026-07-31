@@ -26,6 +26,7 @@ extension RFC_9110.Parse {
 extension RFC_9110.Parse.QuotedString: Parser.`Protocol` {
     public typealias Output = [Byte]
     public typealias Failure = __HTTPQuotedStringParserError
+    public typealias Body = Never
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> [Byte] {

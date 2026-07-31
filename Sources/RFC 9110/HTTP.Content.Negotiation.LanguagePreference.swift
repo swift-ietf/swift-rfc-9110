@@ -63,13 +63,19 @@ extension RFC_9110.Content.Negotiation.LanguagePreference {
         let preferences = RFC_9110.Parse.CommaSeparated<Byte.Input, Self> {
             element in
             var sub = element
-            guard let token = try? RFC_9110.Parse.Token<Byte.Input>().parse(&sub) else {
+            let token: Byte.Input
+            do throws(RFC_9110.Parse.Token<Byte.Input>.Error) {
+                token = try RFC_9110.Parse.Token<Byte.Input>().parse(&sub)
+            } catch {
                 return nil
             }
             let language = String(decoding: token, as: UTF8.self)
             var quality = RFC_9110.Content.Negotiation.QualityValue.default
-            if let q = try? RFC_9110.Parse.QualityValue<Byte.Input>().parse(&sub) {
+            do throws(RFC_9110.Parse.QualityValue<Byte.Input>.Error) {
+                let q = try RFC_9110.Parse.QualityValue<Byte.Input>().parse(&sub)
                 quality = RFC_9110.Content.Negotiation.QualityValue(Double(q) / 1000.0)
+            } catch {
+                // no explicit quality supplied: keep default
             }
             return Self(language: language, quality: quality)
         }.parse(&input)

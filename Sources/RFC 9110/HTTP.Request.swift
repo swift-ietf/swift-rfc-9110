@@ -147,7 +147,7 @@ extension RFC_9110.Request {
         // swiftlint:disable:next force_try
         let effectivePath = path ?? (try! RFC_3986.URI.Path("/"))
 
-        if let scheme = scheme, let host = host {
+        if let scheme, let host {
             // Absolute-form: construct URI from components
             let authority = RFC_3986.URI.Authority(
                 userinfo: userinfo,
@@ -188,7 +188,7 @@ extension RFC_9110.Request {
     ///
     /// Header field names are case-insensitive per RFC 9110 Section 5.1.
     public func header(_ name: RFC_9110.Header.Field.Name) -> [RFC_9110.Header.Field.Value] {
-        headers[name.rawValue] ?? []
+        headers[name] ?? []
     }
 
     /// Gets the first value of a header field by name
@@ -196,7 +196,7 @@ extension RFC_9110.Request {
     /// - Parameter name: The header field name (case-insensitive)
     /// - Returns: The first value for that header field, or nil if not present
     public func firstHeader(_ name: RFC_9110.Header.Field.Name) -> RFC_9110.Header.Field.Value? {
-        headers[name.rawValue]?.first
+        headers[name]?.first
     }
 
     /// Adds a header field
@@ -215,7 +215,7 @@ extension RFC_9110.Request {
     /// - Returns: A new request with the header fields removed
     public func removingHeaders(_ name: RFC_9110.Header.Field.Name) -> Self {
         var copy = self
-        copy.headers.removeAll(named: name.rawValue)
+        copy.headers.removeAll(named: name)
         return copy
     }
 }
@@ -266,8 +266,10 @@ extension RFC_9110.Request {
                 host: host,
                 port: uri.port
             )
+
         case .authority(let authority):
             return authority
+
         case .origin, .asterisk:
             return nil
         }
@@ -339,6 +341,8 @@ extension RFC_9110.Request {
 // MARK: - Codable
 
 extension RFC_9110.Request {
+    // reason: Decodable's `init(from:) throws` requirement is fixed by the stdlib protocol — `any Decoder` and untyped `throws` cannot be replaced with a generic constraint or typed throws without breaking Codable conformance.
+    // swiftlint:disable:next no_any_protocol_existential typed_throws_required
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let method = try container.decode(RFC_9110.Method.self, forKey: .method)
@@ -354,6 +358,8 @@ extension RFC_9110.Request {
         )
     }
 
+    // reason: Encodable's `encode(to:) throws` requirement is fixed by the stdlib protocol — `any Encoder` and untyped `throws` cannot be replaced with a generic constraint or typed throws without breaking Codable conformance.
+    // swiftlint:disable:next no_any_protocol_existential typed_throws_required
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(method, forKey: .method)
@@ -361,7 +367,7 @@ extension RFC_9110.Request {
         if !headers.isEmpty {
             try container.encode(Array(headers), forKey: .headers)
         }
-        if let body = body {
+        if let body {
             try container.encode(body, forKey: .body)
         }
     }
@@ -385,7 +391,7 @@ extension RFC_9110.Request: CustomStringConvertible {
         for header in headers {
             result += "\n\(header.description)"
         }
-        if let body = body {
+        if let body {
             result += "\n\n[Body: \(body.count) bytes]"
         }
         return result

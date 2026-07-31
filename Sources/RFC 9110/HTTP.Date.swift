@@ -252,6 +252,15 @@ private func gmtDateTime(
     day: Int,
     time: (hour: Int, minute: Int, second: Int)
 ) -> RFC_5322.DateTime? {
+    // RFC_5322.DateTime.init(year:...) throws the L1 `Time.Error` type from
+    // swift-time-primitives, a package this target does not otherwise
+    // depend on; naming that type in a `do throws(Time.Error)` here would
+    // require adding a new direct dependency solely to spell a caught error
+    // type. Deferred pending a dependency-addition decision — see
+    // adjudication request on the tracking issue.
+    // swift-linter:disable:next try optional
+    // REASON: see explanation above.
+    // swiftlint:disable:next no_try_optional - reason: see explanation above
     try? RFC_5322.DateTime(
         year: year,
         month: month,

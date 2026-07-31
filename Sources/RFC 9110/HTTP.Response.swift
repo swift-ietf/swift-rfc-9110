@@ -109,7 +109,7 @@ extension RFC_9110.Response {
     ///
     /// Header field names are case-insensitive per RFC 9110 Section 5.1.
     public func header(_ name: RFC_9110.Header.Field.Name) -> [RFC_9110.Header.Field.Value] {
-        headers[name.rawValue] ?? []
+        headers[name] ?? []
     }
 
     /// Gets the first value of a header field by name
@@ -117,7 +117,7 @@ extension RFC_9110.Response {
     /// - Parameter name: The header field name (case-insensitive)
     /// - Returns: The first value for that header field, or nil if not present
     public func firstHeader(_ name: RFC_9110.Header.Field.Name) -> RFC_9110.Header.Field.Value? {
-        headers[name.rawValue]?.first
+        headers[name]?.first
     }
 
     /// Adds a header field
@@ -136,7 +136,7 @@ extension RFC_9110.Response {
     /// - Returns: A new response with the header fields removed
     public func removingHeaders(_ name: RFC_9110.Header.Field.Name) -> Self {
         var copy = self
-        copy.headers.removeAll(named: name.rawValue)
+        copy.headers.removeAll(named: name)
         return copy
     }
 }
@@ -144,6 +144,8 @@ extension RFC_9110.Response {
 // MARK: - Codable
 
 extension RFC_9110.Response {
+    // reason: Decodable's `init(from:) throws` requirement is fixed by the stdlib protocol — `any Decoder` and untyped `throws` cannot be replaced with a generic constraint or typed throws without breaking Codable conformance.
+    // swiftlint:disable:next no_any_protocol_existential typed_throws_required
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let status = try container.decode(RFC_9110.Status.self, forKey: .status)
@@ -157,13 +159,15 @@ extension RFC_9110.Response {
         )
     }
 
+    // reason: Encodable's `encode(to:) throws` requirement is fixed by the stdlib protocol — `any Encoder` and untyped `throws` cannot be replaced with a generic constraint or typed throws without breaking Codable conformance.
+    // swiftlint:disable:next no_any_protocol_existential typed_throws_required
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(status, forKey: .status)
         if !headers.isEmpty {
             try container.encode(Array(headers), forKey: .headers)
         }
-        if let body = body {
+        if let body {
             try container.encode(body, forKey: .body)
         }
     }
@@ -186,7 +190,7 @@ extension RFC_9110.Response: CustomStringConvertible {
         for header in headers {
             result += "\n\(header.description)"
         }
-        if let body = body {
+        if let body {
             result += "\n\n[Body: \(body.count) bytes]"
         }
         return result
@@ -256,7 +260,7 @@ extension RFC_9110.Response {
         body: [Byte]? = nil
     ) throws(RFC_9110.Header.Field.Error) -> Self {
         var responseHeaders = headers
-        if let location = location {
+        if let location {
             responseHeaders.append(try RFC_9110.Header.Field(name: "Location", value: location))
         }
         return Self(status: .created, headers: responseHeaders, body: body)
@@ -411,7 +415,7 @@ extension RFC_9110.Response {
         body: [Byte]? = nil
     ) throws(RFC_9110.Header.Field.Error) -> Self {
         var responseHeaders = headers
-        if let retryAfter = retryAfter {
+        if let retryAfter {
             responseHeaders.append(
                 try RFC_9110.Header.Field(name: "Retry-After", value: retryAfter)
             )

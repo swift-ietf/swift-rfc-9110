@@ -27,6 +27,7 @@ extension RFC_9110.Parse {
 extension RFC_9110.Parse.QualityValue: Parser.`Protocol` {
     public typealias Output = Int
     public typealias Failure = __HTTPQualityValueParserError
+    public typealias Body = Never
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Int {

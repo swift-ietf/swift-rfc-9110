@@ -8,7 +8,7 @@
 
 // MARK: - Iterator
 
-extension RFC_9110.Headers: Sequence {
+extension RFC_9110.Headers: Swift.Sequence {
     /// Iterator for Headers collection
     ///
     /// Iterates over all header fields, expanding headers with multiple

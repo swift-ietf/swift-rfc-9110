@@ -28,7 +28,10 @@ extension RFC_9110.Parse {
         var input = Byte.Input(utf8: headerValue)
         return CommaSeparated<Byte.Input, String> { element in
             var sub = element
-            guard let token = try? Token<Byte.Input>().parse(&sub) else {
+            let token: Byte.Input
+            do throws(Token<Byte.Input>.Error) {
+                token = try Token<Byte.Input>().parse(&sub)
+            } catch {
                 return nil
             }
             return String(decoding: token, as: UTF8.self)
@@ -46,7 +49,10 @@ extension RFC_9110.Parse {
         var input = Byte.Input(utf8: headerValue)
         return CommaSeparated<Byte.Input, (name: String, value: String?)> { element in
             var sub = element
-            guard let nameSlice = try? Token<Byte.Input>().parse(&sub) else {
+            let nameSlice: Byte.Input
+            do throws(Token<Byte.Input>.Error) {
+                nameSlice = try Token<Byte.Input>().parse(&sub)
+            } catch {
                 return nil
             }
             let name = String(decoding: nameSlice, as: UTF8.self)
@@ -58,11 +64,17 @@ extension RFC_9110.Parse {
             sub = sub[sub.index(after: sub.startIndex)...]
             OWS<Byte.Input>().parse(&sub)
 
-            if let quoted = try? QuotedString<Byte.Input>().parse(&sub) {
+            do throws(QuotedString<Byte.Input>.Error) {
+                let quoted = try QuotedString<Byte.Input>().parse(&sub)
                 return (name: name, value: String(decoding: quoted, as: UTF8.self))
+            } catch {
+                // fall through to token attempt
             }
-            if let tokenSlice = try? Token<Byte.Input>().parse(&sub) {
+            do throws(Token<Byte.Input>.Error) {
+                let tokenSlice = try Token<Byte.Input>().parse(&sub)
                 return (name: name, value: String(decoding: tokenSlice, as: UTF8.self))
+            } catch {
+                // fall through to nil value
             }
 
             return (name: name, value: nil)

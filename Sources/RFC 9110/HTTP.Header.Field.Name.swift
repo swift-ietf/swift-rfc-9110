@@ -57,6 +57,12 @@ extension RFC_9110.Header.Field.Name {
 
     /// Equality comparison (case-insensitive per RFC 9110)
     public static func == (lhs: Self, rhs: Self) -> Bool {
+        // swift-linter:disable:next raw value access
+        // REASON: Name's own Equatable conformance — same-package implementation
+        // reading its own wrapped value at the type's boundary.
+        // swift-linter:disable:next chained rawvalue access
+        // REASON: typed-system bottom-out — the wrapper's own case-insensitive
+        // comparison boundary.
         lhs.rawValue.lowercased() == rhs.rawValue.lowercased()
     }
 }

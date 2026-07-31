@@ -26,6 +26,7 @@ extension RFC_9110.Parse {
 extension RFC_9110.Parse.Parameter: Parser.`Protocol` {
     public typealias Output = (name: Input, value: [Byte])
     public typealias Failure = __HTTPParameterParserError
+    public typealias Body = Never
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> (name: Input, value: [Byte]) {

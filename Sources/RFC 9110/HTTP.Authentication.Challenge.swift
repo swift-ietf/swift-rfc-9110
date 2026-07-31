@@ -110,7 +110,10 @@ extension RFC_9110.Authentication.Challenge {
         RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
 
         // Parse scheme (token)
-        guard let schemeSlice = try? RFC_9110.Parse.Token<Byte.Input>().parse(&input) else {
+        let schemeSlice: Byte.Input
+        do throws(RFC_9110.Parse.Token<Byte.Input>.Error) {
+            schemeSlice = try RFC_9110.Parse.Token<Byte.Input>().parse(&input)
+        } catch {
             return nil
         }
         let scheme = RFC_9110.Authentication.Scheme(String(decoding: schemeSlice, as: UTF8.self))
@@ -125,7 +128,10 @@ extension RFC_9110.Authentication.Challenge {
         var parameters: [String: String] = [:]
         while true {
             let saved = input
-            guard let param = try? RFC_9110.Parse.Parameter<Byte.Input>().parse(&input) else {
+            let param: (name: Byte.Input, value: [Byte])
+            do throws(RFC_9110.Parse.Parameter<Byte.Input>.Error) {
+                param = try RFC_9110.Parse.Parameter<Byte.Input>().parse(&input)
+            } catch {
                 input = saved
                 break
             }

@@ -23,6 +23,9 @@ struct `HTTP.Date Tests` {
         let httpDate = HTTP.Date(secondsSinceEpoch: 784_111_777)  // Sun, 06 Nov 1994 08:49:37 GMT
 
         let field = HTTP.Header.Field(dateTime: httpDate)
+        // swift-linter:disable:next raw value access
+        // REASON: the test's purpose is the newtype's raw wire boundary —
+        // asserting the exact IMF-fixdate wire spelling.
         let headerValue = field.value.rawValue
 
         // IMF-fixdate per RFC 9110 §5.6.7 (literal "GMT", never the RFC 5322 "+0000")

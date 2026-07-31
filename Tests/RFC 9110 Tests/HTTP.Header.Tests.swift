@@ -69,6 +69,9 @@ struct `HTTP.Header.Field Tests` {
     func `Field value unchecked init`() async throws {
         // Unchecked init should not validate
         let value = HTTP.Header.Field.Value(unchecked: "value\r\ntest")
+        // swift-linter:disable:next raw value access
+        // REASON: the test's purpose is the newtype's raw wire boundary —
+        // asserting the unchecked init bypasses validation.
         #expect(value.rawValue == "value\r\ntest")
     }
 
@@ -79,7 +82,12 @@ struct `HTTP.Header.Field Tests` {
             value: "application/json"
         )
 
+        // swift-linter:disable:next raw value access
+        // REASON: the test's purpose is the newtype's raw wire boundary —
+        // asserting the field's exact wire spelling.
         #expect(field.name.rawValue == "Content-Type")
+        // swift-linter:disable:next raw value access
+        // REASON: raw wire boundary — see above.
         #expect(field.value.rawValue == "application/json")
     }
 
@@ -139,8 +147,15 @@ struct `HTTP.Headers Tests` {
             .init(name: "Content-Type", value: "application/json")
         ])
 
+        // swift-linter:disable:next raw value access
+        // REASON: the test's purpose is the newtype's raw wire boundary —
+        // asserting case-insensitive lookup returns the exact wire value.
         #expect(headers["Content-Type"]?.first?.rawValue == "application/json")
+        // swift-linter:disable:next raw value access
+        // REASON: raw wire boundary — see above.
         #expect(headers["content-type"]?.first?.rawValue == "application/json")
+        // swift-linter:disable:next raw value access
+        // REASON: raw wire boundary — see above.
         #expect(headers["CONTENT-TYPE"]?.first?.rawValue == "application/json")
         #expect(headers["Accept"] == nil)
     }
@@ -154,7 +169,12 @@ struct `HTTP.Headers Tests` {
 
         let acceptValues = headers["Accept"]
         #expect(acceptValues?.count == 2)
+        // swift-linter:disable:next raw value access
+        // REASON: the test's purpose is the newtype's raw wire boundary —
+        // asserting insertion order of the exact wire values.
         #expect(acceptValues?[0].rawValue == "application/json")
+        // swift-linter:disable:next raw value access
+        // REASON: raw wire boundary — see above.
         #expect(acceptValues?[1].rawValue == "text/html")
     }
 
@@ -198,6 +218,11 @@ struct `HTTP.Headers Tests` {
         #expect(fields.count == 3)
 
         // Check that multiple Accept values are expanded
+        // swift-linter:disable:next raw value access
+        // REASON: the test's purpose is the newtype's raw wire boundary —
+        // asserting case-insensitive matching against the exact wire name.
+        // swift-linter:disable:next chained rawvalue access
+        // REASON: raw wire boundary — see above.
         let acceptFields = fields.filter { $0.name.rawValue.lowercased() == "accept" }
         #expect(acceptFields.count == 2)
     }
@@ -220,6 +245,9 @@ struct `HTTP.Headers Tests` {
             .init(name: "Accept", value: "text/html"),
         ])
 
+        // swift-linter:disable:next raw value access
+        // REASON: the test's purpose is the newtype's raw wire boundary —
+        // asserting the exact wire value.
         #expect(headers.first("Accept")?.rawValue == "application/json")
         #expect(headers.first("Content-Type") == nil)
     }
