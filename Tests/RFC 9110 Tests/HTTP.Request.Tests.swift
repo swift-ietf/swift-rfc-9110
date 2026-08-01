@@ -10,6 +10,9 @@ import Testing
 
 @Suite
 struct `HTTP.Request.Target Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 
     @Test
     func `Origin-form request target`() async throws {
@@ -97,6 +100,9 @@ struct `HTTP.Request.Target Tests` {
 
 @Suite
 struct `HTTP.Request Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 
     @Test
     func `Simple GET request`() async throws {

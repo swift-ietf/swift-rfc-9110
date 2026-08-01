@@ -8,6 +8,9 @@ import Testing
 
 @Suite
 struct `HTTP.Content.Encoding Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 
     @Test
     func `Standard encodings`() async throws {

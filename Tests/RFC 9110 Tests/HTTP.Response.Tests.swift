@@ -9,6 +9,9 @@ import Testing
 
 @Suite
 struct `HTTP.Response Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 
     @Test
     func `Simple 200 OK response`() async throws {

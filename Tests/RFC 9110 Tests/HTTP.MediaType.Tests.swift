@@ -8,6 +8,9 @@ import Testing
 
 @Suite
 struct `HTTP.MediaType Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 
     @Test
     func `Media type creation`() async throws {

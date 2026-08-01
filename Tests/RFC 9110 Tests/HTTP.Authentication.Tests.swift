@@ -8,6 +8,9 @@ import Testing
 
 @Suite
 struct `HTTP.Authentication Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 
     // MARK: - Scheme Tests
 

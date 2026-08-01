@@ -8,6 +8,9 @@ import Testing
 
 @Suite
 struct `HTTP.Entity.Tag Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 
     @Test
     func `Strong ETag creation`() async throws {

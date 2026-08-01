@@ -8,6 +8,9 @@ import Testing
 
 @Suite
 struct `HTTP.Header.Field Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 
     @Test
     func `Field name case insensitivity`() async throws {
@@ -129,6 +132,9 @@ struct `HTTP.Header.Field Tests` {
 
 @Suite
 struct `HTTP.Headers Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 
     @Test
     func `Headers initialization`() async throws {

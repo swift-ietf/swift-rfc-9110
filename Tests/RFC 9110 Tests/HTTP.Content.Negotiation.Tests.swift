@@ -8,6 +8,9 @@ import Testing
 
 @Suite
 struct `HTTP.Content.Negotiation Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 
     @Test
     func `Quality value creation`() async throws {

@@ -8,6 +8,9 @@ import Testing
 
 @Suite
 struct `HTTP.Method Tests` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
 
     @Test
     func `Standard methods have correct properties`() async throws {
