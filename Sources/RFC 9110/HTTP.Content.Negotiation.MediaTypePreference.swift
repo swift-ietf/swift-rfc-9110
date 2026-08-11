@@ -70,10 +70,15 @@ extension RFC_9110.Content.Negotiation.MediaTypePreference {
             } catch {
                 return nil
             }
-            // Extract quality from parameters (q= is parsed as a media type parameter)
-            var quality = RFC_9110.Content.Negotiation.QualityValue.default
-            if let qStr = mediaType.parameters["q"], let q = Double(qStr) {
-                quality = RFC_9110.Content.Negotiation.QualityValue(q)
+            guard sub.isEmpty else { return nil }
+            let quality: RFC_9110.Content.Negotiation.QualityValue
+            switch RFC_9110.Content.Negotiation.Weight.parse(parameter: mediaType.parameters["q"]) {
+            case .absent:
+                quality = .default
+            case .value(let value):
+                quality = value
+            case .invalid:
+                return nil
             }
             // Remove q from media type parameters
             var params = mediaType.parameters
@@ -88,7 +93,7 @@ extension RFC_9110.Content.Negotiation.MediaTypePreference {
 
         // Sort by quality (descending), then by specificity
         return preferences.sorted { lhs, rhs in
-            if lhs.quality.value != rhs.quality.value {
+            if lhs.quality != rhs.quality {
                 return lhs.quality > rhs.quality
             }
             if lhs.mediaType.type == "*" && rhs.mediaType.type != "*" { return false }

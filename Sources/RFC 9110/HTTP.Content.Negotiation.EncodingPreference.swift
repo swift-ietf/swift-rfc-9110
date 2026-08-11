@@ -70,12 +70,14 @@ extension RFC_9110.Content.Negotiation.EncodingPreference {
                 return nil
             }
             let encoding = RFC_9110.Content.Encoding(String(decoding: token, as: UTF8.self))
-            var quality = RFC_9110.Content.Negotiation.QualityValue.default
-            do throws(RFC_9110.Parse.QualityValue<Byte.Input>.Error) {
-                let q = try RFC_9110.Parse.QualityValue<Byte.Input>().parse(&sub)
-                quality = RFC_9110.Content.Negotiation.QualityValue(Double(q) / 1000.0)
-            } catch {
-                // no explicit quality supplied: keep default
+            let quality: RFC_9110.Content.Negotiation.QualityValue
+            switch RFC_9110.Content.Negotiation.Weight.parse(&sub) {
+            case .absent:
+                quality = .default
+            case .value(let value):
+                quality = value
+            case .invalid:
+                return nil
             }
             return Self(encoding: encoding, quality: quality)
         }.parse(&input)

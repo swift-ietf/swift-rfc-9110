@@ -25,14 +25,14 @@ extension RFC_9110.Parse {
 
 extension RFC_9110.Parse.Parameter: Parser.`Protocol` {
     public typealias Output = (name: Input, value: [Byte])
-    public typealias Failure = __HTTPParameterParserError
+    public typealias Failure = RFC_9110.Parse.Error.Parameter
     public typealias Body = Never
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> (name: Input, value: [Byte]) {
         // Parse parameter name (token)
         let name: Input
-        do throws(__HTTPTokenParserError) {
+        do throws(RFC_9110.Parse.Error.Token) {
             name = try RFC_9110.Parse.Token<Input>().parse(&input)
         } catch {
             throw .expectedToken
@@ -48,7 +48,7 @@ extension RFC_9110.Parse.Parameter: Parser.`Protocol` {
         if input.startIndex < input.endIndex, input[input.startIndex] == 0x22 {
             // Quoted string
             let value: [Byte]
-            do throws(__HTTPQuotedStringParserError) {
+            do throws(RFC_9110.Parse.Error.QuotedString) {
                 value = try RFC_9110.Parse.QuotedString<Input>().parse(&input)
             } catch {
                 throw .invalidQuotedString(error)
@@ -57,7 +57,7 @@ extension RFC_9110.Parse.Parameter: Parser.`Protocol` {
         } else {
             // Token value
             let tokenValue: Input
-            do throws(__HTTPTokenParserError) {
+            do throws(RFC_9110.Parse.Error.Token) {
                 tokenValue = try RFC_9110.Parse.Token<Input>().parse(&input)
             } catch {
                 throw .expectedValue

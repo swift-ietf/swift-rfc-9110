@@ -45,7 +45,7 @@ extension RFC_9110.Parse.ParameterList: Parser.`Protocol` {
 
             // parameter
             let param: (name: Input, value: [Byte])
-            do throws(__HTTPParameterParserError) {
+            do throws(RFC_9110.Parse.Error.Parameter) {
                 param = try RFC_9110.Parse.Parameter<Input>().parse(&input)
             } catch {
                 input = saved
