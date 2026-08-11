@@ -12,7 +12,9 @@
 // - HTTP.Status - HTTP status codes
 // - HTTP.Header - HTTP header fields
 // - HTTP.Request - HTTP request message
+// - HTTP.Request.Head - body-free HTTP request metadata
 // - HTTP.Response - HTTP response message
+// - HTTP.Response.Head - body-free HTTP response metadata
 // - HTTP.MediaType - Media type handling
 // - HTTP.Content.Negotiation - Content negotiation
 
