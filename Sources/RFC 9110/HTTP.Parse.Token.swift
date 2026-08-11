@@ -23,7 +23,7 @@ extension RFC_9110.Parse {
 
 extension RFC_9110.Parse.Token: Parser.`Protocol` {
     public typealias Output = Input
-    public typealias Failure = __HTTPTokenParserError
+    public typealias Failure = RFC_9110.Parse.Error.Token
     public typealias Body = Never
 
     @inlinable

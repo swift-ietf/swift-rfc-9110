@@ -70,17 +70,19 @@ extension RFC_9110.Content.Negotiation.LanguagePreference {
                 return nil
             }
             let language = String(decoding: token, as: UTF8.self)
-            var quality = RFC_9110.Content.Negotiation.QualityValue.default
-            do throws(RFC_9110.Parse.QualityValue<Byte.Input>.Error) {
-                let q = try RFC_9110.Parse.QualityValue<Byte.Input>().parse(&sub)
-                quality = RFC_9110.Content.Negotiation.QualityValue(Double(q) / 1000.0)
-            } catch {
-                // no explicit quality supplied: keep default
+            let quality: RFC_9110.Content.Negotiation.QualityValue
+            switch RFC_9110.Content.Negotiation.Weight.parse(&sub) {
+            case .absent:
+                quality = .default
+            case .value(let value):
+                quality = value
+            case .invalid:
+                return nil
             }
             return Self(language: language, quality: quality)
         }.parse(&input)
         return preferences.sorted { lhs, rhs in
-            if lhs.quality.value != rhs.quality.value {
+            if lhs.quality != rhs.quality {
                 return lhs.quality > rhs.quality
             }
             return lhs.language.count > rhs.language.count

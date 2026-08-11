@@ -88,7 +88,11 @@ extension RFC_9110.Headers {
     ///
     /// Per RFC 9110 Section 5.1, field names are case-insensitive.
     public subscript(_ name: String) -> [RFC_9110.Header.Field.Value]? {
-        self[RFC_9110.Header.Field.Name(name)]
+        do throws(RFC_9110.Header.Field.Name.Error) {
+            return self[try RFC_9110.Header.Field.Name(name)]
+        } catch {
+            return nil
+        }
     }
 
     /// Subscript access to header values by name (case-insensitive, O(1))
@@ -133,7 +137,7 @@ extension RFC_9110.Headers {
     /// - Parameter name: The header field name (case-insensitive)
     /// - Returns: True if the header exists
     public func contains(_ name: String) -> Bool {
-        storage[RFC_9110.Header.Field.Name(name)] != nil
+        self[name] != nil
     }
 }
 
@@ -159,7 +163,9 @@ extension RFC_9110.Headers {
     ///
     /// - Parameter name: The header field name to remove (case-insensitive)
     public mutating func removeAll(named name: String) {
-        removeAll(named: RFC_9110.Header.Field.Name(name))
+        do throws(RFC_9110.Header.Field.Name.Error) {
+            removeAll(named: try RFC_9110.Header.Field.Name(name))
+        } catch {}
     }
 
     /// Removes all header fields with the given name

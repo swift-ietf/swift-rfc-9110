@@ -53,7 +53,11 @@ extension RFC_9110.Header {
         ///   - value: The header field value (will be validated)
         /// - Throws: `ValidationError` if the value contains invalid characters
         public init(name: String, value: String) throws(Error) {
-            self.name = Name(name)
+            do throws(Name.Error) {
+                self.name = try Name(name)
+            } catch {
+                throw .invalidFieldName(error)
+            }
             self.value = try Value(value)
         }
     }
