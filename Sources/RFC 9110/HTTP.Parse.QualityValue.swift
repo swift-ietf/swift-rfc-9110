@@ -2,7 +2,7 @@
 //  HTTP.Parse.QualityValue.swift
 //  swift-rfc-9110
 //
-//  Quality value weight: OWS ";" OWS "q=" qvalue
+//  Quality value: qvalue
 //
 
 public import ASCII_Decimal_Parser_Primitives
@@ -10,9 +10,8 @@ public import Byte_Parser_Primitives
 public import Parser_Primitives
 
 extension RFC_9110.Parse {
-    /// Parses an HTTP quality value (weight) per RFC 9110 Section 12.4.2.
+    /// Parses an HTTP quality value per RFC 9110 Section 12.4.2.
     ///
-    /// `weight = OWS ";" OWS "q=" qvalue`
     /// `qvalue = ( "0" [ "." *3DIGIT ] ) / ( "1" [ "." *3"0" ] )`
     ///
     /// Returns a value between 0 and 1000 (q=1.000 -> 1000, q=0.5 -> 500).
@@ -26,30 +25,11 @@ extension RFC_9110.Parse {
 
 extension RFC_9110.Parse.QualityValue: Parser.`Protocol` {
     public typealias Output = Int
-    public typealias Failure = __HTTPQualityValueParserError
+    public typealias Failure = RFC_9110.Parse.Error.QualityValue
     public typealias Body = Never
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> Int {
-        // OWS ";" OWS
-        RFC_9110.Parse.OWS<Input>().parse(&input)
-        guard input.startIndex < input.endIndex, input[input.startIndex] == 0x3B else {
-            throw .expectedSemicolon
-        }
-        input = input[input.index(after: input.startIndex)...]
-        RFC_9110.Parse.OWS<Input>().parse(&input)
-
-        // "q=" (case-insensitive for q)
-        guard input.startIndex < input.endIndex else { throw .expectedQ }
-        let q = input[input.startIndex]
-        guard q == 0x71 || q == 0x51 else { throw .expectedQ }  // 'q' or 'Q'
-        input = input[input.index(after: input.startIndex)...]
-
-        guard input.startIndex < input.endIndex, input[input.startIndex] == 0x3D else {
-            throw .expectedQ
-        }
-        input = input[input.index(after: input.startIndex)...]
-
         // qvalue: digit before decimal
         guard input.startIndex < input.endIndex else { throw .invalidQValue }
         let intPart = input[input.startIndex]

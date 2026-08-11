@@ -30,7 +30,7 @@ extension RFC_9110.MediaType {
 
 extension RFC_9110.MediaType.Parser: Parser_Primitives.Parser.`Protocol` {
     public typealias Output = RFC_9110.MediaType
-    public typealias Failure = __HTTPMediaTypeParserError
+    public typealias Failure = RFC_9110.Parse.Error.MediaType
     public typealias Body = Never
 
     @inlinable
@@ -40,7 +40,7 @@ extension RFC_9110.MediaType.Parser: Parser_Primitives.Parser.`Protocol` {
 
         // type = token
         let typeSlice: Input
-        do throws(__HTTPTokenParserError) {
+        do throws(RFC_9110.Parse.Error.Token) {
             typeSlice = try RFC_9110.Parse.Token<Input>().parse(&input)
         } catch {
             throw .expectedType
@@ -54,7 +54,7 @@ extension RFC_9110.MediaType.Parser: Parser_Primitives.Parser.`Protocol` {
 
         // subtype = token
         let subtypeSlice: Input
-        do throws(__HTTPTokenParserError) {
+        do throws(RFC_9110.Parse.Error.Token) {
             subtypeSlice = try RFC_9110.Parse.Token<Input>().parse(&input)
         } catch {
             throw .expectedSubtype

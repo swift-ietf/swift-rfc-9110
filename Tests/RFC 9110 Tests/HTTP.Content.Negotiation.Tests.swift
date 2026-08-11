@@ -14,32 +14,32 @@ struct `HTTP.Content.Negotiation Tests` {
 
     @Test
     func `Quality value creation`() async throws {
-        let q1 = HTTP.Content.Negotiation.QualityValue(1.0)
-        #expect(q1.value == 1.0)
+        let q1 = try #require(HTTP.Content.Negotiation.QualityValue(1000))
+        #expect(q1.thousandths == 1000)
 
-        let q0 = HTTP.Content.Negotiation.QualityValue(0.0)
-        #expect(q0.value == 0.0)
+        let q0 = try #require(HTTP.Content.Negotiation.QualityValue(0))
+        #expect(q0.thousandths == 0)
 
-        let q05 = HTTP.Content.Negotiation.QualityValue(0.5)
-        #expect(q05.value == 0.5)
+        let q05 = try #require(HTTP.Content.Negotiation.QualityValue(500))
+        #expect(q05.thousandths == 500)
     }
 
     @Test
-    func `Quality value clamping`() async throws {
-        let high = HTTP.Content.Negotiation.QualityValue(1.5)
-        #expect(high.value == 1.0)
-
-        let low = HTTP.Content.Negotiation.QualityValue(-0.5)
-        #expect(low.value == 0.0)
+    func `Quality value rejects values outside the closed range`() async throws {
+        #expect(HTTP.Content.Negotiation.QualityValue(1001) == nil)
+        #expect(HTTP.Content.Negotiation.QualityValue(-1) == nil)
     }
 
     @Test
     func `Quality value parsing`() async throws {
         let q1 = HTTP.Content.Negotiation.QualityValue.parse("1.0")
-        #expect(q1?.value == 1.0)
+        #expect(q1?.thousandths == 1000)
 
         let q05 = HTTP.Content.Negotiation.QualityValue.parse("0.5")
-        #expect(q05?.value == 0.5)
+        #expect(q05?.thousandths == 500)
+
+        #expect(HTTP.Content.Negotiation.QualityValue.parse("0.1234") == nil)
+        #expect(HTTP.Content.Negotiation.QualityValue.parse("1.001") == nil)
 
         let invalid = HTTP.Content.Negotiation.QualityValue.parse("invalid")
         #expect(invalid == nil)
@@ -47,9 +47,9 @@ struct `HTTP.Content.Negotiation Tests` {
 
     @Test
     func `Quality value comparison`() async throws {
-        let q1 = HTTP.Content.Negotiation.QualityValue(1.0)
-        let q05 = HTTP.Content.Negotiation.QualityValue(0.5)
-        let q0 = HTTP.Content.Negotiation.QualityValue(0.0)
+        let q1 = try #require(HTTP.Content.Negotiation.QualityValue(1000))
+        let q05 = try #require(HTTP.Content.Negotiation.QualityValue(500))
+        let q0 = try #require(HTTP.Content.Negotiation.QualityValue(0))
 
         #expect(q1 > q05)
         #expect(q05 > q0)
@@ -60,11 +60,11 @@ struct `HTTP.Content.Negotiation Tests` {
     func `Media type preference creation`() async throws {
         let pref = HTTP.Content.Negotiation.MediaTypePreference(
             mediaType: .json,
-            quality: HTTP.Content.Negotiation.QualityValue(0.9)
+            quality: try #require(HTTP.Content.Negotiation.QualityValue(900))
         )
 
         #expect(pref.mediaType == .json)
-        #expect(pref.quality.value == 0.9)
+        #expect(pref.quality.thousandths == 900)
     }
 
     @Test
@@ -72,7 +72,7 @@ struct `HTTP.Content.Negotiation Tests` {
         let pref = HTTP.Content.Negotiation.MediaTypePreference(mediaType: .json)
 
         #expect(pref.quality == .default)
-        #expect(pref.quality.value == 1.0)
+        #expect(pref.quality.thousandths == 1000)
     }
 
     @Test
@@ -81,7 +81,7 @@ struct `HTTP.Content.Negotiation Tests` {
 
         #expect(prefs.count == 1)
         #expect(prefs[0].mediaType == .json)
-        #expect(prefs[0].quality.value == 1.0)
+        #expect(prefs[0].quality.thousandths == 1000)
     }
 
     @Test
@@ -90,7 +90,24 @@ struct `HTTP.Content.Negotiation Tests` {
 
         #expect(prefs.count == 1)
         #expect(prefs[0].mediaType == .json)
-        #expect(prefs[0].quality.value == 0.9)
+        #expect(prefs[0].quality.thousandths == 900)
+    }
+
+    @Test
+    func `Malformed explicit weights are rejected by every preference parser`() async throws {
+        #expect(
+            HTTP.Content.Negotiation.MediaTypePreference.parse("application/json;q=1.001")
+                .isEmpty
+        )
+        #expect(
+            HTTP.Content.Negotiation.CharsetPreference.parse("utf-8;q=0.1234").isEmpty
+        )
+        #expect(
+            HTTP.Content.Negotiation.EncodingPreference.parse("gzip;q=invalid").isEmpty
+        )
+        #expect(
+            HTTP.Content.Negotiation.LanguagePreference.parse("en;q=").isEmpty
+        )
     }
 
     @Test
@@ -103,13 +120,13 @@ struct `HTTP.Content.Negotiation Tests` {
 
         // Should be sorted by quality (descending)
         #expect(prefs[0].mediaType == .html)
-        #expect(prefs[0].quality.value == 1.0)
+        #expect(prefs[0].quality.thousandths == 1000)
 
         #expect(prefs[1].mediaType == .json)
-        #expect(prefs[1].quality.value == 0.9)
+        #expect(prefs[1].quality.thousandths == 900)
 
         #expect(prefs[2].mediaType.type == "*")
-        #expect(prefs[2].quality.value == 0.1)
+        #expect(prefs[2].quality.thousandths == 100)
     }
 
     @Test
@@ -225,13 +242,13 @@ struct `HTTP.Content.Negotiation Tests` {
 
     @Test
     func `Quality value description`() async throws {
-        let q1 = HTTP.Content.Negotiation.QualityValue(1.0)
+        let q1 = try #require(HTTP.Content.Negotiation.QualityValue(1000))
         #expect(q1.description == "1")
 
-        let q09 = HTTP.Content.Negotiation.QualityValue(0.9)
+        let q09 = try #require(HTTP.Content.Negotiation.QualityValue(900))
         #expect(q09.description == "0.9")
 
-        let q0 = HTTP.Content.Negotiation.QualityValue(0.0)
+        let q0 = try #require(HTTP.Content.Negotiation.QualityValue(0))
         #expect(q0.description == "0")
     }
 
@@ -242,7 +259,7 @@ struct `HTTP.Content.Negotiation Tests` {
 
         let pref2 = HTTP.Content.Negotiation.MediaTypePreference(
             mediaType: .json,
-            quality: HTTP.Content.Negotiation.QualityValue(0.9)
+            quality: try #require(HTTP.Content.Negotiation.QualityValue(900))
         )
         #expect(pref2.description.contains("application/json"))
         #expect(pref2.description.contains("q=0.9"))

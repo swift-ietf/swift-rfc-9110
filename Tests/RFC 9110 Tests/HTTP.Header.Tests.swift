@@ -14,9 +14,9 @@ struct `HTTP.Header.Field Tests` {
 
     @Test
     func `Field name case insensitivity`() async throws {
-        let name1 = HTTP.Header.Field.Name("Content-Type")
-        let name2 = HTTP.Header.Field.Name("content-type")
-        let name3 = HTTP.Header.Field.Name("CONTENT-TYPE")
+        let name1 = try HTTP.Header.Field.Name("Content-Type")
+        let name2 = try HTTP.Header.Field.Name("content-type")
+        let name3 = try HTTP.Header.Field.Name("CONTENT-TYPE")
 
         #expect(name1 == name2)
         #expect(name2 == name3)
@@ -26,11 +26,32 @@ struct `HTTP.Header.Field Tests` {
     @Test
     func `Field name hashable with case insensitivity`() async throws {
         var set: Set<HTTP.Header.Field.Name> = []
-        set.insert("Content-Type")
-        set.insert("content-type")  // Same as above
-        set.insert("Accept")
+        set.insert(try HTTP.Header.Field.Name("Content-Type"))
+        set.insert(try HTTP.Header.Field.Name("content-type"))
+        set.insert(try HTTP.Header.Field.Name("Accept"))
 
         #expect(set.count == 2)
+    }
+
+    @Test
+    func `Field name rejects empty and non-token input`() async throws {
+        #expect(throws: HTTP.Header.Field.Name.Error.self) {
+            _ = try HTTP.Header.Field.Name("")
+        }
+        #expect(throws: HTTP.Header.Field.Name.Error.self) {
+            _ = try HTTP.Header.Field.Name("Injected\r\nName")
+        }
+        #expect(throws: HTTP.Header.Field.Name.Error.self) {
+            _ = try HTTP.Header.Field.Name("Content Type")
+        }
+    }
+
+    @Test
+    func `Field name decoding rejects invalid data`() async throws {
+        let data = Data("\"Injected\\r\\nName\"".utf8)
+        #expect(throws: DecodingError.self) {
+            _ = try JSONDecoder().decode(HTTP.Header.Field.Name.self, from: data)
+        }
     }
 
     @Test

@@ -14,6 +14,11 @@ extension RFC_9110 {
     public enum Parse {}
 }
 
+extension RFC_9110.Parse {
+    /// Non-generic parser failures for RFC 9110 grammar productions.
+    public enum Error {}
+}
+
 // MARK: - String Convenience
 
 extension RFC_9110.Parse {

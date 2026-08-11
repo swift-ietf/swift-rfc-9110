@@ -4,6 +4,7 @@
 extension RFC_9110.Header.Field {
     /// Errors that occur during header field validation
     public enum Error: Swift.Error, Sendable {
+        case invalidFieldName(Name.Error)
         /// The header field value is invalid
         case invalidFieldValue(value: String, reason: String)
     }
