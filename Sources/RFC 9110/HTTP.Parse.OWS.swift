@@ -6,7 +6,7 @@
 //
 
 public import Byte_Parser_Primitives
-public import Parser_Primitives
+import Parser_Primitives
 
 extension RFC_9110.Parse {
     /// Consumes zero or more SP (0x20) or HTAB (0x09) bytes.

@@ -88,7 +88,7 @@ extension RFC_9110.Content.Negotiation {
                 }
             }
 
-            if let quality = bestQuality, quality.value > 0.0 {
+            if let quality = bestQuality, quality > .zero {
                 results.append((availableType, quality))
             }
         }

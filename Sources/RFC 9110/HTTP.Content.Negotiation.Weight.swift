@@ -1,6 +1,7 @@
 // HTTP.Content.Negotiation.Weight.swift
 // swift-rfc-9110
 
+public import Byte_Primitive
 import Byte_Parser_Primitives
 
 extension RFC_9110.Content.Negotiation {
@@ -13,7 +14,7 @@ extension RFC_9110.Content.Negotiation {
 }
 
 extension RFC_9110.Content.Negotiation.Weight {
-    package static func parse(_ input: inout Byte.Input) -> Self {
+    static func parse(_ input: inout Byte.Input) -> Self {
         RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
         guard !input.isEmpty else { return .absent }
         guard input[input.startIndex] == 0x3B else { return .invalid }
@@ -34,7 +35,9 @@ extension RFC_9110.Content.Negotiation.Weight {
             return .invalid
         }
         RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
-        guard input.isEmpty, let quality = QualityValue(thousandths) else { return .invalid }
+        guard input.isEmpty,
+            let quality = RFC_9110.Content.Negotiation.QualityValue(thousandths)
+        else { return .invalid }
         return .value(quality)
     }
 
