@@ -8,7 +8,7 @@ let package = Package(
         .macOS(.v27),
         .iOS(.v27),
         .tvOS(.v27),
-        .watchOS(.v27)
+        .watchOS(.v27),
     ],
     products: [
         .library(
@@ -17,35 +17,59 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/swift-primitives/swift-ascii-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-ascii-parser-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-byte-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-byte-parser-primitives.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-parser-primitives.git", branch: "main"),
+        .package(
+            url: "https://github.com/swift-primitives/swift-ascii-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-ascii-parser-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-byte-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-byte-parser-primitives.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-primitives/swift-parser-primitives.git",
+            branch: "main"
+        ),
         .package(url: "https://github.com/swift-ietf/swift-rfc-3986.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-4648.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-5322.git", branch: "main"),
-        .package(url: "https://github.com/swift-primitives/swift-standard-library-extensions.git", branch: "main")
+        .package(
+            url: "https://github.com/swift-primitives/swift-standard-library-extensions.git",
+            branch: "main"
+        ),
     ],
     targets: [
         .target(
             name: "RFC 9110",
             dependencies: [
                 .product(name: "ASCII Primitives", package: "swift-ascii-primitives"),
-                .product(name: "ASCII Decimal Parser Primitives", package: "swift-ascii-parser-primitives"),
+                .product(
+                    name: "ASCII Decimal Parser Primitives",
+                    package: "swift-ascii-parser-primitives"
+                ),
                 .product(name: "Byte Primitives", package: "swift-byte-primitives"),
                 .product(name: "Byte Parser Primitives", package: "swift-byte-parser-primitives"),
                 .product(name: "Parser Primitives", package: "swift-parser-primitives"),
                 .product(name: "RFC 3986", package: "swift-rfc-3986"),
                 .product(name: "RFC 4648", package: "swift-rfc-4648"),
                 .product(name: "RFC 5322", package: "swift-rfc-5322"),
-                .product(name: "Standard Library Extensions", package: "swift-standard-library-extensions")
-    ]
+                .product(
+                    name: "Standard Library Extensions",
+                    package: "swift-standard-library-extensions"
+                ),
+            ]
         ),
         .testTarget(
             name: "RFC 9110 Tests",
             dependencies: [
-                "RFC 9110",
+                "RFC 9110"
             ]
         ),
     ],

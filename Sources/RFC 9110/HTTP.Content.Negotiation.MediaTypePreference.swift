@@ -75,8 +75,10 @@ extension RFC_9110.Content.Negotiation.MediaTypePreference {
             switch RFC_9110.Content.Negotiation.Weight.parse(parameter: mediaType.parameters["q"]) {
             case .absent:
                 quality = .default
+
             case .value(let value):
                 quality = value
+
             case .invalid:
                 return nil
             }

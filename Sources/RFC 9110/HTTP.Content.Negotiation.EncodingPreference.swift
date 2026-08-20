@@ -74,8 +74,10 @@ extension RFC_9110.Content.Negotiation.EncodingPreference {
             switch RFC_9110.Content.Negotiation.Weight.parse(&sub) {
             case .absent:
                 quality = .default
+
             case .value(let value):
                 quality = value
+
             case .invalid:
                 return nil
             }
