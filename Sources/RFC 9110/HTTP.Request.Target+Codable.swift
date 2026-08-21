@@ -1,4 +1,4 @@
-public import RFC_3986
+import RFC_3986
 
 // MARK: - Codable
 

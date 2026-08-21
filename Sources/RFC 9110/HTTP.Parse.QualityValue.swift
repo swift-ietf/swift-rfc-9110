@@ -6,8 +6,8 @@
 //
 
 public import ASCII_Decimal_Parser_Primitives
-public import Byte_Parser_Primitives
-public import Parser_Primitives
+import Byte_Parser_Primitives
+import Parser_Primitives
 
 extension RFC_9110.Parse {
     /// Parses an HTTP quality value per RFC 9110 Section 12.4.2.

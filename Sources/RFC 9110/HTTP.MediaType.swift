@@ -8,7 +8,7 @@
 // Media types for HTTP content negotiation
 
 import ASCII_Primitives
-public import Byte_Parser_Primitives
+import Byte_Parser_Primitives
 import Parser_Primitives
 import Standard_Library_Extensions
 

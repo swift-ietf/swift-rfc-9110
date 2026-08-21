@@ -5,7 +5,7 @@
 //  Namespace for HTTP parser combinators per RFC 9110 grammar.
 //
 
-public import Byte_Parser_Primitives
+import Byte_Parser_Primitives
 import Byte_Primitives_Standard_Library_Integration
 import Parser_Primitives
 

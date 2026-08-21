@@ -1,7 +1,7 @@
 // HTTP.Content.Negotiation.Weight.swift
 // swift-rfc-9110
 
-public import Byte_Primitive
+import Byte_Primitive
 import Byte_Parser_Primitives
 
 extension RFC_9110.Content.Negotiation {

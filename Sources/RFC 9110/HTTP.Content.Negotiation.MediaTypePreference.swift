@@ -6,7 +6,7 @@
 //
 // Media type preference for content negotiation
 
-public import Byte_Parser_Primitives
+import Byte_Parser_Primitives
 import Parser_Primitives
 
 // MARK: - Media Type Preference

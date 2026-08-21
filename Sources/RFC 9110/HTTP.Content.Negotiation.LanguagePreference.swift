@@ -6,7 +6,7 @@
 //
 // Language preference for content negotiation
 
-public import Byte_Parser_Primitives
+import Byte_Parser_Primitives
 import Parser_Primitives
 
 // MARK: - Language Preference (Section 12.5.4)

@@ -6,7 +6,7 @@
 //
 
 public import Byte_Parser_Primitives
-public import Parser_Primitives
+import Parser_Primitives
 
 extension RFC_9110.Parse {
     /// Parses a single HTTP parameter per RFC 9110.
