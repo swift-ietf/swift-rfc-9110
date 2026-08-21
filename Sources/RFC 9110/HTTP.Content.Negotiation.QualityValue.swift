@@ -1,15 +1,11 @@
-// HTTP.Content.Negotiation.QualityValue.swift
-// swift-rfc-9110
-
 import Byte_Parser_Primitives
 
 extension RFC_9110.Content.Negotiation {
-    /// A quality value represented exactly as RFC 9110 thousandths.
+
     public struct QualityValue: Sendable, Equatable, Hashable, Comparable {
-        /// The canonical value in the closed range `0...1000`.
+
         public let thousandths: Int
 
-        /// Creates a quality value when `thousandths` is in `0...1000`.
         public init?(_ thousandths: Int) {
             guard (0...1000).contains(thousandths) else { return nil }
             self.thousandths = thousandths
@@ -22,7 +18,7 @@ extension RFC_9110.Content.Negotiation {
 }
 
 extension RFC_9110.Content.Negotiation.QualityValue {
-    /// Parses one complete RFC 9110 `qvalue`.
+
     public static func parse(_ string: String) -> Self? {
         var input = Byte.Input(utf8: string)
         let thousandths: Int

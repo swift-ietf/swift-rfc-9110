@@ -3,9 +3,6 @@ import Testing
 
 @testable import RFC_9110
 
-// HTTP.Method.Tests.swift
-// swift-rfc-9110
-
 @Suite
 struct `HTTP.Method Tests` {
     @Suite struct Unit {}
@@ -14,47 +11,39 @@ struct `HTTP.Method Tests` {
 
     @Test
     func `Standard methods have correct properties`() async throws {
-        // GET - safe, idempotent, cacheable
+
         #expect(HTTP.Method.get.isSafe == true)
         #expect(HTTP.Method.get.isIdempotent == true)
         #expect(HTTP.Method.get.isCacheable == true)
 
-        // POST - not safe, not idempotent, cacheable
         #expect(HTTP.Method.post.isSafe == false)
         #expect(HTTP.Method.post.isIdempotent == false)
         #expect(HTTP.Method.post.isCacheable == true)
 
-        // PUT - not safe, idempotent, not cacheable
         #expect(HTTP.Method.put.isSafe == false)
         #expect(HTTP.Method.put.isIdempotent == true)
         #expect(HTTP.Method.put.isCacheable == false)
 
-        // DELETE - not safe, idempotent, not cacheable
         #expect(HTTP.Method.delete.isSafe == false)
         #expect(HTTP.Method.delete.isIdempotent == true)
         #expect(HTTP.Method.delete.isCacheable == false)
 
-        // HEAD - safe, idempotent, cacheable
         #expect(HTTP.Method.head.isSafe == true)
         #expect(HTTP.Method.head.isIdempotent == true)
         #expect(HTTP.Method.head.isCacheable == true)
 
-        // OPTIONS - safe, idempotent, not cacheable
         #expect(HTTP.Method.options.isSafe == true)
         #expect(HTTP.Method.options.isIdempotent == true)
         #expect(HTTP.Method.options.isCacheable == false)
 
-        // TRACE - safe, idempotent, not cacheable
         #expect(HTTP.Method.trace.isSafe == true)
         #expect(HTTP.Method.trace.isIdempotent == true)
         #expect(HTTP.Method.trace.isCacheable == false)
 
-        // CONNECT - not safe, not idempotent, not cacheable
         #expect(HTTP.Method.connect.isSafe == false)
         #expect(HTTP.Method.connect.isIdempotent == false)
         #expect(HTTP.Method.connect.isCacheable == false)
 
-        // PATCH - not safe, not idempotent, not cacheable
         #expect(HTTP.Method.patch.isSafe == false)
         #expect(HTTP.Method.patch.isIdempotent == false)
         #expect(HTTP.Method.patch.isCacheable == false)
@@ -74,7 +63,7 @@ struct `HTTP.Method Tests` {
         var set: Set<HTTP.Method> = []
         set.insert(.get)
         set.insert(.post)
-        set.insert(.get)  // duplicate
+        set.insert(.get)
 
         #expect(set.count == 2)
         #expect(set.contains(.get))
@@ -96,9 +85,7 @@ struct `HTTP.Method Tests` {
     @Test
     func `Custom method`() async throws {
         let custom = HTTP.Method(rawValue: "CUSTOM")
-        // swift-linter:disable:next raw value access
-        // REASON: the test's purpose is the newtype's raw wire boundary —
-        // asserting a custom method preserves its exact wire spelling.
+
         #expect(custom.rawValue == "CUSTOM")
         #expect(custom.isSafe == false)
         #expect(custom.isIdempotent == false)
@@ -108,9 +95,7 @@ struct `HTTP.Method Tests` {
     @Test
     func `String literal`() async throws {
         let method: HTTP.Method = "CUSTOM"
-        // swift-linter:disable:next raw value access
-        // REASON: the test's purpose is the newtype's raw wire boundary —
-        // asserting the string-literal conformance preserves exact spelling.
+
         #expect(method.rawValue == "CUSTOM")
     }
 

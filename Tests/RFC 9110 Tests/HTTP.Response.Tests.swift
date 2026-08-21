@@ -4,9 +4,6 @@ import Testing
 
 @testable import RFC_9110
 
-// HTTP.Response.Tests.swift
-// swift-rfc-9110
-
 @Suite
 struct `HTTP.Response Tests` {
     @Suite struct Unit {}
@@ -38,9 +35,7 @@ struct `HTTP.Response Tests` {
 
         #expect(response.status.code == 200)
         #expect(response.body == jsonData)
-        // swift-linter:disable:next raw value access
-        // REASON: the test's purpose is the newtype's raw wire boundary —
-        // asserting the exact header wire value.
+
         #expect(response.headers["Content-Type"]?.first?.rawValue == "application/json")
     }
 
@@ -54,14 +49,11 @@ struct `HTTP.Response Tests` {
             ]
         )
 
-        // header() method
         let cookies = response.header(.init("Set-Cookie"))
         #expect(cookies.count == 2)
 
-        // firstHeader() method
         let firstCookie = response.firstHeader(.init("Set-Cookie"))
-        // swift-linter:disable:next raw value access
-        // REASON: raw wire boundary — see above.
+
         #expect(firstCookie?.rawValue == "session=abc123")
     }
 
@@ -74,7 +66,7 @@ struct `HTTP.Response Tests` {
         )
 
         #expect(withHeader.headers.count == 1)
-        #expect(response.headers.isEmpty)  // Original unchanged
+        #expect(response.headers.isEmpty)
     }
 
     @Test
@@ -91,7 +83,7 @@ struct `HTTP.Response Tests` {
 
         #expect(withoutCustom.headers.count == 1)
         #expect(withoutCustom.headers.contains("X-Custom") == false)
-        #expect(response.headers.count == 2)  // Original unchanged
+        #expect(response.headers.count == 2)
     }
 
     @Test
@@ -112,8 +104,7 @@ struct `HTTP.Response Tests` {
         )
 
         #expect(response.status == .created)
-        // swift-linter:disable:next raw value access
-        // REASON: raw wire boundary — see above.
+
         #expect(response.headers["Location"]?.first?.rawValue == "/users/123")
         #expect(response.body == Array("created".utf8).map { Byte($0) })
     }
@@ -133,8 +124,7 @@ struct `HTTP.Response Tests` {
         )
 
         #expect(response.status == .movedPermanently)
-        // swift-linter:disable:next raw value access
-        // REASON: raw wire boundary — see above.
+
         #expect(response.headers["Location"]?.first?.rawValue == "https://newlocation.com")
     }
 
@@ -145,8 +135,7 @@ struct `HTTP.Response Tests` {
         )
 
         #expect(response.status == .found)
-        // swift-linter:disable:next raw value access
-        // REASON: raw wire boundary — see above.
+
         #expect(response.headers["Location"]?.first?.rawValue == "/temporary/location")
     }
 
@@ -157,8 +146,7 @@ struct `HTTP.Response Tests` {
         )
 
         #expect(response.status == .seeOther)
-        // swift-linter:disable:next raw value access
-        // REASON: raw wire boundary — see above.
+
         #expect(response.headers["Location"]?.first?.rawValue == "/other/resource")
     }
 
@@ -172,8 +160,7 @@ struct `HTTP.Response Tests` {
 
         #expect(response.status == .notModified)
         #expect(response.body == nil)
-        // swift-linter:disable:next raw value access
-        // REASON: raw wire boundary — see above.
+
         #expect(response.headers["ETag"]?.first?.rawValue == "\"abc123\"")
     }
 
@@ -194,8 +181,7 @@ struct `HTTP.Response Tests` {
         )
 
         #expect(response.status == .unauthorized)
-        // swift-linter:disable:next raw value access
-        // REASON: raw wire boundary — see above.
+
         #expect(response.headers["WWW-Authenticate"]?.first?.rawValue == "Bearer realm=\"api\"")
     }
 
@@ -233,8 +219,7 @@ struct `HTTP.Response Tests` {
         )
 
         #expect(response.status == .serviceUnavailable)
-        // swift-linter:disable:next raw value access
-        // REASON: raw wire boundary — see above.
+
         #expect(response.headers["Retry-After"]?.first?.rawValue == "120")
     }
 

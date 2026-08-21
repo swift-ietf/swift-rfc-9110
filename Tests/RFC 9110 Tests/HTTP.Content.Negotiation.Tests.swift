@@ -3,9 +3,6 @@ import Testing
 
 @testable import RFC_9110
 
-// HTTP.Content.Negotiation.Tests.swift
-// swift-rfc-9110
-
 @Suite
 struct `HTTP.Content.Negotiation Tests` {
     @Suite struct Unit {}
@@ -118,7 +115,6 @@ struct `HTTP.Content.Negotiation Tests` {
 
         #expect(prefs.count == 3)
 
-        // Should be sorted by quality (descending)
         #expect(prefs[0].mediaType == .html)
         #expect(prefs[0].quality.thousandths == 1000)
 
@@ -131,14 +127,13 @@ struct `HTTP.Content.Negotiation Tests` {
 
     @Test
     func `Media type preference parsing - specificity`() async throws {
-        // When quality is the same, more specific types should come first
+
         let prefs = HTTP.Content.Negotiation.MediaTypePreference.parse(
             "*/*;q=0.5, application/*;q=0.5, application/json;q=0.5"
         )
 
         #expect(prefs.count == 3)
 
-        // More specific should come first
         #expect(prefs[0].mediaType == .json)
         #expect(prefs[1].mediaType.type == "application")
         #expect(prefs[1].mediaType.subtype == "*")
@@ -186,7 +181,6 @@ struct `HTTP.Content.Negotiation Tests` {
             acceptHeader: "*/*"
         )
 
-        // Should return first available
         #expect(selected == .json)
     }
 
@@ -224,7 +218,7 @@ struct `HTTP.Content.Negotiation Tests` {
         )
 
         #expect(selected.count == 3)
-        // JSON and XML should have higher quality (application/*)
+
         #expect(selected[0] == .json || selected[0] == .xml)
     }
 

@@ -1,58 +1,20 @@
-// HTTP.Authentication.Challenge.swift
-// swift-rfc-9110
-
 import Byte_Parser_Primitives
 import Byte_Primitives_Standard_Library_Integration
 import Parser_Primitives
 
 extension RFC_9110.Authentication {
-    /// WWW-Authenticate challenge (RFC 9110 Section 11.6.1)
-    ///
-    /// A challenge from the server requesting authentication credentials.
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// // Basic authentication
-    /// let challenge = HTTP.Authentication.Challenge(
-    ///     scheme: .basic,
-    ///     realm: "API Access"
-    /// )
-    /// // WWW-Authenticate: Basic realm="API Access"
-    ///
-    /// // Bearer with additional parameters
-    /// let bearer = HTTP.Authentication.Challenge(
-    ///     scheme: .bearer,
-    ///     parameters: ["realm": "example", "scope": "read write"]
-    /// )
-    /// // WWW-Authenticate: Bearer realm="example", scope="read write"
-    /// ```
-    ///
-    /// ## Reference
-    ///
-    /// - [RFC 9110 Section 11.6.1: WWW-Authenticate](https://www.rfc-editor.org/rfc/rfc9110.html#section-11.6.1)
+
     public struct Challenge: Sendable, Equatable {
-        /// The authentication scheme
+
         public let scheme: Scheme
 
-        /// Challenge parameters (for example, realm, scope)
         public var parameters: [String: String]
 
-        /// Creates an authentication challenge
-        ///
-        /// - Parameters:
-        ///   - scheme: The authentication scheme
-        ///   - parameters: Optional challenge parameters
         public init(scheme: Scheme, parameters: [String: String] = [:]) {
             self.scheme = scheme
             self.parameters = parameters
         }
 
-        /// Creates a challenge with a realm
-        ///
-        /// - Parameters:
-        ///   - scheme: The authentication scheme
-        ///   - realm: The protection realm
         public init(scheme: Scheme, realm: String) {
             self.scheme = scheme
             self.parameters = ["realm": realm]
@@ -62,21 +24,11 @@ extension RFC_9110.Authentication {
 }
 
 extension RFC_9110.Authentication.Challenge {
-    /// The realm parameter, if present
+
     public var realm: String? {
         parameters["realm"]
     }
 
-    /// Formats the challenge as a header value
-    ///
-    /// - Returns: The formatted challenge string
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// let challenge = HTTP.Authentication.Challenge(scheme: .basic, realm: "API")
-    /// challenge.headerValue // "Basic realm=\"API\""
-    /// ```
     public var headerValue: String {
         var result = scheme.name
 
@@ -85,7 +37,7 @@ extension RFC_9110.Authentication.Challenge {
                 parameters
                 .sorted { $0.key < $1.key }
                 .map { key, value in
-                    // Quote value if it contains special characters
+
                     if value.contains(" ") || value.contains(",") || value.contains("=") {
                         return "\(key)=\"\(value)\""
                     } else {
@@ -99,17 +51,11 @@ extension RFC_9110.Authentication.Challenge {
         return result
     }
 
-    /// Parses a challenge from a header value
-    ///
-    /// - Parameter headerValue: The WWW-Authenticate header value
-    /// - Returns: A Challenge if parsing succeeds, nil otherwise
     public static func parse(_ headerValue: String) -> Self? {
         var input = Byte.Input(utf8: headerValue)
 
-        // Skip leading OWS
         RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
 
-        // Parse scheme (token)
         let schemeSlice: Byte.Input
         do throws(RFC_9110.Parse.Token<Byte.Input>.Error) {
             schemeSlice = try RFC_9110.Parse.Token<Byte.Input>().parse(&input)
@@ -118,13 +64,11 @@ extension RFC_9110.Authentication.Challenge {
         }
         let scheme = RFC_9110.Authentication.Scheme(String(decoding: schemeSlice, as: UTF8.self))
 
-        // If no more content, scheme-only challenge
         RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
         guard input.startIndex < input.endIndex else {
             return Self(scheme: scheme)
         }
 
-        // Parse comma-separated parameters using Parameter parser
         var parameters: [String: String] = [:]
         while true {
             let saved = input
@@ -140,7 +84,6 @@ extension RFC_9110.Authentication.Challenge {
                 as: UTF8.self
             )
 
-            // Try to consume OWS "," OWS for next parameter
             RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
             guard input.startIndex < input.endIndex, input[input.startIndex] == 0x2C else {
                 break
@@ -153,14 +96,10 @@ extension RFC_9110.Authentication.Challenge {
     }
 }
 
-// MARK: - CustomStringConvertible
-
 extension RFC_9110.Authentication.Challenge: CustomStringConvertible {
     public var description: String {
         headerValue
     }
 }
-
-// MARK: - Codable
 
 extension RFC_9110.Authentication.Challenge: Codable {}

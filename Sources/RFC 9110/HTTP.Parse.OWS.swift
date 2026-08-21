@@ -1,18 +1,8 @@
-//
-//  HTTP.Parse.OWS.swift
-//  swift-rfc-9110
-//
-//  Optional whitespace: OWS = *( SP / HTAB )
-//
-
 public import Byte_Parser_Primitives
 import Parser_Primitives
 
 extension RFC_9110.Parse {
-    /// Consumes zero or more SP (0x20) or HTAB (0x09) bytes.
-    ///
-    /// RFC 9110 Section 5.6.3: OWS (optional whitespace) is used
-    /// between header field components.
+
     public struct OWS<Input: Collection.Slice.`Protocol`>: Sendable
     where Input: Sendable, Input.Element == Byte {
         @inlinable

@@ -1,26 +1,9 @@
-//
-//  HTTP.MediaType.Parser.swift
-//  swift-rfc-9110
-//
-//  Media-type parser per RFC 9110 Section 8.3.1.
-//
-
 public import Byte_Parser_Primitives
 public import Byte_Primitives_Standard_Library_Integration
 public import Parser_Primitives
 
 extension RFC_9110.MediaType {
-    /// Parses a media-type per RFC 9110 Section 8.3.1.
-    ///
-    /// ```
-    /// media-type = type "/" subtype parameters
-    /// type       = token
-    /// subtype    = token
-    /// parameters = *( OWS ";" OWS [ parameter ] )
-    /// ```
-    ///
-    /// Composes `HTTP.Parse.Token`, `HTTP.Parse.OWS`,
-    /// `HTTP.Parse.ParameterList` — zero inline byte logic.
+
     public struct Parser<Input: Collection.Slice.`Protocol` & Swift.Collection>: Sendable
     where Input: Sendable, Input.Element == Byte {
         @inlinable
@@ -35,10 +18,9 @@ extension RFC_9110.MediaType.Parser: Parser_Primitives.Parser.`Protocol` {
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> RFC_9110.MediaType {
-        // OWS
+
         RFC_9110.Parse.OWS<Input>().parse(&input)
 
-        // type = token
         let typeSlice: Input
         do throws(RFC_9110.Parse.Error.Token) {
             typeSlice = try RFC_9110.Parse.Token<Input>().parse(&input)
@@ -46,13 +28,11 @@ extension RFC_9110.MediaType.Parser: Parser_Primitives.Parser.`Protocol` {
             throw .expectedType
         }
 
-        // "/"
         guard input.startIndex < input.endIndex,
             input[input.startIndex] == 0x2F
         else { throw .expectedSlash }
         input = input[input.index(after: input.startIndex)...]
 
-        // subtype = token
         let subtypeSlice: Input
         do throws(RFC_9110.Parse.Error.Token) {
             subtypeSlice = try RFC_9110.Parse.Token<Input>().parse(&input)
@@ -60,10 +40,8 @@ extension RFC_9110.MediaType.Parser: Parser_Primitives.Parser.`Protocol` {
             throw .expectedSubtype
         }
 
-        // parameters = *( OWS ";" OWS parameter )
         let params = RFC_9110.Parse.ParameterList<Input>().parse(&input)
 
-        // Assemble
         let type = String(decoding: typeSlice, as: UTF8.self).lowercased()
         let subtype = String(decoding: subtypeSlice, as: UTF8.self).lowercased()
         var parameters: [String: String] = [:]

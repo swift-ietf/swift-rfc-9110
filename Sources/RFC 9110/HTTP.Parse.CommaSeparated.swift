@@ -1,21 +1,8 @@
-//
-//  HTTP.Parse.CommaSeparated.swift
-//  swift-rfc-9110
-//
-//  Comma-separated list: #element per RFC 9110 Section 5.6.1.
-//
-
 public import Byte_Parser_Primitives
 import Parser_Primitives
 
 extension RFC_9110.Parse {
-    /// Parses a comma-separated list from an HTTP header value.
-    ///
-    /// RFC 9110 Section 5.6.1 defines the `#rule`:
-    /// `#element => [ element ] *( OWS "," OWS [ element ] )`
-    ///
-    /// Empty elements between commas are silently skipped.
-    /// The `transform` closure converts each non-empty trimmed element.
+
     public struct CommaSeparated<Input: Collection.Slice.`Protocol`, T: Sendable>: Sendable
     where Input: Sendable, Input.Element == Byte {
         @usableFromInline
@@ -37,13 +24,11 @@ extension RFC_9110.Parse.CommaSeparated: Parser.`Protocol` {
     public func parse(_ input: inout Input) -> [T] {
         var results: [T] = []
 
-        // Parse first element (may be empty)
         RFC_9110.Parse.OWS<Input>().parse(&input)
         if let first = _parseElement(&input) {
             results.append(first)
         }
 
-        // Parse remaining: *( OWS "," OWS [ element ] )
         while input.startIndex < input.endIndex {
             RFC_9110.Parse.OWS<Input>().parse(&input)
             guard input.startIndex < input.endIndex, input[input.startIndex] == 0x2C else {
@@ -62,7 +47,7 @@ extension RFC_9110.Parse.CommaSeparated: Parser.`Protocol` {
 
     @inlinable
     package func _parseElement(_ input: inout Input) -> T? {
-        // Collect bytes until comma or end
+
         var index = input.startIndex
         while index < input.endIndex {
             let byte = input[index]
@@ -74,7 +59,6 @@ extension RFC_9110.Parse.CommaSeparated: Parser.`Protocol` {
 
         guard !element.isEmpty else { return nil }
 
-        // Trim trailing OWS from the element
         var lastNonWS = element.startIndex
         var hasContent = false
         var idx = element.startIndex

@@ -1,6 +1,3 @@
-// HTTP.Header.Field.Name+Codable.swift
-// swift-rfc-9110
-
 extension RFC_9110.Header.Field.Name {
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()

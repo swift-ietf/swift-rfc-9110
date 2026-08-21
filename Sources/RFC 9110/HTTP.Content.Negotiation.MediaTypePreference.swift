@@ -1,42 +1,14 @@
-// HTTP.Content.Negotiation.MediaTypePreference.swift
-// swift-rfc-9110
-//
-// RFC 9110 Section 12.5.1: Accept
-// https://www.rfc-editor.org/rfc/rfc9110.html#section-12.5.1
-//
-// Media type preference for content negotiation
-
 import Byte_Parser_Primitives
 import Parser_Primitives
 
-// MARK: - Media Type Preference
-
 extension RFC_9110.Content.Negotiation {
-    /// Media type preference from Accept header (RFC 9110 Section 12.5.1)
-    ///
-    /// Represents a media type pattern with an optional quality value.
-    ///
-    /// ## Example
-    ///
-    /// ```
-    /// Accept: text/html, application/json;q=0.9, */*;q=0.1
-    /// ```
-    ///
-    /// ## Reference
-    ///
-    /// - [RFC 9110 Section 12.5.1: Accept](https://www.rfc-editor.org/rfc/rfc9110.html#section-12.5.1)
+
     public struct MediaTypePreference: Sendable, Equatable {
-        /// The media type pattern
+
         public let mediaType: RFC_9110.MediaType
 
-        /// The quality value (defaults to 1.0)
         public let quality: QualityValue
 
-        /// Creates a media type preference
-        ///
-        /// - Parameters:
-        ///   - mediaType: The media type
-        ///   - quality: The quality value (defaults to 1.0)
         public init(mediaType: RFC_9110.MediaType, quality: QualityValue = .default) {
             self.mediaType = mediaType
             self.quality = quality
@@ -46,19 +18,7 @@ extension RFC_9110.Content.Negotiation {
 }
 
 extension RFC_9110.Content.Negotiation.MediaTypePreference {
-    /// Parses media type preferences from an Accept header value
-    ///
-    /// - Parameter headerValue: The Accept header value
-    /// - Returns: An array of media type preferences, sorted by quality (descending)
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// let prefs = HTTP.Content.Negotiation.MediaTypePreference.parse(
-    ///     "text/html, application/json;q=0.9, */*;q=0.1"
-    /// )
-    /// // Returns 3 preferences sorted by quality
-    /// ```
+
     public static func parse(_ headerValue: String) -> [Self] {
         var input = Byte.Input(utf8: headerValue)
         let preferences = RFC_9110.Parse.CommaSeparated<Byte.Input, Self> {
@@ -82,7 +42,7 @@ extension RFC_9110.Content.Negotiation.MediaTypePreference {
             case .invalid:
                 return nil
             }
-            // Remove q from media type parameters
+
             var params = mediaType.parameters
             params.removeValue(forKey: "q")
             let cleanMediaType = RFC_9110.MediaType(
@@ -93,7 +53,6 @@ extension RFC_9110.Content.Negotiation.MediaTypePreference {
             return Self(mediaType: cleanMediaType, quality: quality)
         }.parse(&input)
 
-        // Sort by quality (descending), then by specificity
         return preferences.sorted { lhs, rhs in
             if lhs.quality != rhs.quality {
                 return lhs.quality > rhs.quality
@@ -106,8 +65,6 @@ extension RFC_9110.Content.Negotiation.MediaTypePreference {
         }
     }
 }
-
-// MARK: - CustomStringConvertible
 
 extension RFC_9110.Content.Negotiation.MediaTypePreference: CustomStringConvertible {
     public var description: String {

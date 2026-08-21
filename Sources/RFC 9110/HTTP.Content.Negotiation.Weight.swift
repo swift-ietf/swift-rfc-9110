@@ -1,11 +1,8 @@
-// HTTP.Content.Negotiation.Weight.swift
-// swift-rfc-9110
-
-import Byte_Primitive
 import Byte_Parser_Primitives
+import Byte_Primitive
 
 extension RFC_9110.Content.Negotiation {
-    /// The three possible outcomes when adapting an optional preference weight.
+
     package enum Weight: Sendable, Equatable {
         case absent
         case value(QualityValue)

@@ -3,9 +3,6 @@ import Testing
 
 @testable import RFC_9110
 
-// HTTP.Content.Encoding.Tests.swift
-// swift-rfc-9110
-
 @Suite
 struct `HTTP.Content.Encoding Tests` {
     @Suite struct Unit {}
@@ -106,7 +103,7 @@ struct `HTTP.Content.Encoding Tests` {
     func `Hashable`() async throws {
         var set: Set<HTTP.Content.Encoding> = []
         set.insert(.gzip)
-        set.insert(.gzip)  // Duplicate
+        set.insert(.gzip)
         set.insert(.brotli)
 
         #expect(set.count == 2)

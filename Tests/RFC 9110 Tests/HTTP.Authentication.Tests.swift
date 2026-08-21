@@ -3,16 +3,11 @@ import Testing
 
 @testable import RFC_9110
 
-// HTTP.Authentication.Tests.swift
-// swift-rfc-9110
-
 @Suite
 struct `HTTP.Authentication Tests` {
     @Suite struct Unit {}
     @Suite struct `Edge Case` {}
     @Suite struct Integration {}
-
-    // MARK: - Scheme Tests
 
     @Test
     func `Authentication scheme creation`() async throws {
@@ -47,13 +42,11 @@ struct `HTTP.Authentication Tests` {
     func `Scheme hashable (case-insensitive)`() async throws {
         var set: Set<HTTP.Authentication.Scheme> = []
         set.insert("Basic")
-        set.insert("basic")  // Should be same as Basic
+        set.insert("basic")
         set.insert("Bearer")
 
         #expect(set.count == 2)
     }
-
-    // MARK: - Challenge Tests
 
     @Test
     func `Challenge creation - simple`() async throws {
@@ -141,8 +134,6 @@ struct `HTTP.Authentication Tests` {
         #expect(challenge?.parameters["scope"] == "read write")
     }
 
-    // MARK: - Credentials Tests
-
     @Test
     func `Credentials creation`() async throws {
         let creds = HTTP.Authentication.Credentials(scheme: .bearer, token: "abc123")
@@ -157,7 +148,6 @@ struct `HTTP.Authentication Tests` {
 
         #expect(creds.scheme == .basic)
 
-        // Verify it's base64 encoded
         let decoded = Data(base64Encoded: creds.token)
         #expect(decoded != nil)
 
@@ -205,8 +195,6 @@ struct `HTTP.Authentication Tests` {
         #expect(invalid == nil)
     }
 
-    // MARK: - Codable Tests
-
     @Test
     func `Scheme codable`() async throws {
         let encoder = JSONEncoder()
@@ -242,8 +230,6 @@ struct `HTTP.Authentication Tests` {
         #expect(decoded == creds)
     }
 
-    // MARK: - Description Tests
-
     @Test
     func `Scheme description`() async throws {
         #expect(HTTP.Authentication.Scheme.basic.description == "Basic")
@@ -264,8 +250,6 @@ struct `HTTP.Authentication Tests` {
         let creds = HTTP.Authentication.Credentials.bearer("token123")
         #expect(creds.description == "Bearer token123")
     }
-
-    // MARK: - String Literal Tests
 
     @Test
     func `Scheme string literal`() async throws {

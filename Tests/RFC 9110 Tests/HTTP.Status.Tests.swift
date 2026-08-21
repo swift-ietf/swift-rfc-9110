@@ -3,9 +3,6 @@ import Testing
 
 @testable import RFC_9110
 
-// HTTP.Status.Tests.swift
-// swift-rfc-9110
-
 @Suite
 struct `HTTP.Status Tests` {
     @Suite struct Unit {}
@@ -14,29 +11,25 @@ struct `HTTP.Status Tests` {
 
     @Test
     func `Status code properties`() async throws {
-        // Informational 1xx
+
         #expect(HTTP.Status.continue.isInformational == true)
         #expect(HTTP.Status.continue.code == 100)
 
-        // Successful 2xx
         #expect(HTTP.Status.ok.isSuccessful == true)
         #expect(HTTP.Status.ok.code == 200)
         #expect(HTTP.Status.created.isSuccessful == true)
         #expect(HTTP.Status.noContent.isSuccessful == true)
 
-        // Redirection 3xx
         #expect(HTTP.Status.movedPermanently.isRedirection == true)
         #expect(HTTP.Status.movedPermanently.code == 301)
         #expect(HTTP.Status.found.isRedirection == true)
         #expect(HTTP.Status.notModified.isRedirection == true)
 
-        // Client Error 4xx
         #expect(HTTP.Status.badRequest.isClientError == true)
         #expect(HTTP.Status.badRequest.code == 400)
         #expect(HTTP.Status.unauthorized.isClientError == true)
         #expect(HTTP.Status.notFound.isClientError == true)
 
-        // Server Error 5xx
         #expect(HTTP.Status.internalServerError.isServerError == true)
         #expect(HTTP.Status.internalServerError.code == 500)
         #expect(HTTP.Status.serviceUnavailable.isServerError == true)
@@ -54,7 +47,7 @@ struct `HTTP.Status Tests` {
         var set: Set<HTTP.Status> = []
         set.insert(.ok)
         set.insert(.created)
-        set.insert(.ok)  // duplicate
+        set.insert(.ok)
 
         #expect(set.count == 2)
         #expect(set.contains(.ok))
@@ -95,7 +88,7 @@ struct `HTTP.Status Tests` {
 
     @Test
     func `All standard status codes`() async throws {
-        // Just verify they exist and have correct codes
+
         #expect(HTTP.Status.continue.code == 100)
         #expect(HTTP.Status.switchingProtocols.code == 101)
 

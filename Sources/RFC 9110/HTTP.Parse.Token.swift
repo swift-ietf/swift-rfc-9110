@@ -1,19 +1,8 @@
-//
-//  HTTP.Parse.Token.swift
-//  swift-rfc-9110
-//
-//  HTTP token: token = 1*tchar
-//
-
 public import Byte_Parser_Primitives
 import Parser_Primitives
 
 extension RFC_9110.Parse {
-    /// Parses an HTTP token per RFC 9110 Section 5.6.2.
-    ///
-    /// `token = 1*tchar`
-    /// `tchar = "!" / "#" / "$" / "%" / "&" / "'" / "*" / "+"
-    ///        / "-" / "." / "^" / "_" / "`" / "|" / "~" / DIGIT / ALPHA`
+
     public struct Token<Input: Collection.Slice.`Protocol`>: Sendable
     where Input: Sendable, Input.Element == Byte {
         @inlinable
@@ -44,7 +33,6 @@ extension RFC_9110.Parse.Token: Parser.`Protocol` {
         return result
     }
 
-    /// Returns whether the given byte is a valid token character (`tchar`).
     @inlinable
     public static func isTchar(_ byte: Byte) -> Bool {
         switch byte {
@@ -52,11 +40,11 @@ extension RFC_9110.Parse.Token: Parser.`Protocol` {
             0x2D, 0x2E, 0x5E, 0x5F, 0x60, 0x7C, 0x7E:
             true
 
-        case 0x30...0x39: true  // DIGIT
+        case 0x30...0x39: true
 
-        case 0x41...0x5A: true  // ALPHA upper
+        case 0x41...0x5A: true
 
-        case 0x61...0x7A: true  // ALPHA lower
+        case 0x61...0x7A: true
 
         default: false
         }

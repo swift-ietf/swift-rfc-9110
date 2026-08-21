@@ -1,7 +1,5 @@
 import RFC_3986
 
-// MARK: - Codable
-
 extension RFC_9110.Request.Target {
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

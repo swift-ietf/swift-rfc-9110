@@ -1,11 +1,3 @@
-// HTTP.Entity.Tag.swift
-// swift-rfc-9110
-//
-// RFC 9110 Section 8.8.3: ETag
-// https://www.rfc-editor.org/rfc/rfc9110.html#section-8.8.3
-//
-// Entity tags (ETags) are used for cache validation and conditional requests
-
 import ASCII_Primitives
 import Byte_Parser_Primitives
 import Byte_Primitives_Standard_Library_Integration
@@ -13,68 +5,13 @@ import Parser_Primitives
 import Standard_Library_Extensions
 
 extension RFC_9110.Entity {
-    /// HTTP Entity Tag (ETag) per RFC 9110 Section 8.8.3
-    ///
-    /// An entity tag (ETag) is an opaque validator for differentiating between
-    /// multiple representations of the same resource.
-    ///
-    /// ## Weak vs Strong ETags
-    ///
-    /// - **Strong ETags**: Indicate byte-for-byte equivalence
-    ///   - Format: `"value"`
-    ///   - Example: `"686897696a7c876b7e"`
-    ///
-    /// - **Weak ETags**: Indicate semantic equivalence (representation may differ slightly)
-    ///   - Format: `W/"value"`
-    ///   - Example: `W/"686897696a7c876b7e"`
-    ///
-    /// ## Example Usage
-    ///
-    /// ```swift
-    /// // Strong ETag
-    /// let strong = HTTP.Entity.Tag(value: "686897696a7c876b7e", isWeak: false)
-    /// print(strong.headerValue) // "686897696a7c876b7e"
-    ///
-    /// // Weak ETag
-    /// let weak = HTTP.Entity.Tag(value: "686897696a7c876b7e", isWeak: true)
-    /// print(weak.headerValue) // W/"686897696a7c876b7e"
-    ///
-    /// // Parsing
-    /// let parsed = HTTP.Entity.Tag.parse("W/\"686897696a7c876b7e\"")
-    /// // parsed?.value == "686897696a7c876b7e"
-    /// // parsed?.isWeak == true
-    /// ```
-    ///
-    /// ## RFC 9110 Reference
-    ///
-    /// From RFC 9110 Section 8.8.3:
-    /// ```
-    /// ETag       = entity-tag
-    /// entity-tag = [ weak ] opaque-tag
-    /// weak       = %s"W/"
-    /// opaque-tag = DQUOTE *etagc DQUOTE
-    /// etagc      = %x21 / %x23-7E / obs-text
-    /// ```
-    ///
-    /// ## Reference
-    ///
-    /// - [RFC 9110 Section 8.8.3: ETag](https://www.rfc-editor.org/rfc/rfc9110.html#section-8.8.3)
-    /// - [RFC 9110 Section 13.1: Validators](https://www.rfc-editor.org/rfc/rfc9110.html#section-13.1)
+
     public struct Tag: Sendable, Equatable, Hashable, Codable {
-        /// The opaque tag value (without quotes)
+
         public let value: String
 
-        /// Whether this is a weak entity tag
-        ///
-        /// - `true`: Weak tag (semantic equivalence) - prefixed with W/
-        /// - `false`: Strong tag (byte-for-byte equivalence)
         public let isWeak: Bool
 
-        /// Creates an entity tag
-        ///
-        /// - Parameters:
-        ///   - value: The opaque tag value (without quotes)
-        ///   - isWeak: Whether this is a weak entity tag (defaults to false)
         public init(value: String, isWeak: Bool = false) {
             self.value = value
             self.isWeak = isWeak
@@ -84,16 +21,7 @@ extension RFC_9110.Entity {
 }
 
 extension RFC_9110.Entity.Tag {
-    /// The header value representation
-    ///
-    /// - Returns: The ETag formatted for use in HTTP headers
-    ///
-    /// ## Examples
-    ///
-    /// ```swift
-    /// Entity.Tag.strong("abc").headerValue  // "abc"
-    /// Entity.Tag.weak("abc").headerValue    // W/"abc"
-    /// ```
+
     public var headerValue: String {
         if isWeak {
             return "W/\"\(value)\""
@@ -102,35 +30,20 @@ extension RFC_9110.Entity.Tag {
         }
     }
 
-    /// Parses an entity tag from a header value
-    ///
-    /// - Parameter headerValue: The ETag header value to parse
-    /// - Returns: A Tag if parsing succeeds, nil otherwise
-    ///
-    /// ## Example
-    ///
-    /// ```swift
-    /// Entity.Tag.parse("\"abc123\"")        // Entity.Tag(value: "abc123", isWeak: false)
-    /// Entity.Tag.parse("W/\"abc123\"")      // Entity.Tag(value: "abc123", isWeak: true)
-    /// Entity.Tag.parse("invalid")           // nil
-    /// ```
     public static func parse(_ headerValue: String) -> Self? {
         var input = Byte.Input(utf8: headerValue)
 
-        // OWS
         RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
 
-        // Check for weak prefix "W/"
         var isWeak = false
-        if input.startIndex < input.endIndex, input[input.startIndex] == 0x57 {  // 'W'
+        if input.startIndex < input.endIndex, input[input.startIndex] == 0x57 {
             let next = input.index(after: input.startIndex)
-            if next < input.endIndex, input[next] == 0x2F {  // '/'
+            if next < input.endIndex, input[next] == 0x2F {
                 input = input[input.index(after: next)...]
                 isWeak = true
             }
         }
 
-        // Parse quoted tag value
         let bytes: [Byte]
         do throws(RFC_9110.Parse.QuotedString<Byte.Input>.Error) {
             bytes = try RFC_9110.Parse.QuotedString<Byte.Input>().parse(&input)
@@ -142,15 +55,11 @@ extension RFC_9110.Entity.Tag {
     }
 }
 
-// MARK: - CustomStringConvertible
-
 extension RFC_9110.Entity.Tag: CustomStringConvertible {
     public var description: String {
         headerValue
     }
 }
-
-// MARK: - Codable
 
 extension RFC_9110.Entity.Tag {
     public init(from decoder: any Decoder) throws {
@@ -173,88 +82,39 @@ extension RFC_9110.Entity.Tag {
     }
 }
 
-// MARK: - LosslessStringConvertible
-
 extension RFC_9110.Entity.Tag: LosslessStringConvertible {
-    /// Creates an entity tag from a string description
-    ///
-    /// - Parameter description: The ETag string (e.g., `"abc123"`, `W/"abc123"`)
-    /// - Returns: An entity tag instance, or nil if parsing fails
-    ///
-    /// # Example
-    ///
-    /// ```swift
-    /// let etag = HTTP.Entity.Tag("\"abc123\"")  // Strong ETag
-    /// let str = String(etag)                   // "\"abc123\"" - perfect round-trip
-    /// ```
+
     public init?(_ description: String) {
         guard let parsed = Self.parse(description) else { return nil }
         self = parsed
     }
 }
 
-// MARK: - ExpressibleByStringLiteral
-
 extension RFC_9110.Entity.Tag: ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
         if let parsed = RFC_9110.Entity.Tag.parse(value) {
             self = parsed
         } else {
-            // Fallback: treat as strong ETag with the literal value
+
             self = RFC_9110.Entity.Tag(value: value, isWeak: false)
         }
     }
 }
 
-// MARK: - Factory Methods and Comparison
-
 extension RFC_9110.Entity.Tag {
-    /// Creates a strong entity tag
-    ///
-    /// - Parameter value: The opaque tag value
-    /// - Returns: A strong entity tag
+
     public static func strong(_ value: String) -> Self {
         Self(value: value, isWeak: false)
     }
 
-    /// Creates a weak entity tag
-    ///
-    /// - Parameter value: The opaque tag value
-    /// - Returns: A weak entity tag
     public static func weak(_ value: String) -> Self {
         Self(value: value, isWeak: true)
     }
 
-    /// Performs a strong comparison between two entity tags
-    ///
-    /// Strong comparison returns true only if both tags are strong and
-    /// their values match byte-for-byte.
-    ///
-    /// - Parameters:
-    ///   - lhs: The first entity tag
-    ///   - rhs: The second entity tag
-    /// - Returns: True if both are strong tags with matching values
-    ///
-    /// ## Reference
-    ///
-    /// - [RFC 9110 Section 8.8.3.2: Comparison](https://www.rfc-editor.org/rfc/rfc9110.html#section-8.8.3.2)
     public static func strongCompare(_ lhs: Self, _ rhs: Self) -> Bool {
         !lhs.isWeak && !rhs.isWeak && lhs.value == rhs.value
     }
 
-    /// Performs a weak comparison between two entity tags
-    ///
-    /// Weak comparison returns true if the values match, regardless of
-    /// whether the tags are weak or strong.
-    ///
-    /// - Parameters:
-    ///   - lhs: The first entity tag
-    ///   - rhs: The second entity tag
-    /// - Returns: True if the values match
-    ///
-    /// ## Reference
-    ///
-    /// - [RFC 9110 Section 8.8.3.2: Comparison](https://www.rfc-editor.org/rfc/rfc9110.html#section-8.8.3.2)
     public static func weakCompare(_ lhs: Self, _ rhs: Self) -> Bool {
         lhs.value == rhs.value
     }

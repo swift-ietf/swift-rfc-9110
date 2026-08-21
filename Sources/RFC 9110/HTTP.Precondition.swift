@@ -1,6 +1,3 @@
-// HTTP.Precondition.swift
-// swift-rfc-9110
-
 import ASCII_Primitives
 import Byte_Parser_Primitives
 import Parser_Primitives
@@ -8,74 +5,28 @@ public import RFC_5322
 import Standard_Library_Extensions
 
 extension RFC_9110 {
-    /// Conditional request preconditions (RFC 9110 Section 13)
-    ///
-    /// Preconditions are used to make requests conditional based on the state
-    /// of the target resource. They enable cache validation and optimistic
-    /// concurrency control.
-    ///
-    /// # Example
-    ///
-    /// ```swift
-    /// // Only update if ETag matches
-    /// let precondition = HTTP.Precondition.ifMatch([.strong("abc123")])
-    ///
-    /// // Only fetch if modified since date
-    /// let precondition = HTTP.Precondition.ifModifiedSince(Date())
-    ///
-    /// // Conditional range request
-    /// let precondition = HTTP.Precondition.ifRange(.etag(.strong("abc123")))
-    /// ```
-    ///
+
     public enum Precondition: Sendable, Equatable {
-        /// If-Match: Only perform the action if the current ETag matches one of the provided ETags
-        ///
-        /// Used for updates to ensure the resource hasn't changed (optimistic locking).
-        /// Use `[.wildcard]` to match any representation.
-        ///
-        /// # RFC 9110 Section 13.1.1
+
         case ifMatch([RFC_9110.Entity.Tag])
 
-        /// If-None-Match: Only perform the action if the current ETag doesn't match any provided ETags
-        ///
-        /// Used with GET/HEAD for cache validation. Use `[.wildcard]` to match any representation.
-        ///
-        /// # RFC 9110 Section 13.1.2
         case ifNoneMatch([RFC_9110.Entity.Tag])
 
-        /// If-Modified-Since: Only perform the action if modified after the specified date
-        ///
-        /// Used with GET/HEAD for cache validation.
-        ///
-        /// # RFC 9110 Section 13.1.3
         case ifModifiedSince(RFC_5322.DateTime)
 
-        /// If-Unmodified-Since: Only perform the action if not modified since the specified date
-        ///
-        /// Used for updates to ensure the resource hasn't changed.
-        ///
-        /// # RFC 9110 Section 13.1.4
         case ifUnmodifiedSince(RFC_5322.DateTime)
 
-        /// If-Range: Make range request conditional on validator match
-        ///
-        /// If the validator matches, return the requested range.
-        /// If it doesn't match, return the entire representation.
-        ///
-        /// # RFC 9110 Section 13.1.5
         case ifRange(Validator)
     }
 }
 
 extension RFC_9110.Precondition {
-    /// Wildcard entity tag for matching any representation
+
     public static let wildcardTag = RFC_9110.Entity.Tag.strong("*")
 }
 
-// MARK: - Header Generation
-
 extension RFC_9110.Precondition {
-    /// The header field name for this precondition
+
     public var headerName: String {
         switch self {
         case .ifMatch:
@@ -95,7 +46,6 @@ extension RFC_9110.Precondition {
         }
     }
 
-    /// The header value for this precondition
     public var headerValue: String {
         switch self {
         case .ifMatch(let etags):
@@ -125,18 +75,12 @@ extension RFC_9110.Precondition {
     }
 }
 
-// MARK: - Header Parsing
-
 extension RFC_9110.Precondition {
-    /// Parses an If-Match header value
-    ///
-    /// - Parameter headerValue: The If-Match header value
-    /// - Returns: An If-Match precondition, or nil if parsing fails
+
     public static func parseIfMatch(_ headerValue: String) -> RFC_9110.Precondition? {
         var input = Byte.Input(utf8: headerValue)
         RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
 
-        // Wildcard case
         if input.startIndex < input.endIndex, input[input.startIndex] == 0x2A {
             let saved = input
             input = input[input.index(after: input.startIndex)...]
@@ -147,7 +91,6 @@ extension RFC_9110.Precondition {
             input = saved
         }
 
-        // Parse comma-separated ETags
         let etags = RFC_9110.Parse.CommaSeparated<Byte.Input, RFC_9110.Entity.Tag> { element in
             RFC_9110.Entity.Tag.parse(String(decoding: element, as: UTF8.self))
         }.parse(&input)
@@ -155,15 +98,10 @@ extension RFC_9110.Precondition {
         return etags.isEmpty ? nil : .ifMatch(etags)
     }
 
-    /// Parses an If-None-Match header value
-    ///
-    /// - Parameter headerValue: The If-None-Match header value
-    /// - Returns: An If-None-Match precondition, or nil if parsing fails
     public static func parseIfNoneMatch(_ headerValue: String) -> RFC_9110.Precondition? {
         var input = Byte.Input(utf8: headerValue)
         RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
 
-        // Wildcard case
         if input.startIndex < input.endIndex, input[input.startIndex] == 0x2A {
             let saved = input
             input = input[input.index(after: input.startIndex)...]
@@ -174,7 +112,6 @@ extension RFC_9110.Precondition {
             input = saved
         }
 
-        // Parse comma-separated ETags
         let etags = RFC_9110.Parse.CommaSeparated<Byte.Input, RFC_9110.Entity.Tag> { element in
             RFC_9110.Entity.Tag.parse(String(decoding: element, as: UTF8.self))
         }.parse(&input)
@@ -182,10 +119,6 @@ extension RFC_9110.Precondition {
         return etags.isEmpty ? nil : .ifNoneMatch(etags)
     }
 
-    /// Parses an If-Modified-Since header value
-    ///
-    /// - Parameter headerValue: The If-Modified-Since header value
-    /// - Returns: An If-Modified-Since precondition, or nil if parsing fails
     public static func parseIfModifiedSince(_ headerValue: String) -> RFC_9110.Precondition? {
         let httpDate: RFC_5322.DateTime
         do throws(RFC_5322.DateTime.Error) {
@@ -196,10 +129,6 @@ extension RFC_9110.Precondition {
         return .ifModifiedSince(httpDate)
     }
 
-    /// Parses an If-Unmodified-Since header value
-    ///
-    /// - Parameter headerValue: The If-Unmodified-Since header value
-    /// - Returns: An If-Unmodified-Since precondition, or nil if parsing fails
     public static func parseIfUnmodifiedSince(_ headerValue: String) -> RFC_9110.Precondition? {
         let httpDate: RFC_5322.DateTime
         do throws(RFC_5322.DateTime.Error) {
@@ -210,39 +139,26 @@ extension RFC_9110.Precondition {
         return .ifUnmodifiedSince(httpDate)
     }
 
-    /// Parses an If-Range header value
-    ///
-    /// - Parameter headerValue: The If-Range header value
-    /// - Returns: An If-Range precondition, or nil if parsing fails
     public static func parseIfRange(_ headerValue: String) -> RFC_9110.Precondition? {
         let trimmed = String(headerValue.trimming(where: { $0.isWhitespace }))
 
-        // Try to parse as ETag first
         if let etag = RFC_9110.Entity.Tag.parse(trimmed) {
             return .ifRange(.etag(etag))
         }
 
-        // Try to parse as date
         do throws(RFC_5322.DateTime.Error) {
             let httpDate = try RFC_5322.DateTime(trimmed)
             return .ifRange(.date(httpDate))
         } catch {
-            // not a valid HTTP-date either: fall through to nil
+
         }
 
         return nil
     }
 }
 
-// MARK: - Evaluation
-
 extension RFC_9110.Precondition {
-    /// Evaluates whether this precondition is satisfied
-    ///
-    /// - Parameters:
-    ///   - currentETag: The current entity tag of the resource, if any
-    ///   - lastModified: The last modified timestamp of the resource, if any
-    /// - Returns: true if the precondition is satisfied, false otherwise
+
     public func evaluate(
         currentETag: RFC_9110.Entity.Tag?,
         lastModified: RFC_5322.DateTime?
@@ -252,59 +168,57 @@ extension RFC_9110.Precondition {
             guard let currentETag else {
                 return false
             }
-            // Wildcard matches any representation
+
             if etags.contains(where: { $0.value == "*" }) {
                 return true
             }
-            // Check if any ETag matches using strong comparison
+
             return etags.contains(where: { RFC_9110.Entity.Tag.strongCompare($0, currentETag) })
 
         case .ifNoneMatch(let etags):
             guard let currentETag else {
-                // If no current ETag exists, precondition is satisfied
+
                 return true
             }
-            // Wildcard matches any representation
+
             if etags.contains(where: { $0.value == "*" }) {
                 return false
             }
-            // Check if NO ETag matches using weak comparison
+
             return !etags.contains(where: { RFC_9110.Entity.Tag.weakCompare($0, currentETag) })
 
         case .ifModifiedSince(let date):
             guard let lastModified else {
-                // If no last modified date exists, assume modified
+
                 return true
             }
-            // Satisfied if modified after the specified date
+
             return lastModified > date
 
         case .ifUnmodifiedSince(let date):
             guard let lastModified else {
-                // If no last modified date exists, assume unmodified
+
                 return true
             }
-            // Satisfied if not modified since the specified date
+
             return lastModified <= date
 
         case .ifRange(.etag(let etag)):
             guard let currentETag else {
                 return false
             }
-            // Must use strong comparison for If-Range
+
             return RFC_9110.Entity.Tag.strongCompare(etag, currentETag)
 
         case .ifRange(.date(let date)):
             guard let lastModified else {
                 return false
             }
-            // Satisfied if not modified since the date
+
             return lastModified <= date
         }
     }
 }
-
-// MARK: - CustomStringConvertible
 
 extension RFC_9110.Precondition: CustomStringConvertible {
     public var description: String {

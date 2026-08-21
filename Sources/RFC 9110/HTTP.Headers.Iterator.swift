@@ -1,18 +1,5 @@
-// HTTP.Headers.Iterator.swift
-// swift-rfc-9110
-//
-// RFC 9110 Section 6.3: Header Fields
-// https://www.rfc-editor.org/rfc/rfc9110.html#section-6.3
-//
-// Iterator for HTTP headers collection
-
-// MARK: - Iterator
-
 extension RFC_9110.Headers: Swift.Sequence {
-    /// Iterator for Headers collection
-    ///
-    /// Iterates over all header fields, expanding headers with multiple
-    /// values into separate Field instances while preserving order.
+
     public struct Iterator: IteratorProtocol {
         private var nameIndex = 0
         private var valueIndex = 0
@@ -29,14 +16,6 @@ extension RFC_9110.Headers: Swift.Sequence {
 
     }
 
-    /// Iterates over all header fields (expanding headers with multiple values)
-    ///
-    /// ## Example
-    /// ```swift
-    /// for header in headers {
-    ///     print("\(header.name): \(header.value)")
-    /// }
-    /// ```
     public func makeIterator() -> Iterator {
         Iterator(orderedNames: orderedNames, storage: storage)
     }

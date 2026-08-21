@@ -1,7 +1,5 @@
 import Byte_Primitives
 
-// MARK: - Codable
-
 extension RFC_9110.Request {
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

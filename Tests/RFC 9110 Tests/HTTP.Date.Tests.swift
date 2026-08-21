@@ -4,9 +4,6 @@ import Testing
 
 @testable import RFC_9110
 
-// HTTP.Date.Tests.swift
-// swift-rfc-9110
-
 @Suite
 struct `HTTP.Date Tests` {
     @Suite struct Unit {}
@@ -15,7 +12,7 @@ struct `HTTP.Date Tests` {
 
     @Test
     func `Date creation`() async throws {
-        let timestamp = 784_111_777  // Sun, 06 Nov 1994 08:49:37 GMT
+        let timestamp = 784_111_777
         let httpDate = HTTP.Date(secondsSinceEpoch: timestamp)
 
         #expect(httpDate.secondsSinceEpoch == timestamp)
@@ -23,15 +20,12 @@ struct `HTTP.Date Tests` {
 
     @Test
     func `Header value format - IMF-fixdate`() async throws {
-        let httpDate = HTTP.Date(secondsSinceEpoch: 784_111_777)  // Sun, 06 Nov 1994 08:49:37 GMT
+        let httpDate = HTTP.Date(secondsSinceEpoch: 784_111_777)
 
         let field = HTTP.Header.Field(dateTime: httpDate)
-        // swift-linter:disable:next raw value access
-        // REASON: the test's purpose is the newtype's raw wire boundary —
-        // asserting the exact IMF-fixdate wire spelling.
+
         let headerValue = field.value.rawValue
 
-        // IMF-fixdate per RFC 9110 §5.6.7 (literal "GMT", never the RFC 5322 "+0000")
         #expect(headerValue == "Sun, 06 Nov 1994 08:49:37 GMT")
         #expect(headerValue.contains("GMT"))
         #expect(!headerValue.contains("+0000"))
@@ -46,12 +40,12 @@ struct `HTTP.Date Tests` {
 
         let expectedTimestamp = 784_111_777
         let diff = abs(parsed!.secondsSinceEpoch - expectedTimestamp)
-        #expect(diff < 1)  // Within 1 second
+        #expect(diff < 1)
     }
 
     @Test
     func `Parse RFC 850 format (obsolete)`() async throws {
-        // RFC 9110 §5.6.7: recipients MUST accept the obsolete RFC 850 format
+
         let field = try HTTP.Header.Field(name: "Date", value: "Sunday, 06-Nov-94 08:49:37 GMT")
         let parsed = RFC_5322.DateTime(field)
 
@@ -63,7 +57,7 @@ struct `HTTP.Date Tests` {
 
     @Test
     func `Parse asctime format (obsolete)`() async throws {
-        // RFC 9110 §5.6.7: recipients MUST accept the obsolete asctime format
+
         let field = try HTTP.Header.Field(name: "Date", value: "Sun Nov  6 08:49:37 1994")
         let parsed = RFC_5322.DateTime(field)
 
@@ -79,7 +73,7 @@ struct `HTTP.Date Tests` {
         #expect(RFC_5322.DateTime(try HTTP.Header.Field(name: "Date", value: "")) == nil)
         #expect(
             RFC_5322.DateTime(try HTTP.Header.Field(name: "Date", value: "2024-11-16")) == nil
-        )  // Wrong format
+        )
     }
 
     @Test
@@ -97,7 +91,7 @@ struct `HTTP.Date Tests` {
         var set: Set<HTTP.Date> = []
 
         set.insert(HTTP.Date(secondsSinceEpoch: 784_111_777))
-        set.insert(HTTP.Date(secondsSinceEpoch: 784_111_777))  // Duplicate
+        set.insert(HTTP.Date(secondsSinceEpoch: 784_111_777))
         set.insert(HTTP.Date(secondsSinceEpoch: 784_111_778))
 
         #expect(set.count == 2)
@@ -122,7 +116,7 @@ struct `HTTP.Date Tests` {
         let decoded = try decoder.decode(HTTP.Date.self, from: encoded)
 
         let diff = abs(decoded.secondsSinceEpoch - httpDate.secondsSinceEpoch)
-        #expect(diff < 1)  // Within 1 second
+        #expect(diff < 1)
     }
 
     @Test
@@ -131,7 +125,6 @@ struct `HTTP.Date Tests` {
 
         let description = httpDate.description
 
-        // Description is the RFC 5322 formatted string
         #expect(description.contains("Sun"))
         #expect(description.contains("06 Nov 1994"))
     }
@@ -145,6 +138,6 @@ struct `HTTP.Date Tests` {
 
         #expect(parsed != nil)
         let diff = abs(parsed!.secondsSinceEpoch - original.secondsSinceEpoch)
-        #expect(diff < 1)  // Within 1 second
+        #expect(diff < 1)
     }
 }

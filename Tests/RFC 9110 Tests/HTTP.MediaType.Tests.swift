@@ -3,9 +3,6 @@ import Testing
 
 @testable import RFC_9110
 
-// HTTP.MediaType.Tests.swift
-// swift-rfc-9110
-
 @Suite
 struct `HTTP.MediaType Tests` {
     @Suite struct Unit {}
@@ -36,7 +33,6 @@ struct `HTTP.MediaType Tests` {
     func `Media type normalization`() async throws {
         let mt = HTTP.MediaType("TEXT", "HTML")
 
-        // Type and subtype should be normalized to lowercase
         #expect(mt.type == "text")
         #expect(mt.subtype == "html")
     }
@@ -143,7 +139,7 @@ struct `HTTP.MediaType Tests` {
         var set: Set<HTTP.MediaType> = []
         set.insert(.json)
         set.insert(.html)
-        set.insert(.json)  // duplicate
+        set.insert(.json)
 
         #expect(set.count == 2)
     }
