@@ -49,10 +49,10 @@ struct `HTTP.Response Tests` {
             ]
         )
 
-        let cookies = response.header(.init("Set-Cookie"))
+        let cookies = response.header(try .init("Set-Cookie"))
         #expect(cookies.count == 2)
 
-        let firstCookie = response.firstHeader(.init("Set-Cookie"))
+        let firstCookie = response.firstHeader(try .init("Set-Cookie"))
 
         #expect(firstCookie?.rawValue == "session=abc123")
     }
@@ -79,7 +79,7 @@ struct `HTTP.Response Tests` {
             ]
         )
 
-        let withoutCustom = response.removingHeaders(.init("X-Custom"))
+        let withoutCustom = response.removingHeaders(try .init("X-Custom"))
 
         #expect(withoutCustom.headers.count == 1)
         #expect(withoutCustom.headers.contains("X-Custom") == false)

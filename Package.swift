@@ -69,7 +69,8 @@ let package = Package(
         .testTarget(
             name: "RFC 9110 Tests",
             dependencies: [
-                "RFC 9110"
+                "RFC 9110",
+                .product(name: "RFC 3986", package: "swift-rfc-3986"),
             ]
         ),
     ],
