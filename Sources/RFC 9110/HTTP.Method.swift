@@ -79,33 +79,51 @@ extension RFC_9110.Method {
 
 extension RFC_9110.Method {
 
-    public static let get = Self("GET", isSafe: true, isIdempotent: true, isCacheable: true)
+    public static var get: Self {
+        Self("GET", isSafe: true, isIdempotent: true, isCacheable: true)
+    }
 
-    public static let head = Self("HEAD", isSafe: true, isIdempotent: true, isCacheable: true)
+    public static var head: Self {
+        Self("HEAD", isSafe: true, isIdempotent: true, isCacheable: true)
+    }
 
-    public static let post = Self("POST", isSafe: false, isIdempotent: false, isCacheable: true)
+    public static var post: Self {
+        Self("POST", isSafe: false, isIdempotent: false, isCacheable: true)
+    }
 
-    public static let put = Self("PUT", isSafe: false, isIdempotent: true, isCacheable: false)
+    public static var put: Self {
+        Self("PUT", isSafe: false, isIdempotent: true, isCacheable: false)
+    }
 
-    public static let delete = Self("DELETE", isSafe: false, isIdempotent: true, isCacheable: false)
+    public static var delete: Self {
+        Self("DELETE", isSafe: false, isIdempotent: true, isCacheable: false)
+    }
 
-    public static let connect = Self(
-        "CONNECT",
-        isSafe: false,
-        isIdempotent: false,
-        isCacheable: false
-    )
+    public static var connect: Self {
+        Self(
+            "CONNECT",
+            isSafe: false,
+            isIdempotent: false,
+            isCacheable: false
+        )
+    }
 
-    public static let options = Self(
-        "OPTIONS",
-        isSafe: true,
-        isIdempotent: true,
-        isCacheable: false
-    )
+    public static var options: Self {
+        Self(
+            "OPTIONS",
+            isSafe: true,
+            isIdempotent: true,
+            isCacheable: false
+        )
+    }
 
-    public static let trace = Self("TRACE", isSafe: true, isIdempotent: true, isCacheable: false)
+    public static var trace: Self {
+        Self("TRACE", isSafe: true, isIdempotent: true, isCacheable: false)
+    }
 
-    public static let patch = Self("PATCH", isSafe: false, isIdempotent: false, isCacheable: false)
+    public static var patch: Self {
+        Self("PATCH", isSafe: false, isIdempotent: false, isCacheable: false)
+    }
 }
 
 extension RFC_9110.Method: CustomStringConvertible {

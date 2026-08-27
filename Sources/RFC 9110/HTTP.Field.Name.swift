@@ -52,91 +52,91 @@ extension RFC_9110.Field.Name: CustomStringConvertible {
 
 extension RFC_9110.Field.Name {
 
-    public static let cacheControl = Self(unchecked: "Cache-Control")
+    public static var cacheControl: Self { Self(unchecked: "Cache-Control") }
 
-    public static let expect = Self(unchecked: "Expect")
+    public static var expect: Self { Self(unchecked: "Expect") }
 
-    public static let host = Self(unchecked: "Host")
+    public static var host: Self { Self(unchecked: "Host") }
 
-    public static let maxForwards = Self(unchecked: "Max-Forwards")
+    public static var maxForwards: Self { Self(unchecked: "Max-Forwards") }
 
-    public static let pragma = Self(unchecked: "Pragma")
+    public static var pragma: Self { Self(unchecked: "Pragma") }
 
-    public static let range = Self(unchecked: "Range")
+    public static var range: Self { Self(unchecked: "Range") }
 
-    public static let te = Self(unchecked: "TE")
+    public static var te: Self { Self(unchecked: "TE") }
 
-    public static let from = Self(unchecked: "From")
+    public static var from: Self { Self(unchecked: "From") }
 
-    public static let referer = Self(unchecked: "Referer")
+    public static var referer: Self { Self(unchecked: "Referer") }
 
-    public static let userAgent = Self(unchecked: "User-Agent")
+    public static var userAgent: Self { Self(unchecked: "User-Agent") }
 
-    public static let accept = Self(unchecked: "Accept")
+    public static var accept: Self { Self(unchecked: "Accept") }
 
-    public static let acceptCharset = Self(unchecked: "Accept-Charset")
+    public static var acceptCharset: Self { Self(unchecked: "Accept-Charset") }
 
-    public static let acceptEncoding = Self(unchecked: "Accept-Encoding")
+    public static var acceptEncoding: Self { Self(unchecked: "Accept-Encoding") }
 
-    public static let acceptLanguage = Self(unchecked: "Accept-Language")
+    public static var acceptLanguage: Self { Self(unchecked: "Accept-Language") }
 
-    public static let authorization = Self(unchecked: "Authorization")
+    public static var authorization: Self { Self(unchecked: "Authorization") }
 
-    public static let proxyAuthorization = Self(unchecked: "Proxy-Authorization")
+    public static var proxyAuthorization: Self { Self(unchecked: "Proxy-Authorization") }
 
-    public static let wwwAuthenticate = Self(unchecked: "WWW-Authenticate")
+    public static var wwwAuthenticate: Self { Self(unchecked: "WWW-Authenticate") }
 
-    public static let proxyAuthenticate = Self(unchecked: "Proxy-Authenticate")
+    public static var proxyAuthenticate: Self { Self(unchecked: "Proxy-Authenticate") }
 
-    public static let age = Self(unchecked: "Age")
+    public static var age: Self { Self(unchecked: "Age") }
 
-    public static let expires = Self(unchecked: "Expires")
+    public static var expires: Self { Self(unchecked: "Expires") }
 
-    public static let date = Self(unchecked: "Date")
+    public static var date: Self { Self(unchecked: "Date") }
 
-    public static let location = Self(unchecked: "Location")
+    public static var location: Self { Self(unchecked: "Location") }
 
-    public static let retryAfter = Self(unchecked: "Retry-After")
+    public static var retryAfter: Self { Self(unchecked: "Retry-After") }
 
-    public static let vary = Self(unchecked: "Vary")
+    public static var vary: Self { Self(unchecked: "Vary") }
 
-    public static let server = Self(unchecked: "Server")
+    public static var server: Self { Self(unchecked: "Server") }
 
-    public static let contentType = Self(unchecked: "Content-Type")
+    public static var contentType: Self { Self(unchecked: "Content-Type") }
 
-    public static let contentEncoding = Self(unchecked: "Content-Encoding")
+    public static var contentEncoding: Self { Self(unchecked: "Content-Encoding") }
 
-    public static let contentLanguage = Self(unchecked: "Content-Language")
+    public static var contentLanguage: Self { Self(unchecked: "Content-Language") }
 
-    public static let contentLocation = Self(unchecked: "Content-Location")
+    public static var contentLocation: Self { Self(unchecked: "Content-Location") }
 
-    public static let contentLength = Self(unchecked: "Content-Length")
+    public static var contentLength: Self { Self(unchecked: "Content-Length") }
 
-    public static let contentRange = Self(unchecked: "Content-Range")
+    public static var contentRange: Self { Self(unchecked: "Content-Range") }
 
-    public static let trailer = Self(unchecked: "Trailer")
+    public static var trailer: Self { Self(unchecked: "Trailer") }
 
-    public static let transferEncoding = Self(unchecked: "Transfer-Encoding")
+    public static var transferEncoding: Self { Self(unchecked: "Transfer-Encoding") }
 
-    public static let etag = Self(unchecked: "ETag")
+    public static var etag: Self { Self(unchecked: "ETag") }
 
-    public static let lastModified = Self(unchecked: "Last-Modified")
+    public static var lastModified: Self { Self(unchecked: "Last-Modified") }
 
-    public static let ifMatch = Self(unchecked: "If-Match")
+    public static var ifMatch: Self { Self(unchecked: "If-Match") }
 
-    public static let ifNoneMatch = Self(unchecked: "If-None-Match")
+    public static var ifNoneMatch: Self { Self(unchecked: "If-None-Match") }
 
-    public static let ifModifiedSince = Self(unchecked: "If-Modified-Since")
+    public static var ifModifiedSince: Self { Self(unchecked: "If-Modified-Since") }
 
-    public static let ifUnmodifiedSince = Self(unchecked: "If-Unmodified-Since")
+    public static var ifUnmodifiedSince: Self { Self(unchecked: "If-Unmodified-Since") }
 
-    public static let ifRange = Self(unchecked: "If-Range")
+    public static var ifRange: Self { Self(unchecked: "If-Range") }
 
-    public static let connection = Self(unchecked: "Connection")
+    public static var connection: Self { Self(unchecked: "Connection") }
 
-    public static let close = Self(unchecked: "close")
+    public static var close: Self { Self(unchecked: "close") }
 
-    public static let keepAlive = Self(unchecked: "Keep-Alive")
+    public static var keepAlive: Self { Self(unchecked: "Keep-Alive") }
 
-    public static let allow = Self(unchecked: "Allow")
+    public static var allow: Self { Self(unchecked: "Allow") }
 }
