@@ -1,6 +1,6 @@
-public import ASCII_Decimal_Parser_Primitives
-import Byte_Parser_Primitives
-import Parser_Primitives
+public import ASCII_Decimal_Parser
+import Byte_Parser
+import Parser
 
 extension RFC_9110.Parse {
 

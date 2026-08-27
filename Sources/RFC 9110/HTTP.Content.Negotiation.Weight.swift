@@ -1,4 +1,4 @@
-import Byte_Parser_Primitives
+import Byte_Parser
 import Byte_Primitive
 
 extension RFC_9110.Content.Negotiation {

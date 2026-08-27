@@ -18,30 +18,30 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/swift-primitives/swift-ascii-primitives.git",
+            url: "https://github.com/swift-molecules/swift-ascii.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-ascii-parser-primitives.git",
+            url: "https://github.com/swift-molecules/swift-ascii-parser.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-byte-primitives.git",
+            url: "https://github.com/swift-molecules/swift-byte.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-byte-parser-primitives.git",
+            url: "https://github.com/swift-molecules/swift-byte-parser.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-parser-primitives.git",
+            url: "https://github.com/swift-molecules/swift-parser.git",
             branch: "main"
         ),
         .package(url: "https://github.com/swift-ietf/swift-rfc-3986.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-4648.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-5322.git", branch: "main"),
         .package(
-            url: "https://github.com/swift-primitives/swift-standard-library-extensions.git",
+            url: "https://github.com/swift-molecules/swift-standard-library-extensions.git",
             branch: "main"
         ),
     ],
@@ -49,14 +49,14 @@ let package = Package(
         .target(
             name: "RFC 9110",
             dependencies: [
-                .product(name: "ASCII Primitives", package: "swift-ascii-primitives"),
+                .product(name: "ASCII", package: "swift-ascii"),
                 .product(
-                    name: "ASCII Decimal Parser Primitives",
-                    package: "swift-ascii-parser-primitives"
+                    name: "ASCII Decimal Parser",
+                    package: "swift-ascii-parser"
                 ),
-                .product(name: "Byte Primitives", package: "swift-byte-primitives"),
-                .product(name: "Byte Parser Primitives", package: "swift-byte-parser-primitives"),
-                .product(name: "Parser Primitives", package: "swift-parser-primitives"),
+                .product(name: "Byte", package: "swift-byte"),
+                .product(name: "Byte Parser", package: "swift-byte-parser"),
+                .product(name: "Parser", package: "swift-parser"),
                 .product(name: "RFC 3986", package: "swift-rfc-3986"),
                 .product(name: "RFC 4648", package: "swift-rfc-4648"),
                 .product(name: "RFC 5322", package: "swift-rfc-5322"),

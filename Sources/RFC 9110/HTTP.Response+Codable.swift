@@ -1,4 +1,4 @@
-import Byte_Primitives
+import Byte
 
 extension RFC_9110.Response {
     public init(from decoder: any Decoder) throws {

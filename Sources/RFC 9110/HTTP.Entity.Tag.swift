@@ -1,7 +1,7 @@
-import ASCII_Primitives
-import Byte_Parser_Primitives
-import Byte_Primitives_Standard_Library_Integration
-import Parser_Primitives
+import ASCII
+import Byte_Parser
+import Byte_Standard_Library_Integration
+import Parser
 import Standard_Library_Extensions
 
 extension RFC_9110.Entity {

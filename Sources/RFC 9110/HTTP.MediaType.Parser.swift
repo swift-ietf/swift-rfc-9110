@@ -1,6 +1,6 @@
-public import Byte_Parser_Primitives
-public import Byte_Primitives_Standard_Library_Integration
-public import Parser_Primitives
+public import Byte_Parser
+public import Byte_Standard_Library_Integration
+public import Parser
 
 extension RFC_9110.MediaType {
 
@@ -11,7 +11,7 @@ extension RFC_9110.MediaType {
     }
 }
 
-extension RFC_9110.MediaType.Parser: Parser_Primitives.Parser.`Protocol` {
+extension RFC_9110.MediaType.Parser: Parser.Parser.`Protocol` {
     public typealias Output = RFC_9110.MediaType
     public typealias Failure = RFC_9110.Parse.Error.MediaType
     public typealias Body = Never

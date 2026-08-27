@@ -1,6 +1,6 @@
-import ASCII_Primitives
-import Byte_Parser_Primitives
-import Parser_Primitives
+import ASCII
+import Byte_Parser
+import Parser
 public import RFC_5322
 import Standard_Library_Extensions
 
