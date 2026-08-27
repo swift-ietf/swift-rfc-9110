@@ -1,6 +1,6 @@
 extension RFC_9110 {
 
-    public struct Method: Hashable, Sendable, Codable, RawRepresentable {
+    public struct Method: Hashable, RawRepresentable {
 
         public let rawValue: String
 
@@ -57,23 +57,6 @@ extension RFC_9110 {
             }
         }
 
-        public init(from decoder: any Decoder) throws {
-            let container = try decoder.singleValueContainer()
-            let rawValue = try container.decode(String.self)
-
-            let standardMethods: [Method] = [
-                .get, .head, .post, .put, .delete,
-                .connect, .options, .trace, .patch,
-            ]
-
-            if let standard = standardMethods.first(where: { $0.rawValue == rawValue }) {
-                self = standard
-            } else {
-
-                self.init(rawValue: rawValue)
-            }
-        }
-
     }
 }
 
@@ -92,10 +75,6 @@ extension RFC_9110.Method {
         hasher.combine(isCacheable)
     }
 
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(rawValue)
-    }
 }
 
 extension RFC_9110.Method {

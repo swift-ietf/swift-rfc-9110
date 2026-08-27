@@ -7,11 +7,11 @@ extension RFC_9110 {
 
 extension RFC_5322.DateTime {
 
-    public init?(_ field: RFC_9110.Header.Field) {
+    public init?(_ field: RFC_9110.Field) {
         self.init(field.value)
     }
 
-    public init?(_ value: RFC_9110.Header.Field.Value) {
+    public init?(_ value: RFC_9110.Field.Value) {
         guard let parsed = parseHTTPDate(value.rawValue) else {
             return nil
         }
@@ -19,7 +19,7 @@ extension RFC_5322.DateTime {
     }
 }
 
-extension RFC_9110.Header.Field {
+extension RFC_9110.Field {
 
     public init(dateTime: RFC_5322.DateTime, name: Name = .date) {
         self.init(

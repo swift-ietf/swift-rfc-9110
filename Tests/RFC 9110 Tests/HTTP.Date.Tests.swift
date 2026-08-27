@@ -22,7 +22,7 @@ struct `HTTP.Date Tests` {
     func `Header value format - IMF-fixdate`() async throws {
         let httpDate = HTTP.Date(secondsSinceEpoch: 784_111_777)
 
-        let field = HTTP.Header.Field(dateTime: httpDate)
+        let field = HTTP.Field(dateTime: httpDate)
 
         let headerValue = field.value.rawValue
 
@@ -33,7 +33,7 @@ struct `HTTP.Date Tests` {
 
     @Test
     func `Parse IMF-fixdate format`() async throws {
-        let field = try HTTP.Header.Field(name: "Date", value: "Sun, 06 Nov 1994 08:49:37 GMT")
+        let field = try HTTP.Field(name: "Date", value: "Sun, 06 Nov 1994 08:49:37 GMT")
         let parsed = RFC_5322.DateTime(field)
 
         #expect(parsed != nil)
@@ -46,7 +46,7 @@ struct `HTTP.Date Tests` {
     @Test
     func `Parse RFC 850 format (obsolete)`() async throws {
 
-        let field = try HTTP.Header.Field(name: "Date", value: "Sunday, 06-Nov-94 08:49:37 GMT")
+        let field = try HTTP.Field(name: "Date", value: "Sunday, 06-Nov-94 08:49:37 GMT")
         let parsed = RFC_5322.DateTime(field)
 
         #expect(parsed != nil)
@@ -58,7 +58,7 @@ struct `HTTP.Date Tests` {
     @Test
     func `Parse asctime format (obsolete)`() async throws {
 
-        let field = try HTTP.Header.Field(name: "Date", value: "Sun Nov  6 08:49:37 1994")
+        let field = try HTTP.Field(name: "Date", value: "Sun Nov  6 08:49:37 1994")
         let parsed = RFC_5322.DateTime(field)
 
         #expect(parsed != nil)
@@ -69,10 +69,10 @@ struct `HTTP.Date Tests` {
 
     @Test
     func `Parse invalid date`() async throws {
-        #expect(RFC_5322.DateTime(try HTTP.Header.Field(name: "Date", value: "invalid")) == nil)
-        #expect(RFC_5322.DateTime(try HTTP.Header.Field(name: "Date", value: "")) == nil)
+        #expect(RFC_5322.DateTime(try HTTP.Field(name: "Date", value: "invalid")) == nil)
+        #expect(RFC_5322.DateTime(try HTTP.Field(name: "Date", value: "")) == nil)
         #expect(
-            RFC_5322.DateTime(try HTTP.Header.Field(name: "Date", value: "2024-11-16")) == nil
+            RFC_5322.DateTime(try HTTP.Field(name: "Date", value: "2024-11-16")) == nil
         )
     }
 
@@ -133,7 +133,7 @@ struct `HTTP.Date Tests` {
     func `Round trip - format and parse`() async throws {
         let original = HTTP.Date(secondsSinceEpoch: 784_111_777)
 
-        let field = HTTP.Header.Field(dateTime: original)
+        let field = HTTP.Field(dateTime: original)
         let parsed = RFC_5322.DateTime(field)
 
         #expect(parsed != nil)

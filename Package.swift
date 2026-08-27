@@ -54,6 +54,7 @@ let package = Package(
                     name: "ASCII Decimal Parser Primitives",
                     package: "swift-ascii-parser-primitives"
                 ),
+                .product(name: "Byte Primitive", package: "swift-byte-primitives"),
                 .product(name: "Byte Primitives", package: "swift-byte-primitives"),
                 .product(name: "Byte Parser Primitives", package: "swift-byte-parser-primitives"),
                 .product(name: "Parser Primitives", package: "swift-parser-primitives"),
