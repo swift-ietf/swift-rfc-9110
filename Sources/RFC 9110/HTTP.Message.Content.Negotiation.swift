@@ -7,10 +7,8 @@ extension RFC_9110.Message.Content.Negotiation {
 
     public static func selectMediaType(
         from available: [RFC_9110.MediaType],
-        acceptHeader: String
+        preferences: [MediaTypePreference]
     ) -> RFC_9110.MediaType? {
-        let preferences = MediaTypePreference.parse(acceptHeader)
-
         for preference in preferences {
 
             for availableType in available {
@@ -25,9 +23,8 @@ extension RFC_9110.Message.Content.Negotiation {
 
     public static func selectMediaTypes(
         from available: [RFC_9110.MediaType],
-        acceptHeader: String
+        preferences: [MediaTypePreference]
     ) -> [RFC_9110.MediaType] {
-        let preferences = MediaTypePreference.parse(acceptHeader)
         var results: [(RFC_9110.MediaType, QualityValue)] = []
 
         for availableType in available {

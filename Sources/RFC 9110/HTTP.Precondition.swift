@@ -1,11 +1,4 @@
-import ASCII
-import Byte
-import Byte_Parser
-import Byte_Standard_Library_Integration
-import Checkpoint
-import Parser
 public import RFC_5322
-import Standard_Library_Extensions
 
 extension RFC_9110 {
 
@@ -75,88 +68,6 @@ extension RFC_9110.Precondition {
         case .ifRange(.date(let date)):
             return String(date)
         }
-    }
-}
-
-extension RFC_9110.Precondition {
-
-    public static func parseIfMatch(_ headerValue: String) -> RFC_9110.Precondition? {
-        var input = Byte.Input(utf8: headerValue)
-        RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
-
-        if input.first?.bitPattern == 0x2A {
-            let saved = input.checkpoint
-            _ = input.next()
-            RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
-            if input.isEmpty {
-                return .ifMatch([wildcardTag])
-            }
-            input.seek(to: saved)
-        }
-
-        let etags = RFC_9110.Parse.CommaSeparated(
-            RFC_9110.Entity.Tag.Parser<Byte.Input>()
-        ).parse(&input)
-
-        return etags.isEmpty ? nil : .ifMatch(etags)
-    }
-
-    public static func parseIfNoneMatch(_ headerValue: String) -> RFC_9110.Precondition? {
-        var input = Byte.Input(utf8: headerValue)
-        RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
-
-        if input.first?.bitPattern == 0x2A {
-            let saved = input.checkpoint
-            _ = input.next()
-            RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
-            if input.isEmpty {
-                return .ifNoneMatch([wildcardTag])
-            }
-            input.seek(to: saved)
-        }
-
-        let etags = RFC_9110.Parse.CommaSeparated(
-            RFC_9110.Entity.Tag.Parser<Byte.Input>()
-        ).parse(&input)
-
-        return etags.isEmpty ? nil : .ifNoneMatch(etags)
-    }
-
-    public static func parseIfModifiedSince(_ headerValue: String) -> RFC_9110.Precondition? {
-        let httpDate: RFC_5322.DateTime
-        do throws(RFC_5322.DateTime.Error) {
-            httpDate = try RFC_5322.DateTime(headerValue)
-        } catch {
-            return nil
-        }
-        return .ifModifiedSince(httpDate)
-    }
-
-    public static func parseIfUnmodifiedSince(_ headerValue: String) -> RFC_9110.Precondition? {
-        let httpDate: RFC_5322.DateTime
-        do throws(RFC_5322.DateTime.Error) {
-            httpDate = try RFC_5322.DateTime(headerValue)
-        } catch {
-            return nil
-        }
-        return .ifUnmodifiedSince(httpDate)
-    }
-
-    public static func parseIfRange(_ headerValue: String) -> RFC_9110.Precondition? {
-        let trimmed = String(headerValue.trimming(where: { $0.isWhitespace }))
-
-        if let etag = RFC_9110.Entity.Tag.parse(trimmed) {
-            return .ifRange(.etag(etag))
-        }
-
-        do throws(RFC_5322.DateTime.Error) {
-            let httpDate = try RFC_5322.DateTime(trimmed)
-            return .ifRange(.date(httpDate))
-        } catch {
-
-        }
-
-        return nil
     }
 }
 

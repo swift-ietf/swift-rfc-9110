@@ -40,29 +40,6 @@ struct `HTTP.Entity.Tag Tests` {
     }
 
     @Test
-    func `Parse strong ETag`() async throws {
-        let parsed = HTTP.Entity.Tag.parse("\"abc123\"")
-
-        #expect(parsed?.value == "abc123")
-        #expect(parsed?.isWeak == false)
-    }
-
-    @Test
-    func `Parse weak ETag`() async throws {
-        let parsed = HTTP.Entity.Tag.parse("W/\"abc123\"")
-
-        #expect(parsed?.value == "abc123")
-        #expect(parsed?.isWeak == true)
-    }
-
-    @Test
-    func `Parse invalid ETag`() async throws {
-        #expect(HTTP.Entity.Tag.parse("invalid") == nil)
-        #expect(HTTP.Entity.Tag.parse("") == nil)
-        #expect(HTTP.Entity.Tag.parse("abc123") == nil)
-    }
-
-    @Test
     func `Strong comparison - both strong and equal`() async throws {
         let etag1 = HTTP.Entity.Tag.strong("abc")
         let etag2 = HTTP.Entity.Tag.strong("abc")
@@ -138,46 +115,11 @@ struct `HTTP.Entity.Tag Tests` {
     }
 
     @Test
-    func `Codable - strong`() async throws {
-        let encoder = JSONEncoder()
-        let decoder = JSONDecoder()
-
-        let etag = HTTP.Entity.Tag.strong("abc123")
-        let encoded = try encoder.encode(etag)
-        let decoded = try decoder.decode(HTTP.Entity.Tag.self, from: encoded)
-
-        #expect(decoded == etag)
-    }
-
-    @Test
-    func `Codable - weak`() async throws {
-        let encoder = JSONEncoder()
-        let decoder = JSONDecoder()
-
-        let etag = HTTP.Entity.Tag.weak("abc123")
-        let encoded = try encoder.encode(etag)
-        let decoded = try decoder.decode(HTTP.Entity.Tag.self, from: encoded)
-
-        #expect(decoded == etag)
-    }
-
-    @Test
     func `Description`() async throws {
         let strong = HTTP.Entity.Tag.strong("abc")
         #expect(strong.description == "\"abc\"")
 
         let weak = HTTP.Entity.Tag.weak("abc")
         #expect(weak.description == "W/\"abc\"")
-    }
-
-    @Test
-    func `String literal`() async throws {
-        let strong: HTTP.Entity.Tag = "\"abc\""
-        #expect(strong.value == "abc")
-        #expect(strong.isWeak == false)
-
-        let weak: HTTP.Entity.Tag = "W/\"abc\""
-        #expect(weak.value == "abc")
-        #expect(weak.isWeak == true)
     }
 }

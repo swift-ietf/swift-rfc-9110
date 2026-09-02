@@ -1,6 +1,3 @@
-import Byte
-import Byte_Parser
-
 extension RFC_9110.Message.Content.Negotiation {
 
     public struct QualityValue: Sendable, Equatable, Hashable, Comparable {
@@ -19,18 +16,6 @@ extension RFC_9110.Message.Content.Negotiation {
 }
 
 extension RFC_9110.Message.Content.Negotiation.QualityValue {
-
-    public static func parse(_ string: String) -> Self? {
-        var input = Byte.Input(utf8: string)
-        let thousandths: Int
-        do throws(RFC_9110.Parse.Error.QualityValue) {
-            thousandths = try RFC_9110.Parse.QualityValue<Byte.Input>().parse(&input)
-        } catch {
-            return nil
-        }
-        guard input.isEmpty else { return nil }
-        return Self(thousandths)
-    }
 
     public static let `default` = Self(unchecked: 1000)
     public static let zero = Self(unchecked: 0)

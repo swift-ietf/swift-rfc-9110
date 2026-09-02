@@ -1,12 +1,6 @@
-import ASCII
-import Byte
-import Byte_Parser
-import Parser
-import Standard_Library_Extensions
-
 extension RFC_9110 {
 
-    public struct MediaType: Sendable, Equatable, Hashable, Codable {
+    public struct MediaType: Sendable, Equatable, Hashable {
 
         public let type: String
 
@@ -40,23 +34,6 @@ extension RFC_9110.MediaType {
         return result
     }
 
-    public static func parse(_ string: String) -> Self? {
-        var input = Byte.Input(utf8: string)
-        do throws(Parser<Byte.Input>.Error) {
-            return try Parser<Byte.Input>().parse(&input)
-        } catch {
-            return nil
-        }
-    }
-
-    public func matches(_ pattern: String) -> Bool {
-        guard let patternType = Self.parse(pattern) else {
-            return false
-        }
-
-        return matches(patternType)
-    }
-
     public func matches(_ other: Self) -> Bool {
 
         if other.type == "*" && other.subtype == "*" {
@@ -83,46 +60,6 @@ extension RFC_9110.MediaType {
 extension RFC_9110.MediaType: CustomStringConvertible {
     public var description: String {
         value
-    }
-}
-
-extension RFC_9110.MediaType: LosslessStringConvertible {
-
-    public init?(_ description: String) {
-        guard let parsed = Self.parse(description) else { return nil }
-        self = parsed
-    }
-}
-
-extension RFC_9110.MediaType {
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let string = try container.decode(String.self)
-
-        guard let mediaType = RFC_9110.MediaType.parse(string) else {
-            throw DecodingError.dataCorruptedError(
-                in: container,
-                debugDescription: "Invalid media type: \(string)"
-            )
-        }
-
-        self = mediaType
-    }
-
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(value)
-    }
-}
-
-extension RFC_9110.MediaType: ExpressibleByStringLiteral {
-    public init(stringLiteral value: String) {
-        if let parsed = RFC_9110.MediaType.parse(value) {
-            self = parsed
-        } else {
-
-            self = RFC_9110.MediaType("application", "octet-stream")
-        }
     }
 }
 

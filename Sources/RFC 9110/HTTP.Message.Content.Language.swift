@@ -1,6 +1,3 @@
-import ASCII
-import Standard_Library_Extensions
-
 extension RFC_9110.Message.Content {
 
     public struct Language: Sendable, Equatable, Hashable {
@@ -16,10 +13,6 @@ extension RFC_9110.Message.Content {
 }
 
 extension RFC_9110.Message.Content.Language {
-
-    public static func parse(_ headerValue: String) -> [Self] {
-        RFC_9110.Parse.tokens(in: headerValue).map { Self($0) }
-    }
 
     public static func formatHeader(_ languages: [Self]) -> String {
         return

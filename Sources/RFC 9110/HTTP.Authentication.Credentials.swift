@@ -1,6 +1,5 @@
 import Byte
 import RFC_4648
-import Standard_Library_Extensions
 
 extension RFC_9110.Authentication {
 
@@ -22,24 +21,6 @@ extension RFC_9110.Authentication.Credentials {
 
     public var headerValue: String {
         "\(scheme.name) \(token)"
-    }
-
-    public static func parse(_ headerValue: String) -> Self? {
-        let trimmed = String(headerValue.trimming(where: { $0.isWhitespace }))
-
-        guard let spaceIndex = trimmed.firstIndex(of: " ") else {
-            return nil
-        }
-
-        let schemeName = String(trimmed[..<spaceIndex])
-        let scheme = RFC_9110.Authentication.Scheme(schemeName)
-
-        let token = String(
-            String(trimmed[trimmed.index(after: spaceIndex)...])
-                .trimming(where: { $0.isWhitespace })
-        )
-
-        return Self(scheme: scheme, token: token)
     }
 }
 
