@@ -1,5 +1,6 @@
-import Byte_Parser_Primitives
-import Parser_Primitives
+public import Byte
+public import Byte_Parser
+import Parser
 
 extension RFC_9110.Message.Content.Negotiation {
 
@@ -21,18 +22,15 @@ extension RFC_9110.Message.Content.Negotiation.MediaTypePreference {
 
     public static func parse(_ headerValue: String) -> [Self] {
         var input = Byte.Input(utf8: headerValue)
-        let preferences = RFC_9110.Parse.CommaSeparated<Byte.Input, Self> {
-            element in
-            var sub = element
-            let mediaType: RFC_9110.MediaType
-            do throws(RFC_9110.MediaType.Parser<Byte.Input>.Error) {
-                mediaType = try RFC_9110.MediaType.Parser<Byte.Input>().parse(&sub)
-            } catch {
-                return nil
-            }
-            guard sub.isEmpty else { return nil }
+        let mediaTypes = RFC_9110.Parse.CommaSeparated(
+            RFC_9110.MediaType.Parser<Byte.Input>()
+        ).parse(&input)
+
+        let preferences = mediaTypes.compactMap { mediaType -> Self? in
             let quality: RFC_9110.Message.Content.Negotiation.QualityValue
-            switch RFC_9110.Message.Content.Negotiation.Weight.parse(parameter: mediaType.parameters["q"]) {
+            switch RFC_9110.Message.Content.Negotiation.Weight.parse(
+                parameter: mediaType.parameters["q"]
+            ) {
             case .absent:
                 quality = .default
 
@@ -51,7 +49,7 @@ extension RFC_9110.Message.Content.Negotiation.MediaTypePreference {
                 parameters: params
             )
             return Self(mediaType: cleanMediaType, quality: quality)
-        }.parse(&input)
+        }
 
         return preferences.sorted { lhs, rhs in
             if lhs.quality != rhs.quality {

@@ -1,5 +1,9 @@
-import Byte_Parser_Primitives
-import Byte_Primitive
+public import Byte
+public import Checkpoint
+public import Cursor
+public import Iterator
+public import Iterator_Protocol
+import Parser
 
 extension RFC_9110.Message.Content.Negotiation {
 
@@ -11,29 +15,31 @@ extension RFC_9110.Message.Content.Negotiation {
 }
 
 extension RFC_9110.Message.Content.Negotiation.Weight {
-    static func parse(_ input: inout Byte.Input) -> Self {
-        RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
-        guard !input.isEmpty else { return .absent }
-        guard input[input.startIndex] == 0x3B else { return .invalid }
-        input = input[input.index(after: input.startIndex)...]
-        RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
 
-        guard !input.isEmpty else { return .invalid }
-        let q = input[input.startIndex]
-        guard q == 0x71 || q == 0x51 else { return .invalid }
-        input = input[input.index(after: input.startIndex)...]
-        guard !input.isEmpty, input[input.startIndex] == 0x3D else { return .invalid }
-        input = input[input.index(after: input.startIndex)...]
+    static func parse<Input: Cursor.`Protocol`>(_ input: inout Input) -> Self
+    where Input.Element == Byte, Input.Failure == Never {
+        let start = input.checkpoint
+        RFC_9110.Parse.OWS<Input>().parse(&input)
+
+        guard let semicolon = input.next(), semicolon.bitPattern == 0x3B else {
+            input.seek(to: start)
+            return .absent
+        }
+        RFC_9110.Parse.OWS<Input>().parse(&input)
+
+        guard let q = input.next(), q.bitPattern == 0x71 || q.bitPattern == 0x51 else {
+            return .invalid
+        }
+        guard let equals = input.next(), equals.bitPattern == 0x3D else { return .invalid }
 
         let thousandths: Int
         do throws(RFC_9110.Parse.Error.QualityValue) {
-            thousandths = try RFC_9110.Parse.QualityValue<Byte.Input>().parse(&input)
+            thousandths = try RFC_9110.Parse.QualityValue<Input>().parse(&input)
         } catch {
             return .invalid
         }
-        RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
-        guard input.isEmpty,
-            let quality = RFC_9110.Message.Content.Negotiation.QualityValue(thousandths)
+        RFC_9110.Parse.OWS<Input>().parse(&input)
+        guard let quality = RFC_9110.Message.Content.Negotiation.QualityValue(thousandths)
         else { return .invalid }
         return .value(quality)
     }

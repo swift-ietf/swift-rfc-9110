@@ -1,6 +1,7 @@
-import Byte_Parser_Primitives
-import Byte_Primitives_Standard_Library_Integration
-import Parser_Primitives
+import Byte
+import Byte_Parser
+import Byte_Standard_Library_Integration
+import Parser
 
 extension RFC_9110.Authentication {
 
@@ -56,40 +57,28 @@ extension RFC_9110.Authentication.Challenge {
 
         RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
 
-        let schemeSlice: Byte.Input
-        do throws(RFC_9110.Parse.Token<Byte.Input>.Error) {
-            schemeSlice = try RFC_9110.Parse.Token<Byte.Input>().parse(&input)
+        let schemeBytes: [Byte]
+        do throws(RFC_9110.Parse.Error.Token) {
+            schemeBytes = try RFC_9110.Parse.Token<Byte.Input>().parse(&input)
         } catch {
             return nil
         }
-        let scheme = RFC_9110.Authentication.Scheme(String(decoding: schemeSlice, as: UTF8.self))
+        let scheme = RFC_9110.Authentication.Scheme(String(decoding: schemeBytes, as: UTF8.self))
 
         RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
-        guard input.startIndex < input.endIndex else {
+        guard !input.isEmpty else {
             return Self(scheme: scheme)
         }
 
         var parameters: [String: String] = [:]
-        while true {
-            let saved = input
-            let param: (name: Byte.Input, value: [Byte])
-            do throws(RFC_9110.Parse.Parameter<Byte.Input>.Error) {
-                param = try RFC_9110.Parse.Parameter<Byte.Input>().parse(&input)
-            } catch {
-                input = saved
-                break
-            }
+        let parsed = RFC_9110.Parse.CommaSeparated(
+            RFC_9110.Parse.Parameter<Byte.Input>()
+        ).parse(&input)
+        for param in parsed {
             parameters[String(decoding: param.name, as: UTF8.self)] = String(
                 decoding: param.value,
                 as: UTF8.self
             )
-
-            RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
-            guard input.startIndex < input.endIndex, input[input.startIndex] == 0x2C else {
-                break
-            }
-            input = input[input.index(after: input.startIndex)...]
-            RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
         }
 
         return Self(scheme: scheme, parameters: parameters)

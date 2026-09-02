@@ -1,10 +1,14 @@
-public import Byte_Parser_Primitives
-import Parser_Primitives
+public import Byte
+public import Checkpoint
+public import Cursor
+public import Iterator
+public import Iterator_Protocol
+public import Parser
 
 extension RFC_9110.Parse {
 
-    public struct OWS<Input: Collection.Slice.`Protocol`>: Sendable
-    where Input: Sendable, Input.Element == Byte {
+    public struct OWS<Input: Cursor.`Protocol`>: Sendable
+    where Input.Element == Byte, Input.Failure == Never {
         @inlinable
         public init() {}
     }
@@ -17,12 +21,13 @@ extension RFC_9110.Parse.OWS: Parser.`Protocol` {
 
     @inlinable
     public func parse(_ input: inout Input) {
-        var index = input.startIndex
-        while index < input.endIndex {
-            let byte = input[index]
-            guard byte == 0x20 || byte == 0x09 else { break }
-            input.formIndex(after: &index)
+        while true {
+            let checkpoint = input.checkpoint
+            guard let byte = input.next() else { return }
+            guard byte.bitPattern == 0x20 || byte.bitPattern == 0x09 else {
+                input.seek(to: checkpoint)
+                return
+            }
         }
-        input = input[index...]
     }
 }

@@ -1,10 +1,14 @@
-public import Byte_Parser_Primitives
-import Parser_Primitives
+public import Byte
+public import Checkpoint
+public import Cursor
+public import Iterator
+public import Iterator_Protocol
+public import Parser
 
 extension RFC_9110.Parse {
 
-    public struct QuotedString<Input: Collection.Slice.`Protocol`>: Sendable
-    where Input: Sendable, Input.Element == Byte {
+    public struct QuotedString<Input: Cursor.`Protocol`>: Sendable
+    where Input.Element == Byte, Input.Failure == Never {
         @inlinable
         public init() {}
     }
@@ -17,43 +21,37 @@ extension RFC_9110.Parse.QuotedString: Parser.`Protocol` {
 
     @inlinable
     public func parse(_ input: inout Input) throws(Failure) -> [Byte] {
-        var index = input.startIndex
-        guard index < input.endIndex, input[index] == 0x22 else {
+        let start = input.checkpoint
+        guard let open = input.next(), open.bitPattern == 0x22 else {
+            input.seek(to: start)
             throw .expectedOpenQuote
         }
-        input.formIndex(after: &index)
 
         var result: [Byte] = []
 
-        while index < input.endIndex {
-            let byte = input[index]
+        while let byte = input.next() {
 
-            if byte == 0x22 {
-
-                input.formIndex(after: &index)
-                input = input[index...]
+            if byte.bitPattern == 0x22 {
                 return result
             }
 
-            if byte == 0x5C {
-
-                input.formIndex(after: &index)
-                guard index < input.endIndex else {
+            if byte.bitPattern == 0x5C {
+                guard let escaped = input.next() else {
                     throw .unexpectedEndOfInput
                 }
-                let escaped = input[index]
 
-                guard escaped == 0x09 || (escaped >= 0x20 && escaped <= 0x7E) || escaped >= 0x80
+                guard
+                    escaped.bitPattern == 0x09
+                        || (escaped.bitPattern >= 0x20 && escaped.bitPattern <= 0x7E)
+                        || escaped.bitPattern >= 0x80
                 else {
                     throw .invalidEscapeSequence
                 }
                 result.append(escaped)
-                input.formIndex(after: &index)
                 continue
             }
 
             result.append(byte)
-            input.formIndex(after: &index)
         }
 
         throw .unexpectedEndOfInput

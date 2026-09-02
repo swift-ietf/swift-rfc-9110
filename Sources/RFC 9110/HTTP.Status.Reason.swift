@@ -1,4 +1,4 @@
-public import Byte_Primitive
+public import Byte
 
 extension RFC_9110.Status {
     public struct Reason: Equatable, Hashable {

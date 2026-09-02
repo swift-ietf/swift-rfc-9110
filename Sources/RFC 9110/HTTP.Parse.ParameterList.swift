@@ -1,41 +1,44 @@
-public import Byte_Parser_Primitives
-import Parser_Primitives
+public import Byte
+public import Checkpoint
+public import Cursor
+public import Iterator
+public import Iterator_Protocol
+public import Parser
 
 extension RFC_9110.Parse {
 
-    public struct ParameterList<Input: Collection.Slice.`Protocol`>: Sendable
-    where Input: Sendable, Input.Element == Byte {
+    public struct ParameterList<Input: Cursor.`Protocol`>: Sendable
+    where Input.Element == Byte, Input.Failure == Never {
         @inlinable
         public init() {}
     }
 }
 
 extension RFC_9110.Parse.ParameterList: Parser.`Protocol` {
-    public typealias Output = [(name: Input, value: [Byte])]
+    public typealias Output = [(name: [Byte], value: [Byte])]
     public typealias Failure = Never
     public typealias Body = Never
 
     @inlinable
-    public func parse(_ input: inout Input) -> [(name: Input, value: [Byte])] {
-        var results: [(name: Input, value: [Byte])] = []
+    public func parse(_ input: inout Input) -> [(name: [Byte], value: [Byte])] {
+        var results: [(name: [Byte], value: [Byte])] = []
 
         while true {
 
-            let saved = input
+            let saved = input.checkpoint
 
             RFC_9110.Parse.OWS<Input>().parse(&input)
-            guard input.startIndex < input.endIndex, input[input.startIndex] == 0x3B else {
-                input = saved
+            guard let semicolon = input.next(), semicolon.bitPattern == 0x3B else {
+                input.seek(to: saved)
                 break
             }
-            input = input[input.index(after: input.startIndex)...]
             RFC_9110.Parse.OWS<Input>().parse(&input)
 
-            let param: (name: Input, value: [Byte])
+            let param: (name: [Byte], value: [Byte])
             do throws(RFC_9110.Parse.Error.Parameter) {
                 param = try RFC_9110.Parse.Parameter<Input>().parse(&input)
             } catch {
-                input = saved
+                input.seek(to: saved)
                 break
             }
             results.append(param)

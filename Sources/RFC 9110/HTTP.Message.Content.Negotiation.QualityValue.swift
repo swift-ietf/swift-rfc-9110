@@ -1,4 +1,5 @@
-import Byte_Parser_Primitives
+public import Byte
+public import Byte_Parser
 
 extension RFC_9110.Message.Content.Negotiation {
 

@@ -1,7 +1,8 @@
-import ASCII_Primitives
-import Byte_Parser_Primitives
-import Byte_Primitives_Standard_Library_Integration
-import Parser_Primitives
+import ASCII
+import Byte
+import Byte_Parser
+import Byte_Standard_Library_Integration
+import Parser
 import Standard_Library_Extensions
 
 extension RFC_9110.Entity {
@@ -32,26 +33,11 @@ extension RFC_9110.Entity.Tag {
 
     public static func parse(_ headerValue: String) -> Self? {
         var input = Byte.Input(utf8: headerValue)
-
-        RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
-
-        var isWeak = false
-        if input.startIndex < input.endIndex, input[input.startIndex] == 0x57 {
-            let next = input.index(after: input.startIndex)
-            if next < input.endIndex, input[next] == 0x2F {
-                input = input[input.index(after: next)...]
-                isWeak = true
-            }
-        }
-
-        let bytes: [Byte]
-        do throws(RFC_9110.Parse.QuotedString<Byte.Input>.Error) {
-            bytes = try RFC_9110.Parse.QuotedString<Byte.Input>().parse(&input)
+        do throws(RFC_9110.Parse.Error.QuotedString) {
+            return try Parser<Byte.Input>().parse(&input)
         } catch {
             return nil
         }
-
-        return Self(value: String(decoding: bytes, as: UTF8.self), isWeak: isWeak)
     }
 }
 

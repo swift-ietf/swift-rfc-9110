@@ -1,41 +1,48 @@
-public import Byte_Parser_Primitives
-import Parser_Primitives
+public import Byte
+public import Checkpoint
+public import Cursor
+public import Iterator
+public import Iterator_Protocol
+public import Parser
 
 extension RFC_9110.Parse {
 
-    public struct Token<Input: Collection.Slice.`Protocol`>: Sendable
-    where Input: Sendable, Input.Element == Byte {
+    public struct Token<Input: Cursor.`Protocol`>: Sendable
+    where Input.Element == Byte, Input.Failure == Never {
         @inlinable
         public init() {}
     }
 }
 
 extension RFC_9110.Parse.Token: Parser.`Protocol` {
-    public typealias Output = Input
+    public typealias Output = [Byte]
     public typealias Failure = RFC_9110.Parse.Error.Token
     public typealias Body = Never
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> Input {
-        var index = input.startIndex
+    public func parse(_ input: inout Input) throws(Failure) -> [Byte] {
+        var result: [Byte] = []
 
-        while index < input.endIndex {
-            guard Self.isTchar(input[index]) else { break }
-            input.formIndex(after: &index)
+        while true {
+            let checkpoint = input.checkpoint
+            guard let byte = input.next() else { break }
+            guard Self.isTchar(byte) else {
+                input.seek(to: checkpoint)
+                break
+            }
+            result.append(byte)
         }
 
-        guard index > input.startIndex else {
+        guard !result.isEmpty else {
             throw .expectedToken
         }
 
-        let result = input[input.startIndex..<index]
-        input = input[index...]
         return result
     }
 
     @inlinable
     public static func isTchar(_ byte: Byte) -> Bool {
-        switch byte {
+        switch byte.bitPattern {
         case 0x21, 0x23, 0x24, 0x25, 0x26, 0x27, 0x2A, 0x2B,
             0x2D, 0x2E, 0x5E, 0x5F, 0x60, 0x7C, 0x7E:
             true

@@ -1,6 +1,9 @@
-import ASCII_Primitives
-import Byte_Parser_Primitives
-import Parser_Primitives
+import ASCII
+import Byte
+import Byte_Parser
+import Byte_Standard_Library_Integration
+import Checkpoint
+import Parser
 public import RFC_5322
 import Standard_Library_Extensions
 
@@ -81,19 +84,19 @@ extension RFC_9110.Precondition {
         var input = Byte.Input(utf8: headerValue)
         RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
 
-        if input.startIndex < input.endIndex, input[input.startIndex] == 0x2A {
-            let saved = input
-            input = input[input.index(after: input.startIndex)...]
+        if input.first?.bitPattern == 0x2A {
+            let saved = input.checkpoint
+            _ = input.next()
             RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
-            if input.startIndex >= input.endIndex {
+            if input.isEmpty {
                 return .ifMatch([wildcardTag])
             }
-            input = saved
+            input.seek(to: saved)
         }
 
-        let etags = RFC_9110.Parse.CommaSeparated<Byte.Input, RFC_9110.Entity.Tag> { element in
-            RFC_9110.Entity.Tag.parse(String(decoding: element, as: UTF8.self))
-        }.parse(&input)
+        let etags = RFC_9110.Parse.CommaSeparated(
+            RFC_9110.Entity.Tag.Parser<Byte.Input>()
+        ).parse(&input)
 
         return etags.isEmpty ? nil : .ifMatch(etags)
     }
@@ -102,19 +105,19 @@ extension RFC_9110.Precondition {
         var input = Byte.Input(utf8: headerValue)
         RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
 
-        if input.startIndex < input.endIndex, input[input.startIndex] == 0x2A {
-            let saved = input
-            input = input[input.index(after: input.startIndex)...]
+        if input.first?.bitPattern == 0x2A {
+            let saved = input.checkpoint
+            _ = input.next()
             RFC_9110.Parse.OWS<Byte.Input>().parse(&input)
-            if input.startIndex >= input.endIndex {
+            if input.isEmpty {
                 return .ifNoneMatch([wildcardTag])
             }
-            input = saved
+            input.seek(to: saved)
         }
 
-        let etags = RFC_9110.Parse.CommaSeparated<Byte.Input, RFC_9110.Entity.Tag> { element in
-            RFC_9110.Entity.Tag.parse(String(decoding: element, as: UTF8.self))
-        }.parse(&input)
+        let etags = RFC_9110.Parse.CommaSeparated(
+            RFC_9110.Entity.Tag.Parser<Byte.Input>()
+        ).parse(&input)
 
         return etags.isEmpty ? nil : .ifNoneMatch(etags)
     }

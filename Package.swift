@@ -18,30 +18,50 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/swift-primitives/swift-ascii-primitives.git",
+            url: "https://github.com/swift-atoms/swift-ascii.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-ascii-parser-primitives.git",
+            url: "https://github.com/swift-molecules/swift-ascii-parser.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-byte-primitives.git",
+            url: "https://github.com/swift-atoms/swift-byte.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-byte-parser-primitives.git",
+            url: "https://github.com/swift-molecules/swift-byte-parser.git",
             branch: "main"
         ),
         .package(
-            url: "https://github.com/swift-primitives/swift-parser-primitives.git",
+            url: "https://github.com/swift-atoms/swift-checkpoint.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-atoms/swift-cursor.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-molecules/swift-cursor-parser.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-atoms/swift-either.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-atoms/swift-iterator.git",
+            branch: "main"
+        ),
+        .package(
+            url: "https://github.com/swift-atoms/swift-parser.git",
             branch: "main"
         ),
         .package(url: "https://github.com/swift-ietf/swift-rfc-3986.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-4648.git", branch: "main"),
         .package(url: "https://github.com/swift-ietf/swift-rfc-5322.git", branch: "main"),
         .package(
-            url: "https://github.com/swift-primitives/swift-standard-library-extensions.git",
+            url: "https://github.com/swift-atoms/swift-standard-library-extensions.git",
             branch: "main"
         ),
     ],
@@ -49,15 +69,31 @@ let package = Package(
         .target(
             name: "RFC 9110",
             dependencies: [
-                .product(name: "ASCII Primitives", package: "swift-ascii-primitives"),
+                .product(name: "ASCII", package: "swift-ascii"),
                 .product(
-                    name: "ASCII Decimal Parser Primitives",
-                    package: "swift-ascii-parser-primitives"
+                    name: "ASCII Decimal Parser",
+                    package: "swift-ascii-parser"
                 ),
-                .product(name: "Byte Primitive", package: "swift-byte-primitives"),
-                .product(name: "Byte Primitives", package: "swift-byte-primitives"),
-                .product(name: "Byte Parser Primitives", package: "swift-byte-parser-primitives"),
-                .product(name: "Parser Primitives", package: "swift-parser-primitives"),
+                .product(name: "Byte", package: "swift-byte"),
+                .product(
+                    name: "Byte Standard Library Integration",
+                    package: "swift-byte"
+                ),
+                .product(name: "Byte Parser", package: "swift-byte-parser"),
+                .product(name: "Checkpoint", package: "swift-checkpoint"),
+                .product(name: "Cursor", package: "swift-cursor"),
+                .product(
+                    name: "Cursor Parser Many",
+                    package: "swift-cursor-parser"
+                ),
+                .product(
+                    name: "Cursor Parser Optionally",
+                    package: "swift-cursor-parser"
+                ),
+                .product(name: "Either", package: "swift-either"),
+                .product(name: "Iterator", package: "swift-iterator"),
+                .product(name: "Iterator Protocol", package: "swift-iterator"),
+                .product(name: "Parser", package: "swift-parser"),
                 .product(name: "RFC 3986", package: "swift-rfc-3986"),
                 .product(name: "RFC 4648", package: "swift-rfc-4648"),
                 .product(name: "RFC 5322", package: "swift-rfc-5322"),
@@ -77,11 +113,6 @@ let package = Package(
     ],
     swiftLanguageModes: [.v6]
 )
-
-extension String {
-    var tests: Self { self + " Tests" }
-    var foundation: Self { self + " Foundation" }
-}
 
 for target in package.targets where ![.system, .binary, .plugin, .macro].contains(target.type) {
     let ecosystem: [SwiftSetting] = [

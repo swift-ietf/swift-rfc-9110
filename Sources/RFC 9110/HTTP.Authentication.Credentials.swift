@@ -1,3 +1,4 @@
+import Byte
 import RFC_4648
 import Standard_Library_Extensions
 
@@ -57,7 +58,7 @@ extension RFC_9110.Authentication.Credentials {
         password: String
     ) -> RFC_9110.Authentication.Credentials {
         let combined = "\(username):\(password)"
-        let bytes: [Byte] = combined.utf8.map(Byte.init)
+        let bytes: [Byte] = combined.utf8.map(Byte.init(bitPattern:))
         let encoded = bytes.base64.encoded()
         return Self(scheme: .basic, token: encoded)
     }

@@ -1,5 +1,7 @@
-import Byte_Parser_Primitives
-import Parser_Primitives
+public import Byte
+public import Byte_Parser
+import Byte_Standard_Library_Integration
+import Parser
 
 extension RFC_9110.Message.Content.Negotiation {
 
@@ -21,29 +23,15 @@ extension RFC_9110.Message.Content.Negotiation.LanguagePreference {
 
     public static func parse(_ headerValue: String) -> [Self] {
         var input = Byte.Input(utf8: headerValue)
-        let preferences = RFC_9110.Parse.CommaSeparated<Byte.Input, Self> {
-            element in
-            var sub = element
-            let token: Byte.Input
-            do throws(RFC_9110.Parse.Token<Byte.Input>.Error) {
-                token = try RFC_9110.Parse.Token<Byte.Input>().parse(&sub)
-            } catch {
-                return nil
-            }
-            let language = String(decoding: token, as: UTF8.self)
-            let quality: RFC_9110.Message.Content.Negotiation.QualityValue
-            switch RFC_9110.Message.Content.Negotiation.Weight.parse(&sub) {
-            case .absent:
-                quality = .default
-
-            case .value(let value):
-                quality = value
-
-            case .invalid:
-                return nil
-            }
-            return Self(language: language, quality: quality)
-        }.parse(&input)
+        let weighted = RFC_9110.Parse.CommaSeparated(
+            RFC_9110.Message.Content.Negotiation.Weighted(RFC_9110.Parse.Token<Byte.Input>())
+        ).parse(&input)
+        let preferences = weighted.map { element in
+            Self(
+                language: String(decoding: element.value, as: UTF8.self),
+                quality: element.quality
+            )
+        }
         return preferences.sorted { lhs, rhs in
             if lhs.quality != rhs.quality {
                 return lhs.quality > rhs.quality

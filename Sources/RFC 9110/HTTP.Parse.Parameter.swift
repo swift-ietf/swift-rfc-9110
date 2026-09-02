@@ -1,37 +1,41 @@
-public import Byte_Parser_Primitives
-import Parser_Primitives
+public import Byte
+public import Checkpoint
+public import Cursor
+public import Iterator
+public import Iterator_Protocol
+public import Parser
 
 extension RFC_9110.Parse {
 
-    public struct Parameter<Input: Collection.Slice.`Protocol`>: Sendable
-    where Input: Sendable, Input.Element == Byte {
+    public struct Parameter<Input: Cursor.`Protocol`>: Sendable
+    where Input.Element == Byte, Input.Failure == Never {
         @inlinable
         public init() {}
     }
 }
 
 extension RFC_9110.Parse.Parameter: Parser.`Protocol` {
-    public typealias Output = (name: Input, value: [Byte])
+    public typealias Output = (name: [Byte], value: [Byte])
     public typealias Failure = RFC_9110.Parse.Error.Parameter
     public typealias Body = Never
 
     @inlinable
-    public func parse(_ input: inout Input) throws(Failure) -> (name: Input, value: [Byte]) {
+    public func parse(_ input: inout Input) throws(Failure) -> (name: [Byte], value: [Byte]) {
 
-        let name: Input
+        let name: [Byte]
         do throws(RFC_9110.Parse.Error.Token) {
             name = try RFC_9110.Parse.Token<Input>().parse(&input)
         } catch {
             throw .expectedToken
         }
 
-        guard input.startIndex < input.endIndex, input[input.startIndex] == 0x3D else {
+        let afterName = input.checkpoint
+        guard let equals = input.next(), equals.bitPattern == 0x3D else {
+            input.seek(to: afterName)
             throw .expectedEquals
         }
-        input = input[input.index(after: input.startIndex)...]
 
-        if input.startIndex < input.endIndex, input[input.startIndex] == 0x22 {
-
+        if RFC_9110.Parse.peek(input)?.bitPattern == 0x22 {
             let value: [Byte]
             do throws(RFC_9110.Parse.Error.QuotedString) {
                 value = try RFC_9110.Parse.QuotedString<Input>().parse(&input)
@@ -39,21 +43,14 @@ extension RFC_9110.Parse.Parameter: Parser.`Protocol` {
                 throw .invalidQuotedString(error)
             }
             return (name: name, value: value)
-        } else {
-
-            let tokenValue: Input
-            do throws(RFC_9110.Parse.Error.Token) {
-                tokenValue = try RFC_9110.Parse.Token<Input>().parse(&input)
-            } catch {
-                throw .expectedValue
-            }
-            var bytes: [Byte] = []
-            var i = tokenValue.startIndex
-            while i < tokenValue.endIndex {
-                bytes.append(tokenValue[i])
-                i = tokenValue.index(after: i)
-            }
-            return (name: name, value: bytes)
         }
+
+        let value: [Byte]
+        do throws(RFC_9110.Parse.Error.Token) {
+            value = try RFC_9110.Parse.Token<Input>().parse(&input)
+        } catch {
+            throw .expectedValue
+        }
+        return (name: name, value: value)
     }
 }
