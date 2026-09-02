@@ -2,7 +2,7 @@ public import ASCII_Decimal_Parser
 public import Byte
 public import Checkpoint
 public import Cursor
-public import Iterator
+import Iterator
 public import Iterator_Protocol
 public import Parser
 
@@ -52,6 +52,15 @@ extension RFC_9110.Parse.QualityValue: Parser.`Protocol` {
             }
             frac = frac * 10 + digit
             digits += 1
+        }
+
+        let afterFraction = input.checkpoint
+        if let extra = input.next() {
+            guard extra.bitPattern < 0x30 || extra.bitPattern > 0x39 else {
+                input.seek(to: start)
+                throw .invalidQValue
+            }
+            input.seek(to: afterFraction)
         }
 
         while digits < 3 {
