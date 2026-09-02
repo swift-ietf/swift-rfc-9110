@@ -1,8 +1,8 @@
-public import Byte
-public import Checkpoint
-public import Cursor
-public import Iterator
-public import Iterator_Protocol
+import Byte
+import Checkpoint
+import Cursor
+import Iterator
+import Iterator_Protocol
 import Parser
 
 extension RFC_9110.Message.Content.Negotiation {

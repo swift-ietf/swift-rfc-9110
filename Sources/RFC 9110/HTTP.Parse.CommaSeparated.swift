@@ -4,7 +4,7 @@ public import Checkpoint
 public import Cursor
 public import Cursor_Parser_Many
 public import Cursor_Parser_Optionally
-public import Iterator
+import Iterator
 public import Iterator_Protocol
 public import Parser
 

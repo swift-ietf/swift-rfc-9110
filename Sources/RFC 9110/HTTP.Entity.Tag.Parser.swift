@@ -2,7 +2,7 @@ public import Byte
 public import Byte_Standard_Library_Integration
 public import Checkpoint
 public import Cursor
-public import Iterator
+import Iterator
 public import Iterator_Protocol
 public import Parser
 

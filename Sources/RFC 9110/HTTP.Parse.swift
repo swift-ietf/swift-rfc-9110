@@ -1,11 +1,11 @@
 public import Byte
-public import Byte_Parser
+import Byte_Parser
 import Byte_Standard_Library_Integration
-public import Checkpoint
+import Checkpoint
 public import Cursor
-public import Iterator
+import Iterator
 public import Iterator_Protocol
-public import Parser
+import Parser
 
 extension RFC_9110 {
 

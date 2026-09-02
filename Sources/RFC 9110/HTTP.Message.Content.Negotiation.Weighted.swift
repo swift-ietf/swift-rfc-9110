@@ -1,8 +1,8 @@
 public import Byte
-public import Checkpoint
+import Checkpoint
 public import Cursor
 public import Either
-public import Iterator
+import Iterator
 public import Iterator_Protocol
 public import Parser
 

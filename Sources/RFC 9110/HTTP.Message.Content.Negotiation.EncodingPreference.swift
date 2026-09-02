@@ -1,5 +1,5 @@
-public import Byte
-public import Byte_Parser
+import Byte
+import Byte_Parser
 import Byte_Standard_Library_Integration
 import Parser
 
