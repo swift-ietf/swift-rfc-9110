@@ -1,9 +1,9 @@
-extension RFC_9110.Message.Content {
+extension RFC_9110 {
 
     public enum Negotiation {}
 }
 
-extension RFC_9110.Message.Content.Negotiation {
+extension RFC_9110.Negotiation {
 
     public static func selectMediaType(
         from available: [RFC_9110.MediaType],

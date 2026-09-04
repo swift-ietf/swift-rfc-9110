@@ -7,3 +7,10 @@ extension RFC_9110 {
         case asterisk
     }
 }
+
+extension RFC_9110.Target {
+
+    public init(unchecked resource: String) {
+        self = .resource(RFC_3986.URI(unchecked: resource))
+    }
+}

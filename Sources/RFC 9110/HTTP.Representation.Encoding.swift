@@ -1,4 +1,4 @@
-extension RFC_9110.Message.Content {
+extension RFC_9110.Representation {
 
     public struct Encoding: Sendable, Equatable, Hashable, Codable {
 
@@ -10,20 +10,20 @@ extension RFC_9110.Message.Content {
     }
 }
 
-extension RFC_9110.Message.Content.Encoding {
+extension RFC_9110.Representation.Encoding {
 
     public static func formatHeader(_ encodings: [Self]) -> String {
         encodings.map(\.value).joined(separator: ", ")
     }
 }
 
-extension RFC_9110.Message.Content.Encoding: CustomStringConvertible {
+extension RFC_9110.Representation.Encoding: CustomStringConvertible {
     public var description: String {
         value
     }
 }
 
-extension RFC_9110.Message.Content.Encoding {
+extension RFC_9110.Representation.Encoding {
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let value = try container.decode(String.self)
@@ -36,13 +36,13 @@ extension RFC_9110.Message.Content.Encoding {
     }
 }
 
-extension RFC_9110.Message.Content.Encoding: ExpressibleByStringLiteral {
+extension RFC_9110.Representation.Encoding: ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
         self.init(value)
     }
 }
 
-extension RFC_9110.Message.Content.Encoding {
+extension RFC_9110.Representation.Encoding {
 
     public static let gzip = Self("gzip")
 

@@ -1,4 +1,4 @@
-extension RFC_9110.Message.Content.Negotiation {
+extension RFC_9110.Negotiation {
 
     public struct QualityValue: Sendable, Equatable, Hashable, Comparable {
 
@@ -15,7 +15,7 @@ extension RFC_9110.Message.Content.Negotiation {
     }
 }
 
-extension RFC_9110.Message.Content.Negotiation.QualityValue {
+extension RFC_9110.Negotiation.QualityValue {
 
     public static let `default` = Self(unchecked: 1000)
     public static let zero = Self(unchecked: 0)
@@ -25,7 +25,7 @@ extension RFC_9110.Message.Content.Negotiation.QualityValue {
     }
 }
 
-extension RFC_9110.Message.Content.Negotiation.QualityValue: CustomStringConvertible {
+extension RFC_9110.Negotiation.QualityValue: CustomStringConvertible {
     public var description: String {
         guard thousandths != 1000 else { return "1" }
         guard thousandths != 0 else { return "0" }

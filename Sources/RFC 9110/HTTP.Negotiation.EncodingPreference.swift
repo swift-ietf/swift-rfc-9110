@@ -1,12 +1,12 @@
-extension RFC_9110.Message.Content.Negotiation {
+extension RFC_9110.Negotiation {
 
     public struct EncodingPreference: Sendable, Equatable {
 
-        public let encoding: RFC_9110.Message.Content.Encoding
+        public let encoding: RFC_9110.Representation.Encoding
 
         public let quality: QualityValue
 
-        public init(encoding: RFC_9110.Message.Content.Encoding, quality: QualityValue = .default) {
+        public init(encoding: RFC_9110.Representation.Encoding, quality: QualityValue = .default) {
             self.encoding = encoding
             self.quality = quality
         }
@@ -14,7 +14,7 @@ extension RFC_9110.Message.Content.Negotiation {
     }
 }
 
-extension RFC_9110.Message.Content.Negotiation.EncodingPreference: CustomStringConvertible {
+extension RFC_9110.Negotiation.EncodingPreference: CustomStringConvertible {
     public var description: String {
         if quality == .default {
             return encoding.value

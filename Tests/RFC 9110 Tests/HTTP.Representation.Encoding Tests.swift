@@ -4,31 +4,31 @@ import Testing
 @testable import RFC_9110
 
 @Suite
-struct `HTTP.Message.Content.Encoding Tests` {
+struct `HTTP.Representation.Encoding Tests` {
     @Suite struct Unit {}
     @Suite struct `Edge Case` {}
     @Suite struct Integration {}
 
     @Test
     func `Standard encodings`() async throws {
-        #expect(HTTP.Message.Content.Encoding.gzip.value == "gzip")
-        #expect(HTTP.Message.Content.Encoding.deflate.value == "deflate")
-        #expect(HTTP.Message.Content.Encoding.compress.value == "compress")
-        #expect(HTTP.Message.Content.Encoding.brotli.value == "br")
-        #expect(HTTP.Message.Content.Encoding.identity.value == "identity")
+        #expect(HTTP.Representation.Encoding.gzip.value == "gzip")
+        #expect(HTTP.Representation.Encoding.deflate.value == "deflate")
+        #expect(HTTP.Representation.Encoding.compress.value == "compress")
+        #expect(HTTP.Representation.Encoding.brotli.value == "br")
+        #expect(HTTP.Representation.Encoding.identity.value == "identity")
     }
 
     @Test
     func `Custom encoding`() async throws {
-        let custom = HTTP.Message.Content.Encoding("custom-encoding")
+        let custom = HTTP.Representation.Encoding("custom-encoding")
 
         #expect(custom.value == "custom-encoding")
     }
 
     @Test
     func `Case insensitive`() async throws {
-        let upper = HTTP.Message.Content.Encoding("GZIP")
-        let lower = HTTP.Message.Content.Encoding("gzip")
+        let upper = HTTP.Representation.Encoding("GZIP")
+        let lower = HTTP.Representation.Encoding("gzip")
 
         #expect(upper.value == "gzip")
         #expect(lower.value == "gzip")
@@ -37,30 +37,30 @@ struct `HTTP.Message.Content.Encoding Tests` {
 
     @Test
     func `Format header - single`() async throws {
-        let header = HTTP.Message.Content.Encoding.formatHeader([.gzip])
+        let header = HTTP.Representation.Encoding.formatHeader([.gzip])
 
         #expect(header == "gzip")
     }
 
     @Test
     func `Format header - multiple`() async throws {
-        let header = HTTP.Message.Content.Encoding.formatHeader([.gzip, .deflate, .brotli])
+        let header = HTTP.Representation.Encoding.formatHeader([.gzip, .deflate, .brotli])
 
         #expect(header == "gzip, deflate, br")
     }
 
     @Test
     func `Format header - empty`() async throws {
-        let header = HTTP.Message.Content.Encoding.formatHeader([])
+        let header = HTTP.Representation.Encoding.formatHeader([])
 
         #expect(header.isEmpty)
     }
 
     @Test
     func `Equality`() async throws {
-        let gzip1 = HTTP.Message.Content.Encoding.gzip
-        let gzip2 = HTTP.Message.Content.Encoding("gzip")
-        let br = HTTP.Message.Content.Encoding.brotli
+        let gzip1 = HTTP.Representation.Encoding.gzip
+        let gzip2 = HTTP.Representation.Encoding("gzip")
+        let br = HTTP.Representation.Encoding.brotli
 
         #expect(gzip1 == gzip2)
         #expect(gzip1 != br)
@@ -68,7 +68,7 @@ struct `HTTP.Message.Content.Encoding Tests` {
 
     @Test
     func `Hashable`() async throws {
-        var set: Set<HTTP.Message.Content.Encoding> = []
+        var set: Set<HTTP.Representation.Encoding> = []
         set.insert(.gzip)
         set.insert(.gzip)
         set.insert(.brotli)
@@ -81,23 +81,23 @@ struct `HTTP.Message.Content.Encoding Tests` {
         let encoder = JSONEncoder()
         let decoder = JSONDecoder()
 
-        let encoding = HTTP.Message.Content.Encoding.gzip
+        let encoding = HTTP.Representation.Encoding.gzip
         let encoded = try encoder.encode(encoding)
-        let decoded = try decoder.decode(HTTP.Message.Content.Encoding.self, from: encoded)
+        let decoded = try decoder.decode(HTTP.Representation.Encoding.self, from: encoded)
 
         #expect(decoded == encoding)
     }
 
     @Test
     func `Description`() async throws {
-        #expect(HTTP.Message.Content.Encoding.gzip.description == "gzip")
-        #expect(HTTP.Message.Content.Encoding.brotli.description == "br")
+        #expect(HTTP.Representation.Encoding.gzip.description == "gzip")
+        #expect(HTTP.Representation.Encoding.brotli.description == "br")
     }
 
     @Test
     func `String literal`() async throws {
-        let gzip: HTTP.Message.Content.Encoding = "gzip"
-        let custom: HTTP.Message.Content.Encoding = "custom"
+        let gzip: HTTP.Representation.Encoding = "gzip"
+        let custom: HTTP.Representation.Encoding = "custom"
 
         #expect(gzip == .gzip)
         #expect(custom.value == "custom")

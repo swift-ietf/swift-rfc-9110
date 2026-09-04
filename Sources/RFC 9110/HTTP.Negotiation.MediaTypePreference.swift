@@ -1,4 +1,4 @@
-extension RFC_9110.Message.Content.Negotiation {
+extension RFC_9110.Negotiation {
 
     public struct MediaTypePreference: Sendable, Equatable {
 
@@ -14,7 +14,7 @@ extension RFC_9110.Message.Content.Negotiation {
     }
 }
 
-extension RFC_9110.Message.Content.Negotiation.MediaTypePreference: CustomStringConvertible {
+extension RFC_9110.Negotiation.MediaTypePreference: CustomStringConvertible {
     public var description: String {
         if quality == .default {
             return mediaType.value

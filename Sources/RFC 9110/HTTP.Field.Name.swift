@@ -138,5 +138,7 @@ extension RFC_9110.Field.Name {
 
     public static var keepAlive: Self { Self(unchecked: "Keep-Alive") }
 
+    public static var upgrade: Self { Self(unchecked: "Upgrade") }
+
     public static var allow: Self { Self(unchecked: "Allow") }
 }

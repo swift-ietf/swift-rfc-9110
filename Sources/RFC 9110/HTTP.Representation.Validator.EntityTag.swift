@@ -1,6 +1,6 @@
-extension RFC_9110.Entity {
+extension RFC_9110.Representation.Validator {
 
-    public struct Tag: Sendable, Equatable, Hashable {
+    public struct EntityTag: Sendable, Equatable, Hashable {
 
         public let value: String
 
@@ -14,7 +14,7 @@ extension RFC_9110.Entity {
     }
 }
 
-extension RFC_9110.Entity.Tag {
+extension RFC_9110.Representation.Validator.EntityTag {
 
     public var headerValue: String {
         if isWeak {
@@ -25,13 +25,13 @@ extension RFC_9110.Entity.Tag {
     }
 }
 
-extension RFC_9110.Entity.Tag: CustomStringConvertible {
+extension RFC_9110.Representation.Validator.EntityTag: CustomStringConvertible {
     public var description: String {
         headerValue
     }
 }
 
-extension RFC_9110.Entity.Tag {
+extension RFC_9110.Representation.Validator.EntityTag {
 
     public static func strong(_ value: String) -> Self {
         Self(value: value, isWeak: false)
