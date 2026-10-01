@@ -34,10 +34,11 @@ extension RFC_9110.Authentication.Challenge {
                 .sorted { $0.key < $1.key }
                 .map { key, value in
 
-                    if value.contains(" ") || value.contains(",") || value.contains("=") {
-                        return "\(key)=\"\(value)\""
-                    } else {
+                    if !value.isEmpty, value.utf8.allSatisfy(RFC_9110.Token.isTchar) {
                         return "\(key)=\(value)"
+                    } else {
+                        let escaped = value.replacing("\\", with: "\\\\").replacing("\"", with: "\\\"")
+                        return "\(key)=\"\(escaped)\""
                     }
                 }
                 .joined(separator: ", ")
