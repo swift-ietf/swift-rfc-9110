@@ -1,6 +1,6 @@
 extension RFC_9110.Field {
 
-    public struct Name: Hashable {
+    public struct Name: Sendable, Hashable {
 
         public let rawValue: String
 

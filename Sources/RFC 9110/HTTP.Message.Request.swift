@@ -24,3 +24,4 @@ extension RFC_9110.Message {
 
 extension RFC_9110.Message.Request: Equatable where Content: Equatable {}
 extension RFC_9110.Message.Request: Hashable where Content: Hashable {}
+extension RFC_9110.Message.Request: Sendable where Content: Sendable {}

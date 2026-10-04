@@ -1,5 +1,5 @@
 extension RFC_9110.Message {
-    public struct Headers: Equatable, Hashable {
+    public struct Headers: Sendable, Equatable, Hashable {
         package var fields: [RFC_9110.Field]
 
         public init(_ fields: [RFC_9110.Field] = []) {

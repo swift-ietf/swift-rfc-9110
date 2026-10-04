@@ -1,6 +1,6 @@
 extension RFC_9110 {
 
-    public struct Status: Hashable {
+    public struct Status: Sendable, Hashable {
 
         public let code: Int
 

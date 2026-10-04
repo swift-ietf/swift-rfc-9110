@@ -1,6 +1,6 @@
 extension RFC_9110 {
 
-    public struct Method: Hashable, RawRepresentable {
+    public struct Method: Sendable, Hashable, RawRepresentable {
 
         public let rawValue: String
 

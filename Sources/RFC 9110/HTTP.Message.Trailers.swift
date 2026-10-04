@@ -1,5 +1,5 @@
 extension RFC_9110.Message {
-    public struct Trailers: Equatable, Hashable {
+    public struct Trailers: Sendable, Equatable, Hashable {
         package var fields: [RFC_9110.Field]
 
         public init(_ fields: [RFC_9110.Field] = []) {
