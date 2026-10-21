@@ -16,10 +16,9 @@ extension RFC_9110.Negotiation {
 
 extension RFC_9110.Negotiation.EncodingPreference: CustomStringConvertible {
     public var description: String {
-        if quality == .default {
+        guard quality != .default else {
             return encoding.value
-        } else {
-            return "\(encoding.value);q=\(quality)"
         }
+        return "\(encoding.value);q=\(quality)"
     }
 }

@@ -16,10 +16,9 @@ extension RFC_9110.Negotiation {
 
 extension RFC_9110.Negotiation.CharsetPreference: CustomStringConvertible {
     public var description: String {
-        if quality == .default {
+        guard quality != .default else {
             return charset
-        } else {
-            return "\(charset);q=\(quality)"
         }
+        return "\(charset);q=\(quality)"
     }
 }

@@ -17,11 +17,10 @@ extension RFC_9110.Representation.Validator {
 extension RFC_9110.Representation.Validator.EntityTag {
 
     public var headerValue: String {
-        if isWeak {
-            return "W/\"\(value)\""
-        } else {
+        guard isWeak else {
             return "\"\(value)\""
         }
+        return "W/\"\(value)\""
     }
 }
 

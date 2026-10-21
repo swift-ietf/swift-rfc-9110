@@ -16,10 +16,9 @@ extension RFC_9110.Negotiation {
 
 extension RFC_9110.Negotiation.LanguagePreference: CustomStringConvertible {
     public var description: String {
-        if quality == .default {
+        guard quality != .default else {
             return language
-        } else {
-            return "\(language);q=\(quality)"
         }
+        return "\(language);q=\(quality)"
     }
 }

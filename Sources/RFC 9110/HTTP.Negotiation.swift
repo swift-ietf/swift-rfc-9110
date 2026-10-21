@@ -33,7 +33,7 @@ extension RFC_9110.Negotiation {
 
             for preference in preferences {
                 if availableType.matches(preference.mediaType) {
-                    if bestQuality == nil || preference.quality > bestQuality! {
+                    if bestQuality.map({ preference.quality > $0 }) ?? true {
                         bestQuality = preference.quality
                     }
                 }

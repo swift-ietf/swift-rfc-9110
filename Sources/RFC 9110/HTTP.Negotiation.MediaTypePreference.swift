@@ -16,10 +16,9 @@ extension RFC_9110.Negotiation {
 
 extension RFC_9110.Negotiation.MediaTypePreference: CustomStringConvertible {
     public var description: String {
-        if quality == .default {
+        guard quality != .default else {
             return mediaType.value
-        } else {
-            return "\(mediaType.value);q=\(quality)"
         }
+        return "\(mediaType.value);q=\(quality)"
     }
 }
