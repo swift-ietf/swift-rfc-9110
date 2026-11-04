@@ -1,161 +1,23 @@
 # swift-rfc-9110
 
-![Development Status](https://img.shields.io/badge/status-active--development-blue.svg)
+Use this package when you work with HTTP meaning that does not depend on the protocol version: methods, status codes, header fields, media types, content negotiation, entity tags and conditional requests. Start from `RFC_9110.Message.Request` and `RFC_9110.Message.Response`, or from `RFC_9110.Negotiation` when you choose a representation from an Accept header. To reach the same types as `HTTP.*`, use swift-http. For HTTP/1.1 message framing use swift-rfc-9112, and for caching rules use swift-rfc-9111.
 
-Swift implementation of RFC 9110: HTTP Semantics
+## Laws
 
-## Overview
-
-This package implements [RFC 9110 - HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html), which obsoletes RFC 7230, 7231, 7232, 7233, 7234, and 7235 (June 2022).
-
-RFC 9110 consolidates and updates the core HTTP specifications, providing a unified foundation for HTTP semantics across all HTTP versions.
-
-## Status
-
-**Alpha** - Week 1 & 2 implementation complete
-
-### Implemented (Week 1)
-
-- ✅ `HTTP.Method` - HTTP methods with properties (Section 9)
-  - All standard methods: GET, POST, PUT, DELETE, PATCH, HEAD, OPTIONS, CONNECT, TRACE
-  - Properties: `isSafe`, `isIdempotent`, `isCacheable`
-  - Full conformances: Sendable, Equatable, Hashable, Codable, RawRepresentable
-
-- ✅ `HTTP.Status` - HTTP status codes (Section 15)
-  - All standard status codes (1xx through 5xx)
-  - Category checks: `isInformational`, `isSuccessful`, `isRedirection`, `isClientError`, `isServerError`
-  - Full conformances: Sendable, Equatable, Hashable, Codable
-
-### Implemented (Week 2)
-
-- ✅ `HTTP.Header.Field` - HTTP header fields (Section 6.3)
-  - Name (case-insensitive) and Value (validated for security)
-  - CRLF injection prevention
-  - 40+ standard header name constants
-
-- ✅ `HTTP.Headers` - Header field collection
-  - Case-insensitive subscript access
-  - Multiple values per header name
-  - Preserves insertion order
-
-- ✅ `HTTP.Request.Target` - Request target forms (Section 7.1)
-  - origin-form (most common)
-  - absolute-form (for proxies)
-  - authority-form (for CONNECT)
-  - asterisk-form (for OPTIONS *)
-
-- ✅ `HTTP.Request.Message` - Complete HTTP request
-  - Method + Target + Headers + Body
-  - Request validation
-  - Convenience constructors
-
-- ✅ `HTTP.Response.Message` - Complete HTTP response
-  - Status + Headers + Body
-  - Convenience constructors (ok, created, notFound, etc.)
-  - Helper methods
-
-### Planned
-
-- 📋 Week 3: `HTTP.MediaType`, `HTTP.ContentNegotiation`, `HTTP.Authentication`
-- 📋 Future: Additional semantics as needed
-
-## Usage
-
-```swift
-import RFC_9110
-
-// Methods with properties
-let method = HTTP.Method.get
-method.isSafe        // true
-method.isIdempotent  // true
-method.isCacheable   // true
-
-// Status codes with category checks
-let status = HTTP.Status.ok
-status.code           // 200
-status.isSuccessful   // true
-status.description    // "200 OK"
-
-// Headers
-let headers = try HTTP.Headers([
-    .init(name: "Content-Type", value: "application/json"),
-    .init(name: "Accept", value: "application/json")
-])
-
-// Request
-let request = try HTTP.Request.Message(
-    method: .post,
-    target: .origin(path: .init("/api/users"), query: nil),
-    headers: headers,
-    body: Data(#"{"name":"John"}"#.utf8)
-)
-
-// Response with convenience constructor
-let response = try HTTP.Response.Message.created(
-    location: "/api/users/123",
-    body: Data(#"{"id":123,"name":"John"}"#.utf8)
-)
-```
-
-## Requirements
-
-- Swift 6.0+
-- macOS 14.0+, iOS 17.0+, tvOS 17.0+, watchOS 10.0+
-
-## Dependencies
-
-- [swift-collections](https://github.com/apple/swift-collections) - OrderedCollections
-- [swift-rfc-3986](https://github.com/swift-ietf/swift-rfc-3986) - URI types
-
-## Installation
-
-```swift
-dependencies: [
-    .package(url: "https://github.com/swift-ietf/swift-rfc-9110", from: "0.0.4")
-],
-targets: [
-    .target(
-        name: "YourTarget",
-        dependencies: [
-            .product(name: "RFC 9110", package: "swift-rfc-9110")
-        ]
-    )
-]
-```
-
-## Relationship to Other RFCs
-
-- **RFC 9110** (this package) - HTTP Semantics
-- **RFC 9111** - HTTP Caching (swift-rfc-9111)
-- **RFC 9112** - HTTP/1.1 Message Syntax (swift-rfc-9112)
-
-Together, these three RFCs replace the obsolete RFC 7230-7235 series.
-
-## Design Principles
-
-Following the established patterns from swift-rfc-7230/7231:
-
-- ✅ Namespace with underscore: `RFC_9110`
-- ✅ Convenience typealias: `HTTP = RFC_9110`
-- ✅ Comprehensive conformances: Sendable, Equatable, Hashable, Codable
-- ✅ Static properties for standard values
-- ✅ Full documentation with RFC section references
-- ✅ Swift 6.2 strict concurrency enabled
-
-## Testing
-
-```bash
-swift test
-```
-
-Current test coverage: 75 tests, all passing
-
-## License
-
-[Apache 2.0](LICENSE)
-
-## References
-
-- [RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110.html)
-- [RFC 9110 Section 9: Methods](https://www.rfc-editor.org/rfc/rfc9110.html#section-9)
-- [RFC 9110 Section 15: Status Codes](https://www.rfc-editor.org/rfc/rfc9110.html#section-15)
+- `RFC_9110.Field.Name` and `RFC_9110.Authentication.Scheme` compare and hash without regard to case, and keep the spelling they were given.
+- `RFC_9110.Field.Value.init(_:)` refuses only CR and LF. A field name must be a non-empty token.
+- `RFC_9110.Message.Headers` keeps every field line in the order given, duplicates included. Looking up a name returns all its values in that order.
+- `RFC_9110.MediaType` lowercases its type and subtype. Equality and hashing ignore parameters, so `text/html` equals `text/html; charset=utf-8`. Parameters are written sorted by name.
+- `RFC_9110.MediaType.matches(_:)` treats its argument as the pattern. `application/json` matches `application/*` and `*/*`, not the other way round.
+- `RFC_9110.Representation.Encoding`, `RFC_9110.Negotiation.CharsetPreference` and the field names in `RFC_9110.Negotiation.Vary` are lowercased.
+- `RFC_9110.Negotiation.Vary.matches(requestHeaders:cachedRequestHeaders:)` looks headers up by lowercased name, so both dictionaries need lowercased keys. `RFC_9110.Negotiation.Vary.all` includes every field and never matches.
+- A quality value is a whole number of thousandths from 0 to 1000. Parsing accepts at most three decimals, and `1` may only be followed by zeros, so `0.1234` and `1.001` are refused. It prints without trailing zeros, as `1`, `0.9` or `0`.
+- Parsed Accept preferences are sorted by quality, highest first. Among media types of equal quality, `type/subtype` comes before `type/*`, which comes before `*/*`. Among languages of equal quality, the longer tag comes first.
+- One malformed element makes a whole field value list fail, so a header with one bad weight parses to no preferences at all. Empty list elements and whitespace around commas are allowed. Lists are written with a comma and a space.
+- `RFC_9110.Negotiation.selectMediaTypes(from:acceptHeader:)` leaves out anything whose best matching quality is 0.
+- `RFC_9110.Representation.Validator.EntityTag.strongCompare(_:_:)` is true only when both tags are strong and equal. `RFC_9110.Representation.Validator.EntityTag.weakCompare(_:_:)` ignores weakness. Plain equality counts weakness, so `W/"a"` and `"a"` are not equal.
+- HTTP dates are written as IMF-fixdate in GMT, such as `Sun, 06 Nov 1994 08:49:37 GMT`. Parsing also accepts the obsolete RFC 850 and asctime forms. An RFC 850 two-digit year below 70 is read as 20xx, and any other as 19xx.
+- `RFC_9110.Authentication.Challenge.headerValue` writes parameters sorted by name. A value that is a token is written bare. Any other value, including an empty one, is quoted with `"` and `\` escaped.
+- `RFC_9110.Authentication.Credentials.basic(username:password:)` encodes `username:password` as UTF-8, then Base64. When credentials are parsed, the token is everything after the scheme and its whitespace, with trailing whitespace removed.
+- `RFC_9110.Parameter.coder` writes a value as a token when it is one and quoted otherwise, and unescapes quoted values when parsing. `RFC_9110.MediaType.value` writes parameter values as they are, without quoting.
+- `RFC_9110.MediaType` and `RFC_9110.Representation.Validator.EntityTag` encode as their header text and decode by parsing it. Text that does not parse fails to decode with a data-corrupted `DecodingError`.
