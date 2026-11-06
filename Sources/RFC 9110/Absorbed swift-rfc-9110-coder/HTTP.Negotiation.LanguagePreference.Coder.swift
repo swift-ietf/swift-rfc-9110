@@ -20,8 +20,8 @@
             {
                 return RFC_9110.Negotiation.Weighted(RFC_9110.Token.Coder<Input, Buffer>())
                     .map(
-                        to: { RFC_9110.Negotiation.LanguagePreference(language: $0.value.rawValue, quality: $0.quality) },
-                        from: { (value: RFC_9110.Token(unchecked: $0.language), quality: $0.quality) }
+                        to: { RFC_9110.Negotiation.LanguagePreference(language: .init(unchecked: $0.value.rawValue), quality: $0.quality) },
+                        from: { (value: RFC_9110.Token(unchecked: $0.language.value), quality: $0.quality) }
                     )
             }
         }
@@ -38,7 +38,7 @@
                 if lhs.quality != rhs.quality {
                     return lhs.quality > rhs.quality
                 }
-                return lhs.language.count > rhs.language.count
+                return lhs.language.value.count > rhs.language.value.count
             }
         }
     }

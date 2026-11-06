@@ -93,26 +93,4 @@
             self = parsed
         }
     }
-
-    extension RFC_9110.MediaType: Encodable, Decodable {
-
-        public init(from decoder: any Decoder) throws {
-            let container = try decoder.singleValueContainer()
-            let string = try container.decode(String.self)
-
-            guard let mediaType = Self.parse(string) else {
-                throw DecodingError.dataCorruptedError(
-                    in: container,
-                    debugDescription: "Invalid media type: \(string)"
-                )
-            }
-
-            self = mediaType
-        }
-
-        public func encode(to encoder: any Encoder) throws {
-            var container = encoder.singleValueContainer()
-            try container.encode(value)
-        }
-    }
 #endif
