@@ -123,3 +123,37 @@ extension RFC_9110.MediaType {
 
     public static let otf = RFC_9110.MediaType("font", "otf")
 }
+
+extension RFC_9110.MediaType {
+
+    /// The media type `text` spells, `type/subtype` with any `; name=value` parameters, or `nil` when it spells none.
+    public init?(parsing text: some StringProtocol) {
+        let parts = text.split(separator: ";").map { $0.trimmingPrefix(while: \.isWhitespace) }
+        guard let essence = parts.first else { return nil }
+        let names = essence.split(separator: "/", omittingEmptySubsequences: false)
+        guard names.count == 2, !names[0].isEmpty, !names[1].isEmpty, !names[1].contains(where: \.isWhitespace) else { return nil }
+        var parameters: [String: String] = [:]
+        for parameter in parts.dropFirst() {
+            guard let equals = parameter.firstIndex(of: "=") else { return nil }
+            parameters[String(parameter[..<equals]).lowercased()] = String(parameter[parameter.index(after: equals)...])
+        }
+        self.init(String(names[0]), String(names[1]), parameters: parameters)
+    }
+}
+
+extension RFC_9110.MediaType: Codable {
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let text = try container.decode(String.self)
+        guard let mediaType = Self(parsing: text) else {
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "not a media type: \(text)")
+        }
+        self = mediaType
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(value)
+    }
+}
