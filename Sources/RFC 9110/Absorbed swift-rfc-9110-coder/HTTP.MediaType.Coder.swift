@@ -8,8 +8,53 @@
     import Serializer
 
     extension RFC_9110.MediaType {
+
         public struct Coder<Input: Cursor.`Protocol`<Byte, Never>, Buffer: RangeReplaceableCollection<Byte>>: Coding {
+
+            public typealias Failure = RFC_9110.MediaType.Error
+
             public init() {}
+
+            @Coder::Builder<Input, Buffer>
+            public var body:
+                some Coding
+                    & Parsing<Input, RFC_9110.MediaType, Failure>
+                    & Serializing<RFC_9110.MediaType, Buffer, Failure>
+            {
+                Coder::Coder(Input.self, Buffer.self) {
+                    RFC_9110.OWS.Coder()
+                    RFC_9110.Token.Coder()
+                    Coder::ConsumingLiteral<Input, Buffer>([Byte](utf8: "/"))
+                    RFC_9110.Token.Coder()
+                    Parser::Many(
+                        RFC_9110.Parameter.Prefixed(),
+                        rejected: {
+                            if case .expectedPrefix = $0 { return true }
+                            return false
+                        }
+                    )
+                }
+                .map(
+                    to: { output in
+                        RFC_9110.MediaType(output.first.first.rawValue, output.first.second.rawValue, parameters: output.second.dictionary)
+                    },
+                    from: {
+                        .init(
+                            .init(RFC_9110.Token(unchecked: $0.type), RFC_9110.Token(unchecked: $0.subtype)),
+                            [RFC_9110.Parameter].sorted($0.parameters)
+                        )
+                    }
+                )
+                .mapFailure { (failure) -> Failure in
+                    switch failure {
+                    case .left(.left(.left(let error))): .expectedType(error)
+                    case .left(.left(.right)): .expectedSlash
+                    case .left(.right(let error)): .expectedSubtype(error)
+                    case .right(.element(let error)): .invalidParameter(error)
+                    case .right: .invalidParameter(.expectedName(.empty))
+                    }
+                }
+            }
         }
 
         public static var coder: Coder<ArraySlice<Byte>, [Byte]> { .init() }
@@ -22,52 +67,8 @@
         }
     }
 
-extension RFC_9110.MediaType.Coder {
-        public typealias Failure = RFC_9110.MediaType.Error
-
-        @Coder::Builder<Input, Buffer>
-        public var body:
-            some Coding
-                & Parsing<Input, RFC_9110.MediaType, Failure>
-                & Serializing<RFC_9110.MediaType, Buffer, Failure>
-        {
-            Coder::Coder(Input.self, Buffer.self) {
-                RFC_9110.OWS.Coder()
-                RFC_9110.Token.Coder()
-                Coder::ConsumingLiteral<Input, Buffer>([Byte](utf8: "/"))
-                RFC_9110.Token.Coder()
-                Parser::Many(
-                    RFC_9110.Parameter.Prefixed(),
-                    rejected: {
-                        if case .expectedPrefix = $0 { return true }
-                        return false
-                    }
-                )
-            }
-            .map(
-                to: { output in
-                    RFC_9110.MediaType(output.first.first.rawValue, output.first.second.rawValue, parameters: output.second.dictionary)
-                },
-                from: {
-                    .init(
-                        .init(RFC_9110.Token(unchecked: $0.type), RFC_9110.Token(unchecked: $0.subtype)),
-                        [RFC_9110.Parameter].sorted($0.parameters)
-                    )
-                }
-            )
-            .mapFailure { (failure) -> Failure in
-                switch failure {
-                case .left(.left(.left(let error))): .expectedType(error)
-                case .left(.left(.right)): .expectedSlash
-                case .left(.right(let error)): .expectedSubtype(error)
-                case .right(.element(let error)): .invalidParameter(error)
-                case .right: .invalidParameter(.expectedName(.empty))
-                }
-            }
-        }
-}
-
     extension RFC_9110.MediaType {
+
         public static func parse(_ string: String) -> Self? {
             var input = [Byte](utf8: string)[...]
             do throws(Error) {
@@ -86,6 +87,7 @@ extension RFC_9110.MediaType.Coder {
     }
 
     extension RFC_9110.MediaType: LosslessStringConvertible {
+
         public init?(_ description: String) {
             guard let parsed = Self.parse(description) else { return nil }
             self = parsed
