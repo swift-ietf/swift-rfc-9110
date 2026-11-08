@@ -18,7 +18,7 @@
         }
     }
 
-extension RFC_9110.Negotiation.MediaTypePreference.Coder {
+    extension RFC_9110.Negotiation.MediaTypePreference.Coder {
         public typealias Output = RFC_9110.Negotiation.MediaTypePreference
 
         public typealias Failure = RFC_9110.Negotiation.MediaTypePreference.Error
@@ -58,7 +58,7 @@ extension RFC_9110.Negotiation.MediaTypePreference.Coder {
                 throw .weight(error)
             }
         }
-}
+    }
 
     extension RFC_9110.Negotiation.MediaTypePreference {
         public static func parse(_ headerValue: String) -> [Self] {

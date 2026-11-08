@@ -21,7 +21,7 @@
         }
     }
 
-extension RFC_9110.Authentication.Challenge.Coder {
+    extension RFC_9110.Authentication.Challenge.Coder {
         public typealias Failure = RFC_9110.Authentication.Challenge.Error
 
         @Coder::Builder<Input, Buffer>
@@ -67,7 +67,7 @@ extension RFC_9110.Authentication.Challenge.Coder {
                 }
             }
         }
-}
+    }
 
     extension RFC_9110.Authentication.Challenge {
         public static func parse(_ headerValue: String) -> Self? {

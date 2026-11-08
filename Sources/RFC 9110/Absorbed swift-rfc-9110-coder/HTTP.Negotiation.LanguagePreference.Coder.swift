@@ -13,7 +13,7 @@
         public static var coder: Coder<ArraySlice<Byte>, [Byte]> { .init() }
     }
 
-extension RFC_9110.Negotiation.LanguagePreference.Coder {
+    extension RFC_9110.Negotiation.LanguagePreference.Coder {
         public typealias Failure = RFC_9110.Negotiation.Weighted<RFC_9110.Token.Coder<Input, Buffer>>.Error
 
         public var body:
@@ -27,7 +27,7 @@ extension RFC_9110.Negotiation.LanguagePreference.Coder {
                     from: { (value: RFC_9110.Token(unchecked: $0.language.value), quality: $0.quality) }
                 )
         }
-}
+    }
 
     extension RFC_9110.Negotiation.LanguagePreference {
         public static func parse(_ headerValue: String) -> [Self] {

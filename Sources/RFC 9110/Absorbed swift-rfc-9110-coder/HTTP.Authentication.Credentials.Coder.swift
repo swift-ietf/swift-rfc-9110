@@ -20,7 +20,7 @@
         }
     }
 
-extension RFC_9110.Authentication.Credentials.Coder {
+    extension RFC_9110.Authentication.Credentials.Coder {
         public typealias Failure = RFC_9110.Authentication.Credentials.Error
 
         @Coder::Builder<Input, Buffer>
@@ -48,7 +48,7 @@ extension RFC_9110.Authentication.Credentials.Coder {
                 }
             }
         }
-}
+    }
 
     extension RFC_9110.Authentication.Credentials {
         public static func parse(_ headerValue: String) -> Self? {
@@ -74,7 +74,7 @@ extension RFC_9110.Authentication.Credentials.Coder {
         }
     }
 
-extension RFC_9110.Authentication.Credentials.Remainder.Coder {
+    extension RFC_9110.Authentication.Credentials.Remainder.Coder {
         typealias Output = String
 
         typealias Failure = RFC_9110.Authentication.Credentials.Remainder.Error
@@ -95,5 +95,5 @@ extension RFC_9110.Authentication.Credentials.Remainder.Coder {
             guard !output.isEmpty else { throw .empty }
             buffer.append(contentsOf: output.utf8.lazy.map(Byte.init(bitPattern:)))
         }
-}
+    }
 #endif

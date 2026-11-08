@@ -24,7 +24,7 @@
         }
     }
 
-extension RFC_9110.QuotedString.Coder {
+    extension RFC_9110.QuotedString.Coder {
         public typealias Output = String
 
         public typealias Failure = RFC_9110.QuotedString.Error
@@ -81,5 +81,5 @@ extension RFC_9110.QuotedString.Coder {
         static func isQuotedPair(_ byte: Byte) -> Bool {
             byte.bitPattern == 0x09 || (0x20...0x7E).contains(byte.bitPattern) || byte.bitPattern >= 0x80
         }
-}
+    }
 #endif

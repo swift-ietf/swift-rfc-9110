@@ -22,7 +22,7 @@
         }
     }
 
-extension RFC_9110.MediaType.Coder {
+    extension RFC_9110.MediaType.Coder {
         public typealias Failure = RFC_9110.MediaType.Error
 
         @Coder::Builder<Input, Buffer>
@@ -65,7 +65,7 @@ extension RFC_9110.MediaType.Coder {
                 }
             }
         }
-}
+    }
 
     extension RFC_9110.MediaType {
         public static func parse(_ string: String) -> Self? {

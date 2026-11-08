@@ -24,7 +24,7 @@
         }
     }
 
-extension RFC_9110.Parameter.Coder {
+    extension RFC_9110.Parameter.Coder {
         public typealias Failure = RFC_9110.Parameter.Error
 
         @Coder::Builder<Input, Buffer>
@@ -68,7 +68,7 @@ extension RFC_9110.Parameter.Coder {
                 }
             }
         }
-}
+    }
 
     extension RFC_9110.Parameter {
         public struct Prefixed<Input: Cursor.`Protocol`<Byte, Never>, Buffer: RangeReplaceableCollection<Byte>>: Coding {
@@ -76,7 +76,7 @@ extension RFC_9110.Parameter.Coder {
         }
     }
 
-extension RFC_9110.Parameter.Prefixed {
+    extension RFC_9110.Parameter.Prefixed {
         public typealias Failure = RFC_9110.Parameter.Error
 
         @Coder::Builder<Input, Buffer>
@@ -98,7 +98,7 @@ extension RFC_9110.Parameter.Prefixed {
                 }
             }
         }
-}
+    }
 
     extension [RFC_9110.Parameter] {
         static func sorted(_ parameters: [String: String]) -> Self {

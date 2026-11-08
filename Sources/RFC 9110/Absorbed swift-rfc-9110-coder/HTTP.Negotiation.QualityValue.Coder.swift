@@ -17,7 +17,7 @@
         }
     }
 
-extension RFC_9110.Negotiation.QualityValue.Coder {
+    extension RFC_9110.Negotiation.QualityValue.Coder {
         public typealias Output = RFC_9110.Negotiation.QualityValue
 
         public typealias Failure = RFC_9110.Negotiation.QualityValue.Error
@@ -85,7 +85,7 @@ extension RFC_9110.Negotiation.QualityValue.Coder {
             }
             return Int(byte.bitPattern - 0x30)
         }
-}
+    }
 
     extension RFC_9110.Negotiation.QualityValue {
         public static func parse(_ string: String) -> Self? {

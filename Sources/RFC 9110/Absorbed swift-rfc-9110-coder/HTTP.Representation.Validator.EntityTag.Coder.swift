@@ -19,7 +19,7 @@
         }
     }
 
-extension RFC_9110.Representation.Validator.EntityTag.Coder {
+    extension RFC_9110.Representation.Validator.EntityTag.Coder {
         public typealias Failure = RFC_9110.Representation.Validator.EntityTag.Error
 
         @Coder::Builder<Input, Buffer>
@@ -44,7 +44,7 @@ extension RFC_9110.Representation.Validator.EntityTag.Coder {
                 }
             }
         }
-}
+    }
 
     extension RFC_9110.Representation.Validator.EntityTag {
         public static func parse(_ headerValue: String) -> Self? {
