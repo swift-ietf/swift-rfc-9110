@@ -19,11 +19,6 @@ extension RFC_9110 {
 }
 
 extension RFC_9110.Token {
-
-    public enum Error: Swift::Error, Equatable {
-        case empty
-        case invalidCharacter(UInt8)
-    }
 }
 
 extension RFC_9110.Token {
