@@ -86,7 +86,7 @@ let package = Package(
                 .product(name: "RFC 5322", package: "swift-rfc-5322"),
                 .product(
                     name: "Standard Library Extensions",
-                    package: "swift-standard-library-extensions"
+                    package: "swift-standard-library-extensions", condition: .when(traits: ["Coder"])
                 ),
                 .product(name: "Coder", package: "swift-coder", condition: .when(traits: ["Coder"])),
                 .product(name: "Cursor", package: "swift-cursor", condition: .when(traits: ["Coder"])),
