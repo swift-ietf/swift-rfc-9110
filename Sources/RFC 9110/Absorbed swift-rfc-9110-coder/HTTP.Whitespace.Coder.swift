@@ -6,41 +6,56 @@
     import Serializer
 
     extension RFC_9110 {
+
         public enum OWS {}
 
         public enum RWS {}
     }
 
     extension RFC_9110.OWS {
+
         public struct Coder<Input: Cursor.`Protocol`<Byte, Never>, Buffer: RangeReplaceableCollection<Byte>>: Coding {
+
+            public typealias Output = Void
+
+            public typealias Failure = Never
+
             public let canonical: [Byte]
 
             public init(canonical: [Byte] = []) {
                 self.canonical = canonical
             }
+
+            public borrowing func parse(_ input: inout Input) {
+                _ = RFC_9110.Whitespace.skip(&input)
+            }
+
+            public borrowing func serialize(_ output: Void, into buffer: inout Buffer) {
+                buffer.append(contentsOf: canonical)
+            }
         }
     }
 
-extension RFC_9110.OWS.Coder {
-        public typealias Output = Void
-
-        public typealias Failure = Never
-
-        public borrowing func parse(_ input: inout Input) {
-            _ = RFC_9110.Whitespace.skip(&input)
-        }
-
-        public borrowing func serialize(_ output: Void, into buffer: inout Buffer) {
-            buffer.append(contentsOf: canonical)
-        }
-}
-
     extension RFC_9110.RWS {
+
         public struct Coder<Input: Cursor.`Protocol`<Byte, Never>, Buffer: RangeReplaceableCollection<Byte>>: Coding {
+
+            public typealias Output = Void
+
+            public typealias Failure = Error
+
             public let canonical: [Byte]
 
             public init(canonical: [Byte] = [Byte(bitPattern: 0x20)]) {
                 self.canonical = canonical
+            }
+
+            public borrowing func parse(_ input: inout Input) throws(Error) {
+                guard RFC_9110.Whitespace.skip(&input) > 0 else { throw .expectedWhitespace }
+            }
+
+            public borrowing func serialize(_ output: Void, into buffer: inout Buffer) throws(Failure) {
+                buffer.append(contentsOf: canonical)
             }
         }
 
@@ -49,25 +64,13 @@ extension RFC_9110.OWS.Coder {
         }
     }
 
-extension RFC_9110.RWS.Coder {
-        public typealias Output = Void
-
-        public typealias Failure = Error
-
-        public borrowing func parse(_ input: inout Input) throws(Error) {
-            guard RFC_9110.Whitespace.skip(&input) > 0 else { throw .expectedWhitespace }
-        }
-
-        public borrowing func serialize(_ output: Void, into buffer: inout Buffer) throws(Failure) {
-            buffer.append(contentsOf: canonical)
-        }
-}
-
     extension RFC_9110 {
+
         enum Whitespace {}
     }
 
     extension RFC_9110.Whitespace {
+
         static func isWhitespace(_ byte: Byte) -> Bool {
             byte.bitPattern == 0x20 || byte.bitPattern == 0x09
         }
