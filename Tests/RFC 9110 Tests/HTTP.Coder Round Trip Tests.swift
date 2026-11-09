@@ -25,6 +25,15 @@
         }
 
         @Test
+        func `A media type value agrees with its coder`() throws {
+            let mediaType = HTTP.MediaType("multipart", "form-data", parameters: ["boundary": "a b; c", "charset": "utf-8"])
+            var bytes: [Byte] = []
+            try HTTP.MediaType.coder.serialize(mediaType, into: &bytes)
+            #expect(bytes == mediaType.value.utf8.map(Byte.init(bitPattern:)))
+            #expect(HTTP.MediaType.parse(mediaType.value)?.parameters == mediaType.parameters)
+        }
+
+        @Test
         func `An entity tag round-trips in both strengths`() throws {
             for tag in [HTTP.Representation.Validator.EntityTag.strong("abc"), HTTP.Representation.Validator.EntityTag.weak("abc")] {
                 var bytes: [Byte] = []

@@ -84,4 +84,28 @@ struct `HTTP.MediaType Tests` {
         let html = HTTP.MediaType("text", "html", parameters: ["charset": "utf-8"])
         #expect(html.description == "text/html; charset=utf-8")
     }
+
+    @Test
+    func `Media type value quotes parameter values that are not tokens`() async throws {
+        let mediaType = HTTP.MediaType(
+            "multipart",
+            "form-data",
+            parameters: ["boundary": "a b; c", "name": "say \"hi\" \\ bye", "charset": "utf-8"]
+        )
+
+        #expect(mediaType.value == #"multipart/form-data; boundary="a b; c"; charset=utf-8; name="say \"hi\" \\ bye""#)
+
+        let parsed = try #require(HTTP.MediaType(parsing: mediaType.value))
+        #expect(parsed == mediaType)
+        #expect(parsed.parameters == mediaType.parameters)
+    }
+
+    @Test
+    func `Media type with quoted parameters round-trips through Codable`() async throws {
+        let mediaType = HTTP.MediaType("text", "plain", parameters: ["title": "x; y", "empty": ""])
+        let data = try JSONEncoder().encode(mediaType)
+        let decoded = try JSONDecoder().decode(HTTP.MediaType.self, from: data)
+
+        #expect(decoded.parameters == mediaType.parameters)
+    }
 }
