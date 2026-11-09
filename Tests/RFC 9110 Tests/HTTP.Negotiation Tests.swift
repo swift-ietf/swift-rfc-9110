@@ -81,4 +81,16 @@ struct `HTTP.Negotiation Tests` {
         #expect(pref2.description.contains("application/json"))
         #expect(pref2.description.contains("q=0.9"))
     }
+
+    @Test
+    func `Select media type skips zero quality preferences`() async throws {
+        let refused = HTTP.Negotiation.MediaTypePreference(
+            mediaType: .json,
+            quality: try #require(HTTP.Negotiation.QualityValue(0))
+        )
+        let accepted = HTTP.Negotiation.MediaTypePreference(mediaType: .html)
+
+        #expect(HTTP.Negotiation.selectMediaType(from: [.json], preferences: [refused]) == nil)
+        #expect(HTTP.Negotiation.selectMediaType(from: [.json, .html], preferences: [refused, accepted]) == .html)
+    }
 }

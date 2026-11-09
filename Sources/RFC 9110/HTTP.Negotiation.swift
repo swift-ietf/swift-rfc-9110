@@ -9,16 +9,7 @@ extension RFC_9110.Negotiation {
         from available: [RFC_9110.MediaType],
         preferences: [MediaTypePreference]
     ) -> RFC_9110.MediaType? {
-        for preference in preferences {
-
-            for availableType in available {
-                if availableType.matches(preference.mediaType) {
-                    return availableType
-                }
-            }
-        }
-
-        return nil
+        selectMediaTypes(from: available, preferences: preferences).first
     }
 
     public static func selectMediaTypes(
