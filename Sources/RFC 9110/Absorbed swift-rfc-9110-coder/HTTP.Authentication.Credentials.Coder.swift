@@ -13,11 +13,6 @@
         }
 
         public static var coder: Coder<ArraySlice<Byte>, [Byte]> { .init() }
-
-        public enum Error: Swift::Error, Equatable {
-            case expectedScheme(RFC_9110.Token.Error)
-            case expectedToken
-        }
     }
 
     extension RFC_9110.Authentication.Credentials.Coder {

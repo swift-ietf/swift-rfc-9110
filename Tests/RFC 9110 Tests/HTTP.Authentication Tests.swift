@@ -117,7 +117,7 @@ struct `HTTP.Authentication Tests` {
 
     @Test
     func `Credentials - basic authentication`() async throws {
-        let creds = HTTP.Authentication.Credentials.basic(username: "user", password: "pass")
+        let creds = try HTTP.Authentication.Credentials.basic(username: "user", password: "pass")
 
         #expect(creds.scheme == .basic)
 
@@ -126,6 +126,15 @@ struct `HTTP.Authentication Tests` {
 
         let decodedString = String(data: decoded!, encoding: .utf8)
         #expect(decodedString == "user:pass")
+    }
+
+    @Test
+    func `Credentials - basic authentication refuses a username containing a colon`() async throws {
+        #expect(throws: HTTP.Authentication.Credentials.Error.usernameContainsColon) {
+            try HTTP.Authentication.Credentials.basic(username: "us:er", password: "pass")
+        }
+        let creds = try HTTP.Authentication.Credentials.basic(username: "user", password: "pa:ss")
+        #expect(creds.scheme == .basic)
     }
 
     @Test
@@ -138,7 +147,7 @@ struct `HTTP.Authentication Tests` {
 
     @Test
     func `Credentials header value`() async throws {
-        let basic = HTTP.Authentication.Credentials.basic(username: "user", password: "pass")
+        let basic = try HTTP.Authentication.Credentials.basic(username: "user", password: "pass")
         #expect(basic.headerValue.hasPrefix("Basic "))
 
         let bearer = HTTP.Authentication.Credentials.bearer("token123")

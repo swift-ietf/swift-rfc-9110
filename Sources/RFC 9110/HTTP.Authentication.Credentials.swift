@@ -37,7 +37,8 @@ extension RFC_9110.Authentication.Credentials {
     public static func basic(
         username: String,
         password: String
-    ) -> RFC_9110.Authentication.Credentials {
+    ) throws(Error) -> RFC_9110.Authentication.Credentials {
+        guard !username.contains(":") else { throw .usernameContainsColon }
         let combined = "\(username):\(password)"
         let bytes: [Byte] = combined.utf8.map(Byte.init(bitPattern:))
         let encoded = bytes.base64.encoded()
