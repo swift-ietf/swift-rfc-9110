@@ -27,6 +27,21 @@ extension RFC_9110.Target {
 }
 
 extension RFC_9110.Target {
+    public var path: RFC_3986.URI.Path? {
+        switch self {
+        case .origin(let path, _):
+            return path
+
+        case .resource(let resource):
+            return resource.path
+
+        case .authority, .asterisk:
+            return nil
+        }
+    }
+}
+
+extension RFC_9110.Target {
     public var reference: String? {
         switch self {
         case .origin(let path, let query):

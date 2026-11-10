@@ -56,4 +56,12 @@ struct `HTTP.Target Tests` {
                 == .resource(try RFC_3986.URI("https://example.com//apps"))
         )
     }
+
+    @Test
+    func `a target gives its path, whichever form holds it`() throws {
+        #expect(HTTP.Target(unchecked: "//apps?x").path?.segments == ["", "apps"])
+        #expect(HTTP.Target(unchecked: "https://example.com/a/b?c").path?.segments == ["a", "b"])
+        #expect(HTTP.Target(unchecked: "/apps?q=%zz").path?.segments == ["apps"])
+        #expect(HTTP.Target.asterisk.path == nil)
+    }
 }
