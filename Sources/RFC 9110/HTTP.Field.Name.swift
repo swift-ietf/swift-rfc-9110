@@ -12,7 +12,7 @@ extension RFC_9110.Field {
             self.rawValue = rawValue
         }
 
-        private init(unchecked rawValue: String) {
+        public init(unchecked rawValue: String) {
             self.rawValue = rawValue
         }
     }

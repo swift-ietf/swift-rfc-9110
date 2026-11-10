@@ -9,6 +9,12 @@ struct `HTTP.Field Tests` {
     }
 
     @Test
+    func `A name another specification registers is made unchecked, as it is spelled`() {
+        #expect(HTTP.Field.Name(unchecked: "Set-Cookie").rawValue == "Set-Cookie")
+        #expect(HTTP.Field.Name(unchecked: "Set-Cookie") == HTTP.Field.Name(unchecked: "set-cookie"))
+    }
+
+    @Test
     func `A field retains its name and value`() throws {
         let field = try HTTP.Field(name: "Content-Type", value: "text/plain")
         #expect(field.name == .contentType)

@@ -94,3 +94,61 @@ struct `HTTP.Negotiation Tests` {
         #expect(HTTP.Negotiation.selectMediaType(from: [.json, .html], preferences: [refused, accepted]) == .html)
     }
 }
+
+extension `HTTP.Negotiation Tests` {
+    @Suite
+    struct `Best encoding` {
+        let offered: [HTTP.Representation.Encoding] = [.gzip, .identity]
+
+        func weighted(_ encoding: HTTP.Representation.Encoding, _ thousandths: Int) -> HTTP.Negotiation.EncodingPreference {
+            HTTP.Negotiation.EncodingPreference(encoding: encoding, quality: HTTP.Negotiation.QualityValue(thousandths) ?? .default)
+        }
+
+        @Test
+        func `a named offered encoding is chosen`() {
+            #expect(HTTP.Negotiation.EncodingPreference.best(of: offered, accepting: [HTTP.Negotiation.EncodingPreference(encoding: .gzip)]) == .gzip)
+        }
+
+        @Test
+        func `the wildcard accepts an encoding it does not name`() {
+            #expect(HTTP.Negotiation.EncodingPreference.best(of: offered, accepting: [HTTP.Negotiation.EncodingPreference(encoding: "*")]) == .gzip)
+        }
+
+        @Test
+        func `an encoding weighted zero is refused and identity is left`() {
+            #expect(HTTP.Negotiation.EncodingPreference.best(of: offered, accepting: [weighted(.gzip, 0)]) == .identity)
+        }
+
+        @Test
+        func `a named weight overrides the wildcard`() {
+            #expect(HTTP.Negotiation.EncodingPreference.best(of: offered, accepting: [weighted("*", 500), weighted(.gzip, 0)]) == .identity)
+        }
+
+        @Test
+        func `a named encoding with a lower weight still beats identity that is only acceptable by default`() {
+            #expect(HTTP.Negotiation.EncodingPreference.best(of: offered, accepting: [weighted(.brotli, 1000), weighted(.gzip, 800)]) == .gzip)
+        }
+
+        @Test
+        func `the higher weight wins between named encodings`() {
+            let both: [HTTP.Representation.Encoding] = [.gzip, .brotli]
+            #expect(HTTP.Negotiation.EncodingPreference.best(of: both, accepting: [weighted(.gzip, 500), weighted(.brotli, 900)]) == .brotli)
+        }
+
+        @Test
+        func `an encoding the request does not name is not chosen`() {
+            #expect(HTTP.Negotiation.EncodingPreference.best(of: offered, accepting: [HTTP.Negotiation.EncodingPreference(encoding: .brotli)]) == .identity)
+            #expect(HTTP.Negotiation.EncodingPreference.best(of: [.gzip], accepting: [HTTP.Negotiation.EncodingPreference(encoding: .brotli)]) == nil)
+        }
+
+        @Test
+        func `identity excluded by the wildcard leaves nothing`() {
+            #expect(HTTP.Negotiation.EncodingPreference.best(of: [.identity], accepting: [weighted("*", 0)]) == nil)
+        }
+
+        @Test
+        func `no preferences leave identity only`() {
+            #expect(HTTP.Negotiation.EncodingPreference.best(of: offered, accepting: []) == .identity)
+        }
+    }
+}
