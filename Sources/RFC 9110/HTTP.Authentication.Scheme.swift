@@ -28,6 +28,7 @@ extension RFC_9110.Authentication.Scheme: CustomStringConvertible {
     }
 }
 
+#if !hasFeature(Embedded)
 extension RFC_9110.Authentication.Scheme: Codable {
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -40,6 +41,7 @@ extension RFC_9110.Authentication.Scheme: Codable {
         try container.encode(name)
     }
 }
+#endif
 
 extension RFC_9110.Authentication.Scheme: ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {

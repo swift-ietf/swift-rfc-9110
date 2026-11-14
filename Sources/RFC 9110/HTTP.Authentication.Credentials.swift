@@ -30,7 +30,9 @@ extension RFC_9110.Authentication.Credentials: CustomStringConvertible {
     }
 }
 
+#if !hasFeature(Embedded)
 extension RFC_9110.Authentication.Credentials: Codable {}
+#endif
 
 extension RFC_9110.Authentication.Credentials {
 

@@ -128,10 +128,10 @@ extension RFC_9110.MediaType {
 
     /// The media type `text` spells, `type/subtype` with any `; name=value` parameters, or `nil` when it spells none.
     public init?(parsing text: some StringProtocol) {
-        let parts = Self.parts(of: String(text)[...]).map { $0.trimmingPrefix(while: \.isWhitespace) }
+        let parts = Self.parts(of: String(text)[...]).map { $0.drop { $0.isWhitespace } }
         guard let essence = parts.first else { return nil }
         let names = essence.split(separator: "/", omittingEmptySubsequences: false)
-        guard names.count == 2, !names[0].isEmpty, !names[1].isEmpty, !names[1].contains(where: \.isWhitespace) else { return nil }
+        guard names.count == 2, !names[0].isEmpty, !names[1].isEmpty, !names[1].contains(where: { $0.isWhitespace }) else { return nil }
         var parameters: [String: String] = [:]
         for parameter in parts.dropFirst() {
             guard let equals = parameter.firstIndex(of: "="),
@@ -203,6 +203,7 @@ extension RFC_9110.MediaType {
     }
 }
 
+#if !hasFeature(Embedded)
 extension RFC_9110.MediaType: Codable {
 
     public init(from decoder: any Decoder) throws {
@@ -219,3 +220,4 @@ extension RFC_9110.MediaType: Codable {
         try container.encode(value)
     }
 }
+#endif

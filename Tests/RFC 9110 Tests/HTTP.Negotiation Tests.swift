@@ -27,6 +27,12 @@ struct `HTTP.Negotiation Tests` {
         #expect(HTTP.Negotiation.QualityValue(-1) == nil)
     }
 
+    @Test(arguments: [(1000, "1"), (0, "0"), (500, "0.5"), (50, "0.05"), (5, "0.005"), (120, "0.12"), (999, "0.999")])
+    func `Quality value description drops trailing zeros`(_ thousandths: Int, _ expected: String) throws {
+        let quality = try #require(HTTP.Negotiation.QualityValue(thousandths))
+        #expect(quality.description == expected)
+    }
+
     @Test
     func `Quality value comparison`() async throws {
         let q1 = try #require(HTTP.Negotiation.QualityValue(1000))

@@ -30,7 +30,10 @@ extension RFC_9110.Negotiation.QualityValue: CustomStringConvertible {
         guard thousandths != 1000 else { return "1" }
         guard thousandths != 0 else { return "0" }
 
-        let digits = String(thousandths + 1000).dropFirst()
-        return "0.\(digits)".replacing(/0+$/, with: "")
+        var digits = String(thousandths + 1000).dropFirst()
+        while digits.last == "0" {
+            digits = digits.dropLast()
+        }
+        return "0.\(digits)"
     }
 }

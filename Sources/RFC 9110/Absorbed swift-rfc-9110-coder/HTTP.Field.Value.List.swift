@@ -149,7 +149,7 @@
         public static func tokens(in headerValue: String) -> [String] {
             var input = [Byte](utf8: headerValue)[...]
             let tokens = (try? List(RFC_9110.Token.coder, rejected: { $0 == .empty }).parse(&input)) ?? []
-            return tokens.map(\.rawValue)
+            return tokens.map { $0.rawValue }
         }
 
         public static func directives(in headerValue: String) -> [(name: String, value: String?)] {

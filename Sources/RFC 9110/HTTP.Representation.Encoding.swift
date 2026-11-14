@@ -1,6 +1,6 @@
 extension RFC_9110.Representation {
 
-    public struct Encoding: Sendable, Equatable, Hashable, Codable {
+    public struct Encoding: Sendable, Equatable, Hashable {
 
         public let value: String
 
@@ -13,7 +13,7 @@ extension RFC_9110.Representation {
 extension RFC_9110.Representation.Encoding {
 
     public static func formatHeader(_ encodings: [Self]) -> String {
-        encodings.map(\.value).joined(separator: ", ")
+        encodings.map { $0.value }.joined(separator: ", ")
     }
 }
 
@@ -23,7 +23,8 @@ extension RFC_9110.Representation.Encoding: CustomStringConvertible {
     }
 }
 
-extension RFC_9110.Representation.Encoding {
+#if !hasFeature(Embedded)
+extension RFC_9110.Representation.Encoding: Codable {
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let value = try container.decode(String.self)
@@ -35,6 +36,7 @@ extension RFC_9110.Representation.Encoding {
         try container.encode(value)
     }
 }
+#endif
 
 extension RFC_9110.Representation.Encoding: ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {

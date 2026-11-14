@@ -1,6 +1,6 @@
 extension RFC_9110.Negotiation {
 
-    public struct Vary: Sendable, Equatable, Hashable, Codable {
+    public struct Vary: Sendable, Equatable, Hashable {
 
         public let fieldNames: [String]
 
@@ -68,3 +68,7 @@ extension RFC_9110.Negotiation.Vary: ExpressibleByArrayLiteral {
         self.init(fieldNames: elements)
     }
 }
+
+#if !hasFeature(Embedded)
+extension RFC_9110.Negotiation.Vary: Codable {}
+#endif

@@ -35,7 +35,13 @@ extension RFC_9110.Authentication.Challenge {
                 .map { key, value in
 
                     guard !value.isEmpty, value.utf8.allSatisfy(RFC_9110.Token.isTchar) else {
-                        let escaped = value.replacing("\\", with: "\\\\").replacing("\"", with: "\\\"")
+                        var escaped = ""
+                        for character in value {
+                            if character == "\\" || character == "\"" {
+                                escaped.append("\\")
+                            }
+                            escaped.append(character)
+                        }
                         return "\(key)=\"\(escaped)\""
                     }
                     return "\(key)=\(value)"
@@ -54,4 +60,6 @@ extension RFC_9110.Authentication.Challenge: CustomStringConvertible {
     }
 }
 
+#if !hasFeature(Embedded)
 extension RFC_9110.Authentication.Challenge: Codable {}
+#endif

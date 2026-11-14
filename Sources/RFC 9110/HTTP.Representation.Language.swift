@@ -22,6 +22,7 @@ extension RFC_9110.Representation.Language {
     }
 }
 
+#if !hasFeature(Embedded)
 extension RFC_9110.Representation.Language: Codable {
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
@@ -34,6 +35,7 @@ extension RFC_9110.Representation.Language: Codable {
         try container.encode(tag)
     }
 }
+#endif
 
 extension RFC_9110.Representation.Language: CustomStringConvertible {
     public var description: String {
