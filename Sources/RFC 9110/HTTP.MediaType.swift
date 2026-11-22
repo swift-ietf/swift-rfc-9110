@@ -1,4 +1,4 @@
-extension RFC_9110 {
+extension IETF.RFC.`9110` {
 
     public struct MediaType: Sendable, Equatable, Hashable {
 
@@ -17,7 +17,7 @@ extension RFC_9110 {
     }
 }
 
-extension RFC_9110.MediaType {
+extension IETF.RFC.`9110`.MediaType {
 
     public var value: String {
         var result = "\(type)/\(subtype)"
@@ -57,74 +57,74 @@ extension RFC_9110.MediaType {
     }
 }
 
-extension RFC_9110.MediaType: CustomStringConvertible {
+extension IETF.RFC.`9110`.MediaType: CustomStringConvertible {
     public var description: String {
         value
     }
 }
 
-extension RFC_9110.MediaType {
+extension IETF.RFC.`9110`.MediaType {
 
-    public static let plain = RFC_9110.MediaType("text", "plain")
+    public static let plain = IETF.RFC.`9110`.MediaType("text", "plain")
 
-    public static let html = RFC_9110.MediaType("text", "html")
+    public static let html = IETF.RFC.`9110`.MediaType("text", "html")
 
-    public static let css = RFC_9110.MediaType("text", "css")
+    public static let css = IETF.RFC.`9110`.MediaType("text", "css")
 
-    public static let csv = RFC_9110.MediaType("text", "csv")
+    public static let csv = IETF.RFC.`9110`.MediaType("text", "csv")
 
-    public static let xml = RFC_9110.MediaType("text", "xml")
+    public static let xml = IETF.RFC.`9110`.MediaType("text", "xml")
 
-    public static let json = RFC_9110.MediaType("application", "json")
+    public static let json = IETF.RFC.`9110`.MediaType("application", "json")
 
-    public static let xmlApp = RFC_9110.MediaType("application", "xml")
+    public static let xmlApp = IETF.RFC.`9110`.MediaType("application", "xml")
 
-    public static let pdf = RFC_9110.MediaType("application", "pdf")
+    public static let pdf = IETF.RFC.`9110`.MediaType("application", "pdf")
 
-    public static let zip = RFC_9110.MediaType("application", "zip")
+    public static let zip = IETF.RFC.`9110`.MediaType("application", "zip")
 
-    public static let gzip = RFC_9110.MediaType("application", "gzip")
+    public static let gzip = IETF.RFC.`9110`.MediaType("application", "gzip")
 
-    public static let octetStream = RFC_9110.MediaType("application", "octet-stream")
+    public static let octetStream = IETF.RFC.`9110`.MediaType("application", "octet-stream")
 
-    public static let formUrlEncoded = RFC_9110.MediaType("application", "x-www-form-urlencoded")
+    public static let formUrlEncoded = IETF.RFC.`9110`.MediaType("application", "x-www-form-urlencoded")
 
-    public static let formData = RFC_9110.MediaType("multipart", "form-data")
+    public static let formData = IETF.RFC.`9110`.MediaType("multipart", "form-data")
 
-    public static let jpeg = RFC_9110.MediaType("image", "jpeg")
+    public static let jpeg = IETF.RFC.`9110`.MediaType("image", "jpeg")
 
-    public static let png = RFC_9110.MediaType("image", "png")
+    public static let png = IETF.RFC.`9110`.MediaType("image", "png")
 
-    public static let gif = RFC_9110.MediaType("image", "gif")
+    public static let gif = IETF.RFC.`9110`.MediaType("image", "gif")
 
-    public static let svg = RFC_9110.MediaType("image", "svg+xml")
+    public static let svg = IETF.RFC.`9110`.MediaType("image", "svg+xml")
 
-    public static let webp = RFC_9110.MediaType("image", "webp")
+    public static let webp = IETF.RFC.`9110`.MediaType("image", "webp")
 
-    public static let ico = RFC_9110.MediaType("image", "x-icon")
+    public static let ico = IETF.RFC.`9110`.MediaType("image", "x-icon")
 
-    public static let mp3 = RFC_9110.MediaType("audio", "mpeg")
+    public static let mp3 = IETF.RFC.`9110`.MediaType("audio", "mpeg")
 
-    public static let wav = RFC_9110.MediaType("audio", "wav")
+    public static let wav = IETF.RFC.`9110`.MediaType("audio", "wav")
 
-    public static let oggAudio = RFC_9110.MediaType("audio", "ogg")
+    public static let oggAudio = IETF.RFC.`9110`.MediaType("audio", "ogg")
 
-    public static let mp4 = RFC_9110.MediaType("video", "mp4")
+    public static let mp4 = IETF.RFC.`9110`.MediaType("video", "mp4")
 
-    public static let webm = RFC_9110.MediaType("video", "webm")
+    public static let webm = IETF.RFC.`9110`.MediaType("video", "webm")
 
-    public static let oggVideo = RFC_9110.MediaType("video", "ogg")
+    public static let oggVideo = IETF.RFC.`9110`.MediaType("video", "ogg")
 
-    public static let woff = RFC_9110.MediaType("font", "woff")
+    public static let woff = IETF.RFC.`9110`.MediaType("font", "woff")
 
-    public static let woff2 = RFC_9110.MediaType("font", "woff2")
+    public static let woff2 = IETF.RFC.`9110`.MediaType("font", "woff2")
 
-    public static let ttf = RFC_9110.MediaType("font", "ttf")
+    public static let ttf = IETF.RFC.`9110`.MediaType("font", "ttf")
 
-    public static let otf = RFC_9110.MediaType("font", "otf")
+    public static let otf = IETF.RFC.`9110`.MediaType("font", "otf")
 }
 
-extension RFC_9110.MediaType {
+extension IETF.RFC.`9110`.MediaType {
 
     /// The media type `text` spells, `type/subtype` with any `; name=value` parameters, or `nil` when it spells none.
     public init?(parsing text: some StringProtocol) {
@@ -143,10 +143,10 @@ extension RFC_9110.MediaType {
     }
 }
 
-extension RFC_9110.MediaType {
+extension IETF.RFC.`9110`.MediaType {
 
     static func spelling(of value: String) -> String {
-        if !value.isEmpty, value.utf8.allSatisfy(RFC_9110.Token.isTchar) {
+        if !value.isEmpty, value.utf8.allSatisfy(IETF.RFC.`9110`.Token.isTchar) {
             return value
         }
         var result = "\""
@@ -204,7 +204,7 @@ extension RFC_9110.MediaType {
 }
 
 #if !hasFeature(Embedded)
-extension RFC_9110.MediaType: Codable {
+extension IETF.RFC.`9110`.MediaType: Codable {
 
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()

@@ -1,4 +1,4 @@
-extension RFC_9110 {
+extension IETF.RFC.`9110` {
 
     public struct Token: Hashable {
 
@@ -18,10 +18,10 @@ extension RFC_9110 {
     }
 }
 
-extension RFC_9110.Token {
+extension IETF.RFC.`9110`.Token {
 }
 
-extension RFC_9110.Token {
+extension IETF.RFC.`9110`.Token {
 
     public static func isTchar(_ byte: UInt8) -> Bool {
         switch byte {
@@ -36,7 +36,7 @@ extension RFC_9110.Token {
     }
 }
 
-extension RFC_9110.Token: CustomStringConvertible {
+extension IETF.RFC.`9110`.Token: CustomStringConvertible {
 
     public var description: String {
         rawValue

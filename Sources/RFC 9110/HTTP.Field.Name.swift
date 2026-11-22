@@ -1,4 +1,4 @@
-extension RFC_9110.Field {
+extension IETF.RFC.`9110`.Field {
 
     public struct Name: Sendable, Hashable {
 
@@ -18,7 +18,7 @@ extension RFC_9110.Field {
     }
 }
 
-extension RFC_9110.Field.Name {
+extension IETF.RFC.`9110`.Field.Name {
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(rawValue.lowercased())
@@ -30,7 +30,7 @@ extension RFC_9110.Field.Name {
     }
 }
 
-extension RFC_9110.Field.Name {
+extension IETF.RFC.`9110`.Field.Name {
     private static func isTchar(_ byte: UInt8) -> Bool {
         switch byte {
         case 0x21, 0x23, 0x24, 0x25, 0x26, 0x27, 0x2A, 0x2B,
@@ -44,13 +44,13 @@ extension RFC_9110.Field.Name {
     }
 }
 
-extension RFC_9110.Field.Name: CustomStringConvertible {
+extension IETF.RFC.`9110`.Field.Name: CustomStringConvertible {
     public var description: String {
         rawValue
     }
 }
 
-extension RFC_9110.Field.Name {
+extension IETF.RFC.`9110`.Field.Name {
 
     public static var cacheControl: Self { Self(unchecked: "Cache-Control") }
 

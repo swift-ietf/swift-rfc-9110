@@ -1,4 +1,4 @@
-extension RFC_9110.Representation.Validator {
+extension IETF.RFC.`9110`.Representation.Validator {
 
     public struct EntityTag: Sendable, Equatable, Hashable {
 
@@ -14,7 +14,7 @@ extension RFC_9110.Representation.Validator {
     }
 }
 
-extension RFC_9110.Representation.Validator.EntityTag {
+extension IETF.RFC.`9110`.Representation.Validator.EntityTag {
 
     public var headerValue: String {
         guard isWeak else {
@@ -24,13 +24,13 @@ extension RFC_9110.Representation.Validator.EntityTag {
     }
 }
 
-extension RFC_9110.Representation.Validator.EntityTag: CustomStringConvertible {
+extension IETF.RFC.`9110`.Representation.Validator.EntityTag: CustomStringConvertible {
     public var description: String {
         headerValue
     }
 }
 
-extension RFC_9110.Representation.Validator.EntityTag {
+extension IETF.RFC.`9110`.Representation.Validator.EntityTag {
 
     public static func strong(_ value: String) -> Self {
         Self(value: value, isWeak: false)

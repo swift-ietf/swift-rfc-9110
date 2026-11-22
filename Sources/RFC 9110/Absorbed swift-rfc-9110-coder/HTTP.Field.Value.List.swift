@@ -6,7 +6,7 @@
     import Parser
     import Serializer
 
-    extension RFC_9110.Field.Value {
+    extension IETF.RFC.`9110`.Field.Value {
 
         public struct List<Element: Coding>: Coding
         where
@@ -32,11 +32,11 @@
             }
 
             public borrowing func parse(_ input: inout Input) throws(Failure) -> Output {
-                RFC_9110.OWS.Coder<Input, Buffer>().parse(&input)
+                IETF.RFC.`9110`.OWS.Coder<Input, Buffer>().parse(&input)
 
                 let mark = input.checkpoint
-                do throws(RFC_9110.Field.Value.Delimiter.Error) {
-                    try RFC_9110.Field.Value.Delimiter.Coder<Input, Buffer>().parse(&input)
+                do throws(IETF.RFC.`9110`.Field.Value.Delimiter.Error) {
+                    try IETF.RFC.`9110`.Field.Value.Delimiter.Coder<Input, Buffer>().parse(&input)
                 } catch {
                     input.seek(to: mark)
                 }
@@ -46,10 +46,10 @@
                 input.seek(to: probe)
                 if !hasElement { return [] }
 
-                do throws(Parser::Many<Input, Element>.Separated<RFC_9110.Field.Value.Delimiter.Coder<Input, Buffer>>.Error) {
+                do throws(Parser::Many<Input, Element>.Separated<IETF.RFC.`9110`.Field.Value.Delimiter.Coder<Input, Buffer>>.Error) {
                     return try Parser::Many.Separated(
                         element,
-                        separator: RFC_9110.Field.Value.Delimiter.Coder<Input, Buffer>(),
+                        separator: IETF.RFC.`9110`.Field.Value.Delimiter.Coder<Input, Buffer>(),
                         rejected: rejected,
                         separatorRejected: {
                             if case .expectedComma = $0 { return true }
@@ -63,10 +63,10 @@
             }
 
             public borrowing func serialize(_ output: Output, into buffer: inout Buffer) throws(Failure) {
-                do throws(Parser::Many<Input, Element>.Separated<RFC_9110.Field.Value.Delimiter.Coder<Input, Buffer>>.Error) {
+                do throws(Parser::Many<Input, Element>.Separated<IETF.RFC.`9110`.Field.Value.Delimiter.Coder<Input, Buffer>>.Error) {
                     try Parser::Many.Separated(
                         element,
-                        separator: RFC_9110.Field.Value.Delimiter.Coder<Input, Buffer>(),
+                        separator: IETF.RFC.`9110`.Field.Value.Delimiter.Coder<Input, Buffer>(),
                         rejected: rejected,
                         separatorRejected: {
                             if case .expectedComma = $0 { return true }
@@ -80,7 +80,7 @@
             }
 
             static func error(
-                _ failure: Parser::Many<Input, Element>.Separated<RFC_9110.Field.Value.Delimiter.Coder<Input, Buffer>>.Error
+                _ failure: Parser::Many<Input, Element>.Separated<IETF.RFC.`9110`.Field.Value.Delimiter.Coder<Input, Buffer>>.Error
             ) -> Failure {
                 switch failure {
                 case .element(let error): .element(error)
@@ -90,7 +90,7 @@
         }
     }
 
-    extension RFC_9110.Field.Value.List {
+    extension IETF.RFC.`9110`.Field.Value.List {
 
         public enum Error: Swift::Error {
             case element(Element.Failure)
@@ -98,14 +98,14 @@
         }
     }
 
-    extension RFC_9110.Field.Value.List.Error: Equatable where Element.Failure: Equatable {}
+    extension IETF.RFC.`9110`.Field.Value.List.Error: Equatable where Element.Failure: Equatable {}
 
-    extension RFC_9110.Field.Value {
+    extension IETF.RFC.`9110`.Field.Value {
 
         public enum Delimiter {}
     }
 
-    extension RFC_9110.Field.Value.Delimiter {
+    extension IETF.RFC.`9110`.Field.Value.Delimiter {
 
         public struct Coder<Input: Cursor.`Protocol`<Byte, Never>, Buffer: RangeReplaceableCollection<Byte>>: Coding {
 
@@ -123,7 +123,7 @@
                 var commas = 0
                 while true {
                     let mark = input.checkpoint
-                    _ = RFC_9110.Whitespace.skip(&input)
+                    _ = IETF.RFC.`9110`.Whitespace.skip(&input)
                     guard let byte = input.next(), byte.bitPattern == 0x2C else {
                         input.seek(to: mark)
                         break
@@ -131,7 +131,7 @@
                     commas += 1
                 }
                 guard commas > 0 else { throw .expectedComma }
-                _ = RFC_9110.Whitespace.skip(&input)
+                _ = IETF.RFC.`9110`.Whitespace.skip(&input)
             }
 
             public borrowing func serialize(_ output: Void, into buffer: inout Buffer) throws(Failure) {
@@ -144,50 +144,50 @@
         }
     }
 
-    extension RFC_9110.Field.Value {
+    extension IETF.RFC.`9110`.Field.Value {
 
         public static func tokens(in headerValue: String) -> [String] {
             var input = [Byte](utf8: headerValue)[...]
-            let tokens = (try? List(RFC_9110.Token.coder, rejected: { $0 == .empty }).parse(&input)) ?? []
+            let tokens = (try? List(IETF.RFC.`9110`.Token.coder, rejected: { $0 == .empty }).parse(&input)) ?? []
             return tokens.map { $0.rawValue }
         }
 
         public static func directives(in headerValue: String) -> [(name: String, value: String?)] {
             var input = [Byte](utf8: headerValue)[...]
-            return (try? List(RFC_9110.Field.Value.Directive.Coder<ArraySlice<Byte>, [Byte]>()).parse(&input)) ?? []
+            return (try? List(IETF.RFC.`9110`.Field.Value.Directive.Coder<ArraySlice<Byte>, [Byte]>()).parse(&input)) ?? []
         }
     }
 
-    extension RFC_9110.Field.Value {
+    extension IETF.RFC.`9110`.Field.Value {
 
         enum Directive {}
     }
 
-    extension RFC_9110.Field.Value.Directive {
+    extension IETF.RFC.`9110`.Field.Value.Directive {
 
         struct Coder<Input: Cursor.`Protocol`<Byte, Never>, Buffer: RangeReplaceableCollection<Byte>>: Coding {
 
             typealias Output = (name: String, value: String?)
 
-            typealias Failure = RFC_9110.Token.Error
+            typealias Failure = IETF.RFC.`9110`.Token.Error
 
             borrowing func parse(_ input: inout Input) throws(Failure) -> Output {
-                let name = try RFC_9110.Token.Coder<Input, Buffer>().parse(&input)
+                let name = try IETF.RFC.`9110`.Token.Coder<Input, Buffer>().parse(&input)
 
                 let mark = input.checkpoint
-                RFC_9110.OWS.Coder<Input, Buffer>().parse(&input)
+                IETF.RFC.`9110`.OWS.Coder<Input, Buffer>().parse(&input)
                 guard let equals = input.next(), equals.bitPattern == 0x3D else {
                     input.seek(to: mark)
                     return (name: name.rawValue, value: nil)
                 }
-                RFC_9110.OWS.Coder<Input, Buffer>().parse(&input)
+                IETF.RFC.`9110`.OWS.Coder<Input, Buffer>().parse(&input)
 
                 let beforeValue = input.checkpoint
-                if let quoted = try? RFC_9110.QuotedString.Coder<Input, Buffer>().parse(&input) {
+                if let quoted = try? IETF.RFC.`9110`.QuotedString.Coder<Input, Buffer>().parse(&input) {
                     return (name: name.rawValue, value: quoted)
                 }
                 input.seek(to: beforeValue)
-                if let token = try? RFC_9110.Token.Coder<Input, Buffer>().parse(&input) {
+                if let token = try? IETF.RFC.`9110`.Token.Coder<Input, Buffer>().parse(&input) {
                     return (name: name.rawValue, value: token.rawValue)
                 }
                 input.seek(to: mark)
@@ -195,13 +195,13 @@
             }
 
             borrowing func serialize(_ output: Output, into buffer: inout Buffer) throws(Failure) {
-                try RFC_9110.Token.Coder<Input, Buffer>().serialize(RFC_9110.Token(unchecked: output.name), into: &buffer)
+                try IETF.RFC.`9110`.Token.Coder<Input, Buffer>().serialize(IETF.RFC.`9110`.Token(unchecked: output.name), into: &buffer)
                 guard let value = output.value else { return }
                 buffer.append(Byte(bitPattern: 0x3D))
-                do throws(RFC_9110.Token.Error) {
-                    try RFC_9110.Token.Coder<Input, Buffer>().serialize(RFC_9110.Token(unchecked: value), into: &buffer)
+                do throws(IETF.RFC.`9110`.Token.Error) {
+                    try IETF.RFC.`9110`.Token.Coder<Input, Buffer>().serialize(IETF.RFC.`9110`.Token(unchecked: value), into: &buffer)
                 } catch {
-                    try? RFC_9110.QuotedString.Coder<Input, Buffer>().serialize(value, into: &buffer)
+                    try? IETF.RFC.`9110`.QuotedString.Coder<Input, Buffer>().serialize(value, into: &buffer)
                 }
             }
         }

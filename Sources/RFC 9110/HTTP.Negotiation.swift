@@ -1,22 +1,22 @@
-extension RFC_9110 {
+extension IETF.RFC.`9110` {
 
     public enum Negotiation {}
 }
 
-extension RFC_9110.Negotiation {
+extension IETF.RFC.`9110`.Negotiation {
 
     public static func selectMediaType(
-        from available: [RFC_9110.MediaType],
+        from available: [IETF.RFC.`9110`.MediaType],
         preferences: [MediaTypePreference]
-    ) -> RFC_9110.MediaType? {
+    ) -> IETF.RFC.`9110`.MediaType? {
         selectMediaTypes(from: available, preferences: preferences).first
     }
 
     public static func selectMediaTypes(
-        from available: [RFC_9110.MediaType],
+        from available: [IETF.RFC.`9110`.MediaType],
         preferences: [MediaTypePreference]
-    ) -> [RFC_9110.MediaType] {
-        var results: [(RFC_9110.MediaType, QualityValue)] = []
+    ) -> [IETF.RFC.`9110`.MediaType] {
+        var results: [(IETF.RFC.`9110`.MediaType, QualityValue)] = []
 
         for availableType in available {
 

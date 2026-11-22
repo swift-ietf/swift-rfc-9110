@@ -1,12 +1,12 @@
-extension RFC_9110.Negotiation {
+extension IETF.RFC.`9110`.Negotiation {
 
     public struct EncodingPreference: Sendable, Equatable {
 
-        public let encoding: RFC_9110.Representation.Encoding
+        public let encoding: IETF.RFC.`9110`.Representation.Encoding
 
         public let quality: QualityValue
 
-        public init(encoding: RFC_9110.Representation.Encoding, quality: QualityValue = .default) {
+        public init(encoding: IETF.RFC.`9110`.Representation.Encoding, quality: QualityValue = .default) {
             self.encoding = encoding
             self.quality = quality
         }
@@ -14,7 +14,7 @@ extension RFC_9110.Negotiation {
     }
 }
 
-extension RFC_9110.Negotiation.EncodingPreference: CustomStringConvertible {
+extension IETF.RFC.`9110`.Negotiation.EncodingPreference: CustomStringConvertible {
     public var description: String {
         guard quality != .default else {
             return encoding.value
@@ -23,18 +23,18 @@ extension RFC_9110.Negotiation.EncodingPreference: CustomStringConvertible {
     }
 }
 
-extension RFC_9110.Negotiation.EncodingPreference {
+extension IETF.RFC.`9110`.Negotiation.EncodingPreference {
 
     public static func best(
-        of offered: [RFC_9110.Representation.Encoding],
+        of offered: [IETF.RFC.`9110`.Representation.Encoding],
         accepting preferences: [Self]
-    ) -> RFC_9110.Representation.Encoding? {
+    ) -> IETF.RFC.`9110`.Representation.Encoding? {
         let wildcard = preferences.first { $0.encoding.value == "*" }?.quality
-        var best: (encoding: RFC_9110.Representation.Encoding, quality: RFC_9110.Negotiation.QualityValue, named: Bool)?
+        var best: (encoding: IETF.RFC.`9110`.Representation.Encoding, quality: IETF.RFC.`9110`.Negotiation.QualityValue, named: Bool)?
 
         for encoding in offered {
             let named = preferences.first { $0.encoding == encoding }?.quality
-            let quality: RFC_9110.Negotiation.QualityValue
+            let quality: IETF.RFC.`9110`.Negotiation.QualityValue
             let isNamed: Bool
             if let named {
                 quality = named

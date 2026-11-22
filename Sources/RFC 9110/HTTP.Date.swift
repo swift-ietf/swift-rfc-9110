@@ -1,6 +1,6 @@
 public import RFC_5322
 
-extension RFC_9110 {
+extension IETF.RFC.`9110` {
 
-    public typealias Date = RFC_5322.DateTime
+    public typealias Date = IETF.RFC.`5322`.DateTime
 }

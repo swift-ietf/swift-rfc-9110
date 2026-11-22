@@ -1,4 +1,4 @@
-extension RFC_9110 {
+extension IETF.RFC.`9110` {
 
     public struct Status: Sendable, Hashable {
 
@@ -10,7 +10,7 @@ extension RFC_9110 {
     }
 }
 
-extension RFC_9110.Status {
+extension IETF.RFC.`9110`.Status {
 
     public var isInformational: Bool {
         (100...199).contains(code)
@@ -37,7 +37,7 @@ extension RFC_9110.Status {
     }
 }
 
-extension RFC_9110.Status {
+extension IETF.RFC.`9110`.Status {
 
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.code == rhs.code
@@ -49,26 +49,26 @@ extension RFC_9110.Status {
 
 }
 
-extension RFC_9110.Status: CustomStringConvertible {
+extension IETF.RFC.`9110`.Status: CustomStringConvertible {
     public var description: String {
         "\(code)"
     }
 }
 
-extension RFC_9110.Status: ExpressibleByIntegerLiteral {
+extension IETF.RFC.`9110`.Status: ExpressibleByIntegerLiteral {
     public init(integerLiteral value: Int) {
         self.init(value)
     }
 }
 
-extension RFC_9110.Status: Comparable {
+extension IETF.RFC.`9110`.Status: Comparable {
 
-    public static func < (lhs: RFC_9110.Status, rhs: RFC_9110.Status) -> Bool {
+    public static func < (lhs: IETF.RFC.`9110`.Status, rhs: IETF.RFC.`9110`.Status) -> Bool {
         lhs.code < rhs.code
     }
 }
 
-extension RFC_9110.Status {
+extension IETF.RFC.`9110`.Status {
 
     public static var `continue`: Self { Self(100) }
 

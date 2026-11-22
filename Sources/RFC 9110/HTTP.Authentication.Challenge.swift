@@ -1,4 +1,4 @@
-extension RFC_9110.Authentication {
+extension IETF.RFC.`9110`.Authentication {
 
     public struct Challenge: Sendable, Equatable {
 
@@ -19,7 +19,7 @@ extension RFC_9110.Authentication {
     }
 }
 
-extension RFC_9110.Authentication.Challenge {
+extension IETF.RFC.`9110`.Authentication.Challenge {
 
     public var realm: String? {
         parameters["realm"]
@@ -34,7 +34,7 @@ extension RFC_9110.Authentication.Challenge {
                 .sorted { $0.key < $1.key }
                 .map { key, value in
 
-                    guard !value.isEmpty, value.utf8.allSatisfy(RFC_9110.Token.isTchar) else {
+                    guard !value.isEmpty, value.utf8.allSatisfy(IETF.RFC.`9110`.Token.isTchar) else {
                         var escaped = ""
                         for character in value {
                             if character == "\\" || character == "\"" {
@@ -54,12 +54,12 @@ extension RFC_9110.Authentication.Challenge {
     }
 }
 
-extension RFC_9110.Authentication.Challenge: CustomStringConvertible {
+extension IETF.RFC.`9110`.Authentication.Challenge: CustomStringConvertible {
     public var description: String {
         headerValue
     }
 }
 
 #if !hasFeature(Embedded)
-extension RFC_9110.Authentication.Challenge: Codable {}
+extension IETF.RFC.`9110`.Authentication.Challenge: Codable {}
 #endif

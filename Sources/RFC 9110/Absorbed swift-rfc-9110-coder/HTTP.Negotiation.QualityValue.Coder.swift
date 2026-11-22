@@ -5,7 +5,7 @@
     import Parser
     import Serializer
 
-    extension RFC_9110.Negotiation.QualityValue {
+    extension IETF.RFC.`9110`.Negotiation.QualityValue {
         public struct Coder<Input: Cursor.`Protocol`<Byte, Never>, Buffer: RangeReplaceableCollection<Byte>>: Coding {
             public init() {}
         }
@@ -17,10 +17,10 @@
         }
     }
 
-    extension RFC_9110.Negotiation.QualityValue.Coder {
-        public typealias Output = RFC_9110.Negotiation.QualityValue
+    extension IETF.RFC.`9110`.Negotiation.QualityValue.Coder {
+        public typealias Output = IETF.RFC.`9110`.Negotiation.QualityValue
 
-        public typealias Failure = RFC_9110.Negotiation.QualityValue.Error
+        public typealias Failure = IETF.RFC.`9110`.Negotiation.QualityValue.Error
 
         public borrowing func parse(_ input: inout Input) throws(Failure) -> Output {
             let start = input.checkpoint
@@ -87,7 +87,7 @@
         }
     }
 
-    extension RFC_9110.Negotiation.QualityValue {
+    extension IETF.RFC.`9110`.Negotiation.QualityValue {
         public static func parse(_ string: String) -> Self? {
             var input = [Byte](utf8: string)[...]
             do throws(Error) {

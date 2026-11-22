@@ -1,4 +1,4 @@
-extension RFC_9110.Negotiation.LanguageRange {
+extension IETF.RFC.`9110`.Negotiation.LanguageRange {
 
     public enum Error: Swift::Error, Sendable, Equatable {
         case empty

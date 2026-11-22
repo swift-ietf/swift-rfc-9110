@@ -5,11 +5,11 @@
     import Parser
     import Serializer
 
-    extension RFC_9110 {
+    extension IETF.RFC.`9110` {
         public enum QuotedString {}
     }
 
-    extension RFC_9110.QuotedString {
+    extension IETF.RFC.`9110`.QuotedString {
         public struct Coder<Input: Cursor.`Protocol`<Byte, Never>, Buffer: RangeReplaceableCollection<Byte>>: Coding {
             public init() {}
         }
@@ -24,10 +24,10 @@
         }
     }
 
-    extension RFC_9110.QuotedString.Coder {
+    extension IETF.RFC.`9110`.QuotedString.Coder {
         public typealias Output = String
 
-        public typealias Failure = RFC_9110.QuotedString.Error
+        public typealias Failure = IETF.RFC.`9110`.QuotedString.Error
 
         public borrowing func parse(_ input: inout Input) throws(Failure) -> String {
             let start = input.checkpoint

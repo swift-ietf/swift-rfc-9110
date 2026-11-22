@@ -1,27 +1,27 @@
 public import RFC_5322
 
-extension RFC_9110 {
+extension IETF.RFC.`9110` {
 
     public enum Precondition: Sendable, Equatable {
 
-        case ifMatch([RFC_9110.Representation.Validator.EntityTag])
+        case ifMatch([IETF.RFC.`9110`.Representation.Validator.EntityTag])
 
-        case ifNoneMatch([RFC_9110.Representation.Validator.EntityTag])
+        case ifNoneMatch([IETF.RFC.`9110`.Representation.Validator.EntityTag])
 
-        case ifModifiedSince(RFC_5322.DateTime)
+        case ifModifiedSince(IETF.RFC.`5322`.DateTime)
 
-        case ifUnmodifiedSince(RFC_5322.DateTime)
+        case ifUnmodifiedSince(IETF.RFC.`5322`.DateTime)
 
-        case ifRange(RFC_9110.Representation.Validator)
+        case ifRange(IETF.RFC.`9110`.Representation.Validator)
     }
 }
 
-extension RFC_9110.Precondition {
+extension IETF.RFC.`9110`.Precondition {
 
-    public static let wildcardTag = RFC_9110.Representation.Validator.EntityTag.strong("*")
+    public static let wildcardTag = IETF.RFC.`9110`.Representation.Validator.EntityTag.strong("*")
 }
 
-extension RFC_9110.Precondition {
+extension IETF.RFC.`9110`.Precondition {
 
     public var headerName: String {
         switch self {
@@ -43,11 +43,11 @@ extension RFC_9110.Precondition {
     }
 }
 
-extension RFC_9110.Precondition {
+extension IETF.RFC.`9110`.Precondition {
 
     public func evaluate(
-        currentETag: RFC_9110.Representation.Validator.EntityTag?,
-        lastModified: RFC_5322.DateTime?
+        currentETag: IETF.RFC.`9110`.Representation.Validator.EntityTag?,
+        lastModified: IETF.RFC.`5322`.DateTime?
     ) -> Bool {
         switch self {
         case .ifMatch(let etags):
@@ -59,7 +59,7 @@ extension RFC_9110.Precondition {
                 return true
             }
 
-            return etags.contains(where: { RFC_9110.Representation.Validator.EntityTag.strongCompare($0, currentETag) })
+            return etags.contains(where: { IETF.RFC.`9110`.Representation.Validator.EntityTag.strongCompare($0, currentETag) })
 
         case .ifNoneMatch(let etags):
             guard let currentETag else {
@@ -71,7 +71,7 @@ extension RFC_9110.Precondition {
                 return false
             }
 
-            return !etags.contains(where: { RFC_9110.Representation.Validator.EntityTag.weakCompare($0, currentETag) })
+            return !etags.contains(where: { IETF.RFC.`9110`.Representation.Validator.EntityTag.weakCompare($0, currentETag) })
 
         case .ifModifiedSince(let date):
             guard let lastModified else {
@@ -94,7 +94,7 @@ extension RFC_9110.Precondition {
                 return false
             }
 
-            return RFC_9110.Representation.Validator.EntityTag.strongCompare(etag, currentETag)
+            return IETF.RFC.`9110`.Representation.Validator.EntityTag.strongCompare(etag, currentETag)
 
         case .ifRange(.lastModified(let date)):
             guard let lastModified else {

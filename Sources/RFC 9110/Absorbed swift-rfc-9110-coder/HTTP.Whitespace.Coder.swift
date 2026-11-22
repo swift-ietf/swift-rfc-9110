@@ -5,14 +5,14 @@
     import Parser
     import Serializer
 
-    extension RFC_9110 {
+    extension IETF.RFC.`9110` {
 
         public enum OWS {}
 
         public enum RWS {}
     }
 
-    extension RFC_9110.OWS {
+    extension IETF.RFC.`9110`.OWS {
 
         public struct Coder<Input: Cursor.`Protocol`<Byte, Never>, Buffer: RangeReplaceableCollection<Byte>>: Coding {
 
@@ -27,7 +27,7 @@
             }
 
             public borrowing func parse(_ input: inout Input) {
-                _ = RFC_9110.Whitespace.skip(&input)
+                _ = IETF.RFC.`9110`.Whitespace.skip(&input)
             }
 
             public borrowing func serialize(_ output: Void, into buffer: inout Buffer) {
@@ -36,7 +36,7 @@
         }
     }
 
-    extension RFC_9110.RWS {
+    extension IETF.RFC.`9110`.RWS {
 
         public struct Coder<Input: Cursor.`Protocol`<Byte, Never>, Buffer: RangeReplaceableCollection<Byte>>: Coding {
 
@@ -51,7 +51,7 @@
             }
 
             public borrowing func parse(_ input: inout Input) throws(Error) {
-                guard RFC_9110.Whitespace.skip(&input) > 0 else { throw .expectedWhitespace }
+                guard IETF.RFC.`9110`.Whitespace.skip(&input) > 0 else { throw .expectedWhitespace }
             }
 
             public borrowing func serialize(_ output: Void, into buffer: inout Buffer) throws(Failure) {
@@ -64,12 +64,12 @@
         }
     }
 
-    extension RFC_9110 {
+    extension IETF.RFC.`9110` {
 
         enum Whitespace {}
     }
 
-    extension RFC_9110.Whitespace {
+    extension IETF.RFC.`9110`.Whitespace {
 
         static func isWhitespace(_ byte: Byte) -> Bool {
             byte.bitPattern == 0x20 || byte.bitPattern == 0x09

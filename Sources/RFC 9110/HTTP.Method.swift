@@ -1,4 +1,4 @@
-extension RFC_9110 {
+extension IETF.RFC.`9110` {
 
     public struct Method: Sendable, Hashable, RawRepresentable {
 
@@ -60,7 +60,7 @@ extension RFC_9110 {
     }
 }
 
-extension RFC_9110.Method {
+extension IETF.RFC.`9110`.Method {
 
     public static func == (lhs: Self, rhs: Self) -> Bool {
 
@@ -77,7 +77,7 @@ extension RFC_9110.Method {
 
 }
 
-extension RFC_9110.Method {
+extension IETF.RFC.`9110`.Method {
 
     public static var get: Self {
         Self("GET", isSafe: true, isIdempotent: true, isCacheable: true)
@@ -126,28 +126,28 @@ extension RFC_9110.Method {
     }
 }
 
-extension RFC_9110.Method: CustomStringConvertible {
+extension IETF.RFC.`9110`.Method: CustomStringConvertible {
     public var description: String {
         rawValue
     }
 }
 
-extension RFC_9110.Method: LosslessStringConvertible {
+extension IETF.RFC.`9110`.Method: LosslessStringConvertible {
 
     public init?(_ description: String) {
         self.init(rawValue: description)
     }
 }
 
-extension RFC_9110.Method: ExpressibleByStringLiteral {
+extension IETF.RFC.`9110`.Method: ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
         self.init(rawValue: value)
     }
 }
 
-extension RFC_9110.Method: CaseIterable {
+extension IETF.RFC.`9110`.Method: CaseIterable {
 
-    public static var allCases: [RFC_9110.Method] {
+    public static var allCases: [IETF.RFC.`9110`.Method] {
         [.get, .head, .post, .put, .delete, .connect, .options, .trace, .patch]
     }
 }

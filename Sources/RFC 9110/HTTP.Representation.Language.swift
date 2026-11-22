@@ -1,4 +1,4 @@
-extension RFC_9110.Representation {
+extension IETF.RFC.`9110`.Representation {
 
     public struct Language: Sendable, Equatable, Hashable {
 
@@ -12,7 +12,7 @@ extension RFC_9110.Representation {
     }
 }
 
-extension RFC_9110.Representation.Language {
+extension IETF.RFC.`9110`.Representation.Language {
 
     public static func formatHeader(_ languages: [Self]) -> String {
         return
@@ -23,7 +23,7 @@ extension RFC_9110.Representation.Language {
 }
 
 #if !hasFeature(Embedded)
-extension RFC_9110.Representation.Language: Codable {
+extension IETF.RFC.`9110`.Representation.Language: Codable {
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let tag = try container.decode(String.self)
@@ -37,19 +37,19 @@ extension RFC_9110.Representation.Language: Codable {
 }
 #endif
 
-extension RFC_9110.Representation.Language: CustomStringConvertible {
+extension IETF.RFC.`9110`.Representation.Language: CustomStringConvertible {
     public var description: String {
         return tag
     }
 }
 
-extension RFC_9110.Representation.Language: ExpressibleByStringLiteral {
+extension IETF.RFC.`9110`.Representation.Language: ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
         self.init(value)
     }
 }
 
-extension RFC_9110.Representation.Language {
+extension IETF.RFC.`9110`.Representation.Language {
 
     public static let english = Self("en")
 

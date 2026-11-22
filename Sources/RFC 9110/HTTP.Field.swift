@@ -1,4 +1,4 @@
-extension RFC_9110 {
+extension IETF.RFC.`9110` {
 
     public struct Field: Sendable, Hashable {
 
@@ -22,7 +22,7 @@ extension RFC_9110 {
     }
 }
 
-extension RFC_9110.Field: CustomStringConvertible {
+extension IETF.RFC.`9110`.Field: CustomStringConvertible {
 
     public var description: String {
         "\(name.rawValue): \(value.rawValue)"

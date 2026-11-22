@@ -1,4 +1,4 @@
-extension RFC_9110.Negotiation {
+extension IETF.RFC.`9110`.Negotiation {
 
     public struct Vary: Sendable, Equatable, Hashable {
 
@@ -18,9 +18,9 @@ extension RFC_9110.Negotiation {
     }
 }
 
-extension RFC_9110.Negotiation.Vary {
+extension IETF.RFC.`9110`.Negotiation.Vary {
 
-    public static let all = RFC_9110.Negotiation.Vary()
+    public static let all = IETF.RFC.`9110`.Negotiation.Vary()
 
     public var headerValue: String {
         if variesOnAllAspects {
@@ -57,18 +57,18 @@ extension RFC_9110.Negotiation.Vary {
     }
 }
 
-extension RFC_9110.Negotiation.Vary: CustomStringConvertible {
+extension IETF.RFC.`9110`.Negotiation.Vary: CustomStringConvertible {
     public var description: String {
         headerValue
     }
 }
 
-extension RFC_9110.Negotiation.Vary: ExpressibleByArrayLiteral {
+extension IETF.RFC.`9110`.Negotiation.Vary: ExpressibleByArrayLiteral {
     public init(arrayLiteral elements: String...) {
         self.init(fieldNames: elements)
     }
 }
 
 #if !hasFeature(Embedded)
-extension RFC_9110.Negotiation.Vary: Codable {}
+extension IETF.RFC.`9110`.Negotiation.Vary: Codable {}
 #endif

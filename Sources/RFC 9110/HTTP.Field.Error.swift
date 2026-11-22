@@ -1,4 +1,4 @@
-extension RFC_9110.Field {
+extension IETF.RFC.`9110`.Field {
 
     public enum Error: Swift::Error, Sendable {
         case invalidFieldName(Name.Error)

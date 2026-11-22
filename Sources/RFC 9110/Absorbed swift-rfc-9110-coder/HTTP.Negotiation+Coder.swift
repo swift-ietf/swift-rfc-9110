@@ -1,17 +1,17 @@
 #if Coder
-    extension RFC_9110.Negotiation {
+    extension IETF.RFC.`9110`.Negotiation {
 
         public static func selectMediaType(
-            from available: [RFC_9110.MediaType],
+            from available: [IETF.RFC.`9110`.MediaType],
             acceptHeader: String
-        ) -> RFC_9110.MediaType? {
+        ) -> IETF.RFC.`9110`.MediaType? {
             selectMediaType(from: available, preferences: MediaTypePreference.parse(acceptHeader))
         }
 
         public static func selectMediaTypes(
-            from available: [RFC_9110.MediaType],
+            from available: [IETF.RFC.`9110`.MediaType],
             acceptHeader: String
-        ) -> [RFC_9110.MediaType] {
+        ) -> [IETF.RFC.`9110`.MediaType] {
             selectMediaTypes(from: available, preferences: MediaTypePreference.parse(acceptHeader))
         }
     }

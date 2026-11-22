@@ -1,4 +1,4 @@
-extension RFC_9110 {
+extension IETF.RFC.`9110` {
     public struct Version: Equatable, Hashable, Comparable {
         public let major: UInt
         public let minor: UInt
@@ -16,7 +16,7 @@ extension RFC_9110 {
     }
 }
 
-extension RFC_9110.Version {
+extension IETF.RFC.`9110`.Version {
     public static func < (lhs: Self, rhs: Self) -> Bool {
         lhs.major == rhs.major
             ? lhs.minor < rhs.minor

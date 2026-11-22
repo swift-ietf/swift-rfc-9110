@@ -1,6 +1,6 @@
 public import Byte
 
-extension RFC_9110.Status {
+extension IETF.RFC.`9110`.Status {
     public struct Reason: Sendable, Equatable, Hashable {
         public var bytes: [Byte]
 

@@ -1,15 +1,15 @@
-extension RFC_9110.Message {
+extension IETF.RFC.`9110`.Message {
     public struct Headers: Sendable, Equatable, Hashable {
-        package var fields: [RFC_9110.Field]
+        package var fields: [IETF.RFC.`9110`.Field]
 
-        public init(_ fields: [RFC_9110.Field] = []) {
+        public init(_ fields: [IETF.RFC.`9110`.Field] = []) {
             self.fields = fields
         }
     }
 }
 
-extension RFC_9110.Message.Headers {
-    public subscript(_ name: RFC_9110.Field.Name) -> [RFC_9110.Field.Value] {
+extension IETF.RFC.`9110`.Message.Headers {
+    public subscript(_ name: IETF.RFC.`9110`.Field.Name) -> [IETF.RFC.`9110`.Field.Value] {
         fields.compactMap { $0.name == name ? $0.value : nil }
     }
 
@@ -21,21 +21,21 @@ extension RFC_9110.Message.Headers {
         fields.count
     }
 
-    public func values(_ name: RFC_9110.Field.Name) -> [RFC_9110.Field.Value] {
+    public func values(_ name: IETF.RFC.`9110`.Field.Name) -> [IETF.RFC.`9110`.Field.Value] {
         self[name]
     }
 
-    public mutating func append(_ field: RFC_9110.Field) {
+    public mutating func append(_ field: IETF.RFC.`9110`.Field) {
         fields.append(field)
     }
 
-    public mutating func remove(_ name: RFC_9110.Field.Name) {
+    public mutating func remove(_ name: IETF.RFC.`9110`.Field.Name) {
         fields.removeAll { $0.name == name }
     }
 }
 
-extension RFC_9110.Message.Headers: RandomAccessCollection {
-    public typealias Index = Array<RFC_9110.Field>.Index
+extension IETF.RFC.`9110`.Message.Headers: RandomAccessCollection {
+    public typealias Index = Array<IETF.RFC.`9110`.Field>.Index
 
     public var startIndex: Index {
         fields.startIndex
@@ -45,13 +45,13 @@ extension RFC_9110.Message.Headers: RandomAccessCollection {
         fields.endIndex
     }
 
-    public subscript(_ index: Index) -> RFC_9110.Field {
+    public subscript(_ index: Index) -> IETF.RFC.`9110`.Field {
         fields[index]
     }
 }
 
-extension RFC_9110.Message.Headers: ExpressibleByArrayLiteral {
-    public init(arrayLiteral elements: RFC_9110.Field...) {
+extension IETF.RFC.`9110`.Message.Headers: ExpressibleByArrayLiteral {
+    public init(arrayLiteral elements: IETF.RFC.`9110`.Field...) {
         self.init(elements)
     }
 }

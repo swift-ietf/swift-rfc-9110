@@ -1,6 +1,6 @@
 public import RFC_5322
 
-extension RFC_9110.Representation {
+extension IETF.RFC.`9110`.Representation {
 
     public enum Validator: Sendable, Equatable {
         case entityTag(EntityTag)
@@ -8,7 +8,7 @@ extension RFC_9110.Representation {
     }
 }
 
-extension RFC_9110.Representation.Validator {
+extension IETF.RFC.`9110`.Representation.Validator {
 
-    public typealias LastModified = RFC_9110.Date
+    public typealias LastModified = IETF.RFC.`9110`.Date
 }

@@ -1,4 +1,4 @@
-extension RFC_9110.Negotiation {
+extension IETF.RFC.`9110`.Negotiation {
 
     /// A basic language range from RFC 4647 section 2.1, which Accept-Language carries: `*`, or subtags such as `en-GB`.
     public struct LanguageRange: Sendable, Equatable, Hashable {
@@ -43,12 +43,12 @@ extension RFC_9110.Negotiation {
     }
 }
 
-extension RFC_9110.Negotiation.LanguageRange {
+extension IETF.RFC.`9110`.Negotiation.LanguageRange {
 
     public static let any = Self(unchecked: "*")
 }
 
-extension RFC_9110.Negotiation.LanguageRange: CustomStringConvertible {
+extension IETF.RFC.`9110`.Negotiation.LanguageRange: CustomStringConvertible {
 
     public var description: String {
         value

@@ -1,4 +1,4 @@
-extension RFC_9110.Negotiation {
+extension IETF.RFC.`9110`.Negotiation {
 
     public struct LanguagePreference: Sendable, Equatable {
 
@@ -14,7 +14,7 @@ extension RFC_9110.Negotiation {
     }
 }
 
-extension RFC_9110.Negotiation.LanguagePreference: CustomStringConvertible {
+extension IETF.RFC.`9110`.Negotiation.LanguagePreference: CustomStringConvertible {
     public var description: String {
         guard quality != .default else {
             return language.value

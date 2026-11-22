@@ -1,13 +1,13 @@
 #if Coder
     public import RFC_5322
 
-    extension RFC_5322.DateTime {
+    extension IETF.RFC.`5322`.DateTime {
 
-        public init?(_ field: RFC_9110.Field) {
+        public init?(_ field: IETF.RFC.`9110`.Field) {
             self.init(field.value)
         }
 
-        public init?(_ value: RFC_9110.Field.Value) {
+        public init?(_ value: IETF.RFC.`9110`.Field.Value) {
             self.init(httpDate: value.rawValue)
         }
 
@@ -19,9 +19,9 @@
         }
     }
 
-    extension RFC_9110.Field {
+    extension IETF.RFC.`9110`.Field {
 
-        public init(dateTime: RFC_5322.DateTime, name: Name = .date) {
+        public init(dateTime: IETF.RFC.`5322`.DateTime, name: Name = .date) {
             self.init(
                 name: name,
                 value: .init(unchecked: imfFixdate(dateTime))
@@ -29,12 +29,12 @@
         }
     }
 
-    private func imfFixdate(_ dateTime: RFC_5322.DateTime) -> String {
+    private func imfFixdate(_ dateTime: IETF.RFC.`5322`.DateTime) -> String {
 
         let components = dateTime.withTimezone(offsetSeconds: 0).components
 
-        let dayName = RFC_5322.DateTime.dayNames[components.weekday]
-        let monthName = RFC_5322.DateTime.monthNames[components.month - 1]
+        let dayName = IETF.RFC.`5322`.DateTime.dayNames[components.weekday]
+        let monthName = IETF.RFC.`5322`.DateTime.monthNames[components.month - 1]
 
         let day = paddedDecimal(components.day, width: 2)
         let year = paddedDecimal(components.year, width: 4)
@@ -51,7 +51,7 @@
         return String(repeating: "0", count: width - digits.count) + digits
     }
 
-    private func parseHTTPDate(_ string: String) -> RFC_5322.DateTime? {
+    private func parseHTTPDate(_ string: String) -> IETF.RFC.`5322`.DateTime? {
         if let comma = string.firstIndex(of: ",") {
 
             let fields = string[string.index(after: comma)...]
@@ -68,7 +68,7 @@
         return parseAsctimeDate(fields)
     }
 
-    private func parseIMFFixdate(_ fields: [String]) -> RFC_5322.DateTime? {
+    private func parseIMFFixdate(_ fields: [String]) -> IETF.RFC.`5322`.DateTime? {
         guard fields.count == 5, fields[4] == "GMT" else { return nil }
         guard
             let day = Int(fields[0]),
@@ -79,7 +79,7 @@
         return gmtDateTime(year: year, month: month, day: day, time: time)
     }
 
-    private func parseRFC850Date(_ fields: [String]) -> RFC_5322.DateTime? {
+    private func parseRFC850Date(_ fields: [String]) -> IETF.RFC.`5322`.DateTime? {
         guard fields.count == 3, fields[2] == "GMT" else { return nil }
         let date = fields[0].split(separator: "-", omittingEmptySubsequences: false).map(String.init)
         guard
@@ -94,7 +94,7 @@
         return gmtDateTime(year: year, month: month, day: day, time: time)
     }
 
-    private func parseAsctimeDate(_ fields: [String]) -> RFC_5322.DateTime? {
+    private func parseAsctimeDate(_ fields: [String]) -> IETF.RFC.`5322`.DateTime? {
         guard fields.count == 5 else { return nil }
         guard
             let month = monthNumber(fields[1]),
@@ -117,7 +117,7 @@
     }
 
     private func monthNumber(_ name: String) -> Int? {
-        RFC_5322.DateTime.monthNames.firstIndex(of: name).map { $0 + 1 }
+        IETF.RFC.`5322`.DateTime.monthNames.firstIndex(of: name).map { $0 + 1 }
     }
 
     private func gmtDateTime(
@@ -125,9 +125,9 @@
         month: Int,
         day: Int,
         time: (hour: Int, minute: Int, second: Int)
-    ) -> RFC_5322.DateTime? {
+    ) -> IETF.RFC.`5322`.DateTime? {
 
-        try? RFC_5322.DateTime(
+        try? IETF.RFC.`5322`.DateTime(
             year: year,
             month: month,
             day: day,
@@ -142,7 +142,7 @@
         character == " " || character == "\t"
     }
 
-    extension RFC_5322.DateTime {
+    extension IETF.RFC.`5322`.DateTime {
 
         var httpDate: String {
             imfFixdate(self)

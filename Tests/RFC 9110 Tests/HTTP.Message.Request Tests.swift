@@ -6,7 +6,7 @@ import Testing
 struct `HTTP.Message.Request Tests` {
     @Test
     func `Request retains semantic control and content`() throws {
-        let uri = try RFC_3986.URI("https://example.com/greeting?name=Blob")
+        let uri = try IETF.RFC.`3986`.URI("https://example.com/greeting?name=Blob")
         let request = HTTP.Message.Request<String>(
             method: .get,
             target: .resource(uri),

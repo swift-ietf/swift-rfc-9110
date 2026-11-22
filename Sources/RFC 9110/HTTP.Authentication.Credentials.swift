@@ -1,7 +1,7 @@
 import Byte
 import RFC_4648
 
-extension RFC_9110.Authentication {
+extension IETF.RFC.`9110`.Authentication {
 
     public struct Credentials: Sendable, Equatable {
 
@@ -17,29 +17,29 @@ extension RFC_9110.Authentication {
     }
 }
 
-extension RFC_9110.Authentication.Credentials {
+extension IETF.RFC.`9110`.Authentication.Credentials {
 
     public var headerValue: String {
         "\(scheme.name) \(token)"
     }
 }
 
-extension RFC_9110.Authentication.Credentials: CustomStringConvertible {
+extension IETF.RFC.`9110`.Authentication.Credentials: CustomStringConvertible {
     public var description: String {
         headerValue
     }
 }
 
 #if !hasFeature(Embedded)
-extension RFC_9110.Authentication.Credentials: Codable {}
+extension IETF.RFC.`9110`.Authentication.Credentials: Codable {}
 #endif
 
-extension RFC_9110.Authentication.Credentials {
+extension IETF.RFC.`9110`.Authentication.Credentials {
 
     public static func basic(
         username: String,
         password: String
-    ) throws(Error) -> RFC_9110.Authentication.Credentials {
+    ) throws(Error) -> IETF.RFC.`9110`.Authentication.Credentials {
         guard !username.contains(":") else { throw .usernameContainsColon }
         let combined = "\(username):\(password)"
         let bytes: [Byte] = combined.utf8.map(Byte.init(bitPattern:))
@@ -47,7 +47,7 @@ extension RFC_9110.Authentication.Credentials {
         return Self(scheme: .basic, token: encoded)
     }
 
-    public static func bearer(_ token: String) -> RFC_9110.Authentication.Credentials {
+    public static func bearer(_ token: String) -> IETF.RFC.`9110`.Authentication.Credentials {
         Self(scheme: .bearer, token: token)
     }
 }

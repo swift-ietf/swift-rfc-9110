@@ -21,7 +21,7 @@
         @Test
         func `Parse IMF-fixdate format`() async throws {
             let field = try HTTP.Field(name: "Date", value: "Sun, 06 Nov 1994 08:49:37 GMT")
-            let parsed = RFC_5322.DateTime(field)
+            let parsed = IETF.RFC.`5322`.DateTime(field)
 
             #expect(parsed != nil)
 
@@ -34,7 +34,7 @@
         func `Parse RFC 850 format (obsolete)`() async throws {
 
             let field = try HTTP.Field(name: "Date", value: "Sunday, 06-Nov-94 08:49:37 GMT")
-            let parsed = RFC_5322.DateTime(field)
+            let parsed = IETF.RFC.`5322`.DateTime(field)
 
             #expect(parsed != nil)
 
@@ -46,7 +46,7 @@
         func `Parse asctime format (obsolete)`() async throws {
 
             let field = try HTTP.Field(name: "Date", value: "Sun Nov  6 08:49:37 1994")
-            let parsed = RFC_5322.DateTime(field)
+            let parsed = IETF.RFC.`5322`.DateTime(field)
 
             #expect(parsed != nil)
 
@@ -56,10 +56,10 @@
 
         @Test
         func `Parse invalid date`() async throws {
-            #expect(RFC_5322.DateTime(try HTTP.Field(name: "Date", value: "invalid")) == nil)
-            #expect(RFC_5322.DateTime(try HTTP.Field(name: "Date", value: "")) == nil)
+            #expect(IETF.RFC.`5322`.DateTime(try HTTP.Field(name: "Date", value: "invalid")) == nil)
+            #expect(IETF.RFC.`5322`.DateTime(try HTTP.Field(name: "Date", value: "")) == nil)
             #expect(
-                RFC_5322.DateTime(try HTTP.Field(name: "Date", value: "2024-11-16")) == nil
+                IETF.RFC.`5322`.DateTime(try HTTP.Field(name: "Date", value: "2024-11-16")) == nil
             )
         }
 
@@ -68,7 +68,7 @@
             let original = HTTP.Date(secondsSinceEpoch: 784_111_777)
 
             let field = HTTP.Field(dateTime: original)
-            let parsed = RFC_5322.DateTime(field)
+            let parsed = IETF.RFC.`5322`.DateTime(field)
 
             #expect(parsed != nil)
             let diff = abs(parsed!.secondsSinceEpoch - original.secondsSinceEpoch)

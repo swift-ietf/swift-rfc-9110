@@ -1,4 +1,4 @@
-extension RFC_9110.Authentication {
+extension IETF.RFC.`9110`.Authentication {
 
     public struct Scheme: Sendable, Equatable, Hashable {
 
@@ -11,7 +11,7 @@ extension RFC_9110.Authentication {
     }
 }
 
-extension RFC_9110.Authentication.Scheme {
+extension IETF.RFC.`9110`.Authentication.Scheme {
 
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.name.lowercased() == rhs.name.lowercased()
@@ -22,14 +22,14 @@ extension RFC_9110.Authentication.Scheme {
     }
 }
 
-extension RFC_9110.Authentication.Scheme: CustomStringConvertible {
+extension IETF.RFC.`9110`.Authentication.Scheme: CustomStringConvertible {
     public var description: String {
         name
     }
 }
 
 #if !hasFeature(Embedded)
-extension RFC_9110.Authentication.Scheme: Codable {
+extension IETF.RFC.`9110`.Authentication.Scheme: Codable {
     public init(from decoder: any Decoder) throws {
         let container = try decoder.singleValueContainer()
         let name = try container.decode(String.self)
@@ -43,13 +43,13 @@ extension RFC_9110.Authentication.Scheme: Codable {
 }
 #endif
 
-extension RFC_9110.Authentication.Scheme: ExpressibleByStringLiteral {
+extension IETF.RFC.`9110`.Authentication.Scheme: ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
         self.init(value)
     }
 }
 
-extension RFC_9110.Authentication.Scheme {
+extension IETF.RFC.`9110`.Authentication.Scheme {
 
     public static let basic = Self("Basic")
 

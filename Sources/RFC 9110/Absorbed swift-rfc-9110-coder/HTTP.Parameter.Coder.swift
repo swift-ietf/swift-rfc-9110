@@ -8,7 +8,7 @@
     import Product
     import Serializer
 
-    extension RFC_9110.Parameter {
+    extension IETF.RFC.`9110`.Parameter {
         public struct Coder<Input: Cursor.`Protocol`<Byte, Never>, Buffer: RangeReplaceableCollection<Byte>>: Coding {
             public init() {}
         }
@@ -17,28 +17,28 @@
 
         public enum Error: Swift::Error, Equatable {
             case expectedPrefix
-            case expectedName(RFC_9110.Token.Error)
-            case invalidTokenValue(RFC_9110.Token.Error)
+            case expectedName(IETF.RFC.`9110`.Token.Error)
+            case invalidTokenValue(IETF.RFC.`9110`.Token.Error)
             case expectedEquals
-            case invalidValue(RFC_9110.QuotedString.Error)
+            case invalidValue(IETF.RFC.`9110`.QuotedString.Error)
         }
     }
 
-    extension RFC_9110.Parameter.Coder {
-        public typealias Failure = RFC_9110.Parameter.Error
+    extension IETF.RFC.`9110`.Parameter.Coder {
+        public typealias Failure = IETF.RFC.`9110`.Parameter.Error
 
         @Coder::Builder<Input, Buffer>
         public var body:
             some Coding
-                & Parsing<Input, RFC_9110.Parameter, Failure>
-                & Serializing<RFC_9110.Parameter, Buffer, Failure>
+                & Parsing<Input, IETF.RFC.`9110`.Parameter, Failure>
+                & Serializing<IETF.RFC.`9110`.Parameter, Buffer, Failure>
         {
             Coder::Coder(Input.self, Buffer.self) {
-                RFC_9110.Token.Coder()
+                IETF.RFC.`9110`.Token.Coder()
                 Coder::ConsumingLiteral<Input, Buffer>([Byte](utf8: "="))
                 Parser::OneOf.Two(
-                    RFC_9110.Token.Coder().map(to: \.rawValue, from: { RFC_9110.Token(unchecked: $0) }),
-                    RFC_9110.QuotedString.Coder(),
+                    IETF.RFC.`9110`.Token.Coder().map(to: \.rawValue, from: { IETF.RFC.`9110`.Token(unchecked: $0) }),
+                    IETF.RFC.`9110`.QuotedString.Coder(),
                     rejectFirst: {
                         if case .empty = $0 { return true }
                         return false
@@ -55,7 +55,7 @@
                 )
             }
             .map(
-                to: { output in RFC_9110.Parameter(name: output.first, value: output.second) },
+                to: { output in IETF.RFC.`9110`.Parameter(name: output.first, value: output.second) },
                 from: { .init($0.name, $0.value) }
             )
             .mapFailure { (failure) -> Failure in
@@ -70,26 +70,26 @@
         }
     }
 
-    extension RFC_9110.Parameter {
+    extension IETF.RFC.`9110`.Parameter {
         public struct Prefixed<Input: Cursor.`Protocol`<Byte, Never>, Buffer: RangeReplaceableCollection<Byte>>: Coding {
             public init() {}
         }
     }
 
-    extension RFC_9110.Parameter.Prefixed {
-        public typealias Failure = RFC_9110.Parameter.Error
+    extension IETF.RFC.`9110`.Parameter.Prefixed {
+        public typealias Failure = IETF.RFC.`9110`.Parameter.Error
 
         @Coder::Builder<Input, Buffer>
         public var body:
             some Coding
-                & Parsing<Input, RFC_9110.Parameter, Failure>
-                & Serializing<RFC_9110.Parameter, Buffer, Failure>
+                & Parsing<Input, IETF.RFC.`9110`.Parameter, Failure>
+                & Serializing<IETF.RFC.`9110`.Parameter, Buffer, Failure>
         {
             Coder::Coder(Input.self, Buffer.self) {
-                RFC_9110.OWS.Coder()
+                IETF.RFC.`9110`.OWS.Coder()
                 Coder::ConsumingLiteral<Input, Buffer>([Byte](utf8: ";"))
-                RFC_9110.OWS.Coder(canonical: " ")
-                RFC_9110.Parameter.Coder()
+                IETF.RFC.`9110`.OWS.Coder(canonical: " ")
+                IETF.RFC.`9110`.Parameter.Coder()
             }
             .mapFailure { (failure) -> Failure in
                 switch failure {
@@ -100,10 +100,10 @@
         }
     }
 
-    extension [RFC_9110.Parameter] {
+    extension [IETF.RFC.`9110`.Parameter] {
         static func sorted(_ parameters: [String: String]) -> Self {
             parameters.sorted { $0.key < $1.key }.map {
-                RFC_9110.Parameter(name: RFC_9110.Token(unchecked: $0.key), value: $0.value)
+                IETF.RFC.`9110`.Parameter(name: IETF.RFC.`9110`.Token(unchecked: $0.key), value: $0.value)
             }
         }
 

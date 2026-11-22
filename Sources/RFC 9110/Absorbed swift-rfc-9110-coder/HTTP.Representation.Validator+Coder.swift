@@ -1,5 +1,5 @@
 #if Coder
-    extension RFC_9110.Representation.Validator: CustomStringConvertible {
+    extension IETF.RFC.`9110`.Representation.Validator: CustomStringConvertible {
 
         public var description: String {
             switch self {

@@ -32,7 +32,7 @@ struct `HTTP.Target Tests` {
     @Test
     func `a target whose query is not a URI query is kept as written`() {
         #expect(
-            HTTP.Target(unchecked: "/apps?q=%zz") == .resource(RFC_3986.URI(unchecked: "/apps?q=%zz"))
+            HTTP.Target(unchecked: "/apps?q=%zz") == .resource(IETF.RFC.`3986`.URI(unchecked: "/apps?q=%zz"))
         )
     }
 
@@ -53,7 +53,7 @@ struct `HTTP.Target Tests` {
     func `an absolute URI stays a resource`() throws {
         #expect(
             HTTP.Target(unchecked: "https://example.com//apps")
-                == .resource(try RFC_3986.URI("https://example.com//apps"))
+                == .resource(try IETF.RFC.`3986`.URI("https://example.com//apps"))
         )
     }
 
