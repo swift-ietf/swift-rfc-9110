@@ -25,6 +25,6 @@ extension IETF.RFC.`9110` {
 extension IETF.RFC.`9110`.Field: CustomStringConvertible {
 
     public var description: String {
-        "\(name.rawValue): \(value.rawValue)"
+        "\(name): \(value)"
     }
 }
