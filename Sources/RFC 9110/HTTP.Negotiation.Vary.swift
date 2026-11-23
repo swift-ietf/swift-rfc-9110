@@ -70,5 +70,5 @@ extension IETF.RFC.`9110`.Negotiation.Vary: ExpressibleByArrayLiteral {
 }
 
 #if !hasFeature(Embedded)
-extension IETF.RFC.`9110`.Negotiation.Vary: Codable {}
+    extension IETF.RFC.`9110`.Negotiation.Vary: Codable {}
 #endif

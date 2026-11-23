@@ -23,18 +23,18 @@ extension IETF.RFC.`9110`.Representation.Language {
 }
 
 #if !hasFeature(Embedded)
-extension IETF.RFC.`9110`.Representation.Language: Codable {
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let tag = try container.decode(String.self)
-        self.init(tag)
-    }
+    extension IETF.RFC.`9110`.Representation.Language: Codable {
+        public init(from decoder: any Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            let tag = try container.decode(String.self)
+            self.init(tag)
+        }
 
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(tag)
+        public func encode(to encoder: any Encoder) throws {
+            var container = encoder.singleValueContainer()
+            try container.encode(tag)
+        }
     }
-}
 #endif
 
 extension IETF.RFC.`9110`.Representation.Language: CustomStringConvertible {

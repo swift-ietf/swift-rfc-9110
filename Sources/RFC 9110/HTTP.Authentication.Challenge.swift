@@ -61,5 +61,5 @@ extension IETF.RFC.`9110`.Authentication.Challenge: CustomStringConvertible {
 }
 
 #if !hasFeature(Embedded)
-extension IETF.RFC.`9110`.Authentication.Challenge: Codable {}
+    extension IETF.RFC.`9110`.Authentication.Challenge: Codable {}
 #endif

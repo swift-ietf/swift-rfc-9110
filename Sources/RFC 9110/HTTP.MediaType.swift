@@ -204,20 +204,20 @@ extension IETF.RFC.`9110`.MediaType {
 }
 
 #if !hasFeature(Embedded)
-extension IETF.RFC.`9110`.MediaType: Codable {
+    extension IETF.RFC.`9110`.MediaType: Codable {
 
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let text = try container.decode(String.self)
-        guard let mediaType = Self(parsing: text) else {
-            throw DecodingError.dataCorruptedError(in: container, debugDescription: "not a media type: \(text)")
+        public init(from decoder: any Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            let text = try container.decode(String.self)
+            guard let mediaType = Self(parsing: text) else {
+                throw DecodingError.dataCorruptedError(in: container, debugDescription: "not a media type: \(text)")
+            }
+            self = mediaType
         }
-        self = mediaType
-    }
 
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(value)
+        public func encode(to encoder: any Encoder) throws {
+            var container = encoder.singleValueContainer()
+            try container.encode(value)
+        }
     }
-}
 #endif

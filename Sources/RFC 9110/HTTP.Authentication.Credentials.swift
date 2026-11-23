@@ -31,7 +31,7 @@ extension IETF.RFC.`9110`.Authentication.Credentials: CustomStringConvertible {
 }
 
 #if !hasFeature(Embedded)
-extension IETF.RFC.`9110`.Authentication.Credentials: Codable {}
+    extension IETF.RFC.`9110`.Authentication.Credentials: Codable {}
 #endif
 
 extension IETF.RFC.`9110`.Authentication.Credentials {

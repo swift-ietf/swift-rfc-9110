@@ -29,18 +29,18 @@ extension IETF.RFC.`9110`.Authentication.Scheme: CustomStringConvertible {
 }
 
 #if !hasFeature(Embedded)
-extension IETF.RFC.`9110`.Authentication.Scheme: Codable {
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        let name = try container.decode(String.self)
-        self.init(name)
-    }
+    extension IETF.RFC.`9110`.Authentication.Scheme: Codable {
+        public init(from decoder: any Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            let name = try container.decode(String.self)
+            self.init(name)
+        }
 
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(name)
+        public func encode(to encoder: any Encoder) throws {
+            var container = encoder.singleValueContainer()
+            try container.encode(name)
+        }
     }
-}
 #endif
 
 extension IETF.RFC.`9110`.Authentication.Scheme: ExpressibleByStringLiteral {
